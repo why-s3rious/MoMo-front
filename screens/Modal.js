@@ -69,9 +69,9 @@ export default class Modal extends Component {
                 </View>
                 {this.state.isDiffrent && (
                     <View>
-                        <TextInput style={styles.textInput} keyboardType="number-pad" onChangeText={this.onchangeTo} value={inputTextTo}/>
+                        <TextInput style={styles.textInput} keyboardType="number-pad" onChangeText={this.onchangeTo} value={inputTextTo} />
                         <Text>Đến</Text>
-                        <TextInput style={styles.textInput} keyboardType="number-pad" onChangeText={this.onchangeFrom} value={inputTextFrom}/>
+                        <TextInput style={styles.textInput} keyboardType="number-pad" onChangeText={this.onchangeFrom} value={inputTextFrom} />
                     </View>
                 )}
             </View>
@@ -81,7 +81,7 @@ export default class Modal extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: 30, 
+        marginTop: 30,
         justifyContent: 'center',
         alignItems: 'center'
     },
