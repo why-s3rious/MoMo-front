@@ -6,11 +6,17 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import TabBarIcon from '../components/TabBarIcon';
 import Home from '../screens/Home';
 import Account from '../screens/Account';
+import Modal from '../screens/Modal';
 
 //home stack
 const HomeStack = createStackNavigator(
   {
     Home: Home,
+<<<<<<< HEAD
+    Modal: Modal
+=======
+    
+>>>>>>> 1695329c0566d682fba7b07df14f2e39451554d6
   },
   {
     headerMode: 'none',

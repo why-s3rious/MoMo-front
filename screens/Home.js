@@ -20,13 +20,16 @@ export default class Home extends Component {
     this.state = {
     };
   }
+  navigateModal = () => {
+    this.props.navigation.navigate("Modal");
+  }
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
           <SearchBox />
           <View>
-            <TouchableOpacity style={styles.buttonLoc}>
+            <TouchableOpacity style={styles.buttonLoc} onPress={this.navigateModal}>
               <Text>Lọc</Text>
             </TouchableOpacity>
           </View>

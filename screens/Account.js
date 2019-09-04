@@ -12,7 +12,10 @@ export default class Home extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
-
+          <Image
+            style={{ width: 200, height: 200,borderRadius:100 }}
+            source={require('../assets/coffee-dessert.png')}
+          />
         </View>
         <View style={styles.Content}>
 
@@ -30,12 +33,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
   },
-  Header:{
-    flex:0.3,
-    backgroundColor:'red',
+  Header: {
+    flex: 0.5,
+    justifyContent:'center',
+    alignItems:'center',
   },
-  Content:{
-    flex:0.7,
-    backgroundColor:'blue'
+  Content: {
+    flex: 0.5,
   }
 });
