@@ -69,9 +69,9 @@ export default class Modal extends Component {
                 </View>
                 {this.state.isDiffrent && (
                     <View>
-                        <TextInput style={styles.textInput} keyboardType="number-pad" onChangeText={this.onchangeTo} value={inputTextTo}>{inputTextTo}</TextInput>
+                        <TextInput style={styles.textInput} keyboardType="number-pad" onChangeText={this.onchangeTo} value={inputTextTo} />
                         <Text>Đến</Text>
-                        <TextInput style={styles.textInput} keyboardType="number-pad" onChangeText={this.onchangeFrom} value={inputTextFrom}>{inputTextFrom}</TextInput>
+                        <TextInput style={styles.textInput} keyboardType="number-pad" onChangeText={this.onchangeFrom} value={inputTextFrom} />
                     </View>
                 )}
             </View>
