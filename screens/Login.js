@@ -20,7 +20,7 @@ export default class Login extends Component {
         })
     }
     onPressLogin = () => {
-        this.props.navigation.navigate("Home")
+        this.props.navigation.navigate("Main");
     }
     render() {
         const { inputTextUser, inputTextPass } = this.state

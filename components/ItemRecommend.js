@@ -4,12 +4,12 @@ import { View, Text , TouchableOpacity, StyleSheet,Image } from 'react-native';
 class ItemRecommend extends Component {
   render() {
     const {
-        itemData
-        
+        itemData,
+        onPress,
     } = this.props;
     return (
       <View style={styles.RecommendItem}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onPress}>
             <Image 
                 source={itemData.image}
                 style ={styles.ItemImage}

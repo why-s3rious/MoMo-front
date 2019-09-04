@@ -24,7 +24,7 @@ export default class Home extends Component {
     this.props.navigation.navigate("Modal");
   }
   onPressCategoryButton = item => {
-    this.props.navigation.navigate("DungNhieu",{data : item});
+    this.props.navigation.navigate("MainHome",{data : item});
   }
   render() {
     return (
