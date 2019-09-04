@@ -24,7 +24,7 @@ export default class Home extends Component {
     this.props.navigation.navigate("Modal");
   }
   onPressCategoryButton = item => {
-    this.props.navigation.navigate("DungNhieu");
+    this.props.navigation.navigate("DungNhieu",{data : item});
   }
   render() {
     return (
@@ -44,7 +44,8 @@ export default class Home extends Component {
               Data.map(item => {
                 return (
                   <CategoryButton
-                    onPress={()=> this.onPressCategoryButton(item)}
+                    onPress={() => this.onPressCategoryButton(item)}
+                    Data={item}
                     key={item.id} />
                 )
               })
@@ -85,10 +86,10 @@ const styles = StyleSheet.create({
     flex: 0.8,
     flexDirection: 'column',
   },
-  TextDanhMuc:{
-    marginLeft:25,
-    fontSize:25,
-    fontWeight:'400',
+  TextDanhMuc: {
+    marginLeft: 25,
+    fontSize: 25,
+    fontWeight: '400',
   },
   ListDanhMuc: {
     flexDirection: 'column',

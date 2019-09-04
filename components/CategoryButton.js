@@ -5,13 +5,14 @@ class CategoryButton extends Component {
 
     render() {
         const {
+            Data,
             onPress
         } = this.props;
         return (
             <TouchableOpacity onPress={onPress}
                 style={styles.CategoryButton}
             >
-                <Text style={{ fontSize: 20, }}>Tên danh mục</Text>
+                <Text style={{ fontSize: 20, }}>{Data.name}</Text>
                 <Image
                     style={{ width: 120, height: 80 }}
                     source={require('../assets/coffee-dessert.png')}
