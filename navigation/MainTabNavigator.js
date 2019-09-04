@@ -11,6 +11,7 @@ import Account from '../screens/Account';
 const HomeStack = createStackNavigator(
   {
     Home: Home,
+    
   },
   {
     headerMode: 'none',
