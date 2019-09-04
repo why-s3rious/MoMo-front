@@ -18,7 +18,9 @@ export default class Home extends Component {
           />
         </View>
         <View style={styles.Content}>
-
+            <Text style={styles.InfoText}>Tên tài khoản: 0356775770</Text>
+            <Text style={styles.InfoText}>Tên tài khoản: Ngọc Thiện</Text>
+            <Text style={styles.InfoText}>Thông tin cơ bản: Đẹp trai khoai to 15cm 30 phút</Text>
         </View>
       </View>
     );
@@ -40,5 +42,11 @@ const styles = StyleSheet.create({
   },
   Content: {
     flex: 0.5,
+    flexDirection:'column',
+    justifyContent:'center',
+    alignItems:'center',
+  },
+  InfoText:{
+    marginVertical:10,
   }
 });

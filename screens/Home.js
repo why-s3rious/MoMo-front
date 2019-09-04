@@ -23,6 +23,9 @@ export default class Home extends Component {
   navigateModal = () => {
     this.props.navigation.navigate("Modal");
   }
+  onPressCategoryButton = item => {
+    this.props.navigation.navigate("DungNhieu");
+  }
   render() {
     return (
       <View style={styles.container}>
@@ -41,6 +44,7 @@ export default class Home extends Component {
               Data.map(item => {
                 return (
                   <CategoryButton
+                    onPress={()=> this.onPressCategoryButton(item)}
                     key={item.id} />
                 )
               })

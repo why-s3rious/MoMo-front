@@ -7,12 +7,14 @@ import TabBarIcon from '../components/TabBarIcon';
 import Home from '../screens/Home';
 import Account from '../screens/Account';
 import Modal from '../screens/Modal';
+import DungNhieu from '../screens/DungNhieuScreen';
 
 //home stack
 const HomeStack = createStackNavigator(
   {
     Home: Home,
-    Modal: Modal
+    Modal: Modal,
+    DungNhieu: DungNhieu,
   },
   {
     headerMode: 'none',
