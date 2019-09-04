@@ -12,10 +12,9 @@ import Modal from '../screens/Modal';
 const HomeStack = createStackNavigator(
   {
     Home: Home,
-<<<<<<< HEAD
     Modal: Modal
 =======
-    
+
 >>>>>>> 1695329c0566d682fba7b07df14f2e39451554d6
   },
   {
