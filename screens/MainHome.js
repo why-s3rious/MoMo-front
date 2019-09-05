@@ -5,18 +5,21 @@ import SearchBox from '../components/SearchBox';
 import ItemRecommend from '../components/ItemRecommend';
 
 const Data = [
-  { id: 1, name: 'Phúc Long', image: require('../assets/Momo_1.jpg'), address: 'quận 1', longdis: '7km', price:'100.000 - 200.000' },
-  { id: 2, name: 'The Coffee House', image: require('../assets/Momo_2.jpg'), address: 'quận 2', longdis: '6km', price:'150.000 - 200.000' },
-  { id: 3, name: 'Hoàng Yến Buffet', image: require('../assets/Momo_3.jpg'), address: 'quận 3', longdis: '5km', price:'300.000 - 400.000' },
-  { id: 4, name: 'Phúc Long', image: require('../assets/Momo_1.jpg'), address: 'quận 4', longdis: '4km', price:'250.000 - 300.000' },
-  { id: 5, name: 'The Coffee House', image: require('../assets/Momo_2.jpg'), address: 'quận 5', longdis: '3km', price:'50.000- 100.000' },
-  { id: 6, name: 'Hoàng Yến Buffet', image: require('../assets/Momo_3.jpg'), address: 'quận 6', longdis: '2km', price:'500.000 - 1.000.000' },
+  { id: 1, name: 'Phúc Long', image: require('../assets/Momo_1.jpg'), address: 'quận 1', longdis: '7km', price: '100.000 - 200.000' },
+  { id: 2, name: 'The Coffee House', image: require('../assets/Momo_2.jpg'), address: 'quận 2', longdis: '6km', price: '150.000 - 200.000' },
+  { id: 3, name: 'Hoàng Yến Buffet', image: require('../assets/Momo_3.jpg'), address: 'quận 3', longdis: '5km', price: '300.000 - 400.000' },
+  { id: 4, name: 'Phúc Long', image: require('../assets/Momo_1.jpg'), address: 'quận 4', longdis: '4km', price: '250.000 - 300.000' },
+  { id: 5, name: 'The Coffee House', image: require('../assets/Momo_2.jpg'), address: 'quận 5', longdis: '3km', price: '50.000- 100.000' },
+  { id: 6, name: 'Hoàng Yến Buffet', image: require('../assets/Momo_3.jpg'), address: 'quận 6', longdis: '2km', price: '500.000 - 1.000.000' },
 ];
 export default class MainHome extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isDungNhieuScreen: true,
+      textSearch: '',
+      List: Data,
+      whatScreen: 1,
+      isOldUser: true,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
     };
   }
   navigateModal = () => {
@@ -24,17 +27,44 @@ export default class MainHome extends Component {
   }
   onPressDungNhieu = () => {
     this.setState({
-      isDungNhieuScreen: true,
+      whatScreen: 1,
     })
   }
   onPressGanToi = () => {
     this.setState({
-      isDungNhieuScreen: false,
+      whatScreen: 2,
+    })
+  }
+  onPressLishSu = () => {
+    this.setState({
+      whatScreen: 3,
     })
   }
   onPressItemRecommend = item => {
     const { navigation } = this.props;
     navigation.navigate('ItemDetail', { data: item });
+  }
+  onEndEditingSearch = async textSearch => { // Xử lí tìm kiếm
+    if (textSearch != '') {
+      await this.setState({
+        List: Data,
+      })
+      const { List } = this.state;
+      const newData = List.filter(function (item) {
+        //applying filter for the inserted text in search bar
+        const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
+        const textData = textSearch.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      this.setState({
+        List: newData,
+      })
+    }
+    else {
+      this.setState({
+        List: Data,
+      })
+    }
   }
   render() {
 
@@ -42,13 +72,20 @@ export default class MainHome extends Component {
     const Category = navigation.getParam('data');
 
     const {
-      isDungNhieuScreen
+      whatScreen,
+      isOldUser,
+      List,
+      textSearch
     } = this.state;
 
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
-          <SearchBox />
+          <SearchBox
+            text={textSearch}
+            onChangeText={(text) => this.setState({ textSearch: text })}
+            onEndEditing={() => this.onEndEditingSearch(textSearch)}
+          />
           <View>
             <TouchableOpacity style={styles.buttonLoc} onPress={this.navigateModal}>
               <Text>Lọc</Text>
@@ -58,41 +95,77 @@ export default class MainHome extends Component {
         <View style={styles.Content}>
           <TouchableOpacity onPress={() => { this.props.navigation.goBack() }}><Text>Trở về</Text></TouchableOpacity>
           <Text style={styles.TextDanhMuc}>{Category.name}</Text>
-          <View style={styles.TabButton}>
-            <TouchableOpacity
-              style={isDungNhieuScreen ? styles.ChoseButton : styles.unChoseButton}
-              onPress={this.onPressDungNhieu}
-            >
-              <Text style={isDungNhieuScreen ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Dùng nhiều</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={isDungNhieuScreen ? styles.unChoseButton : styles.ChoseButton}
-              onPress={this.onPressGanToi}
-            >
-              <Text style={isDungNhieuScreen ? styles.UnChoseTabButtonText : styles.ChoseTabButtonText}>Gần tôi</Text>
-            </TouchableOpacity>
-          </View>
-          <ScrollView contentContainerStyle={styles.ListDanhMuc}>
-            {isDungNhieuScreen ?
-              Data.map(item => {
-                return (
-                  <ItemRecommend
-                    onPress={() => this.onPressItemRecommend(item)}
-                    key={item.id}
-                    itemData={item}
-                  />
-                );
-              })
+          {
+            isOldUser ? // nếu là user cũ => 3 nút, User mới => 2 nút
+              <View style={styles.TabButton}>
+                <TouchableOpacity
+                  style={whatScreen == 1 ? styles.ChoseButton : styles.unChoseButton}
+                  onPress={this.onPressDungNhieu}
+                >
+                  <Text style={whatScreen == 1 ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Dùng nhiều</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={whatScreen == 2 ? styles.ChoseButton : styles.unChoseButton}
+                  onPress={this.onPressGanToi}
+                >
+                  <Text style={whatScreen == 2 ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Gần tôi</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={whatScreen == 3 ? styles.ChoseButton : styles.unChoseButton}
+                  onPress={this.onPressLishSu}
+                >
+                  <Text style={whatScreen == 3 ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Lịch sử</Text>
+                </TouchableOpacity>
+              </View>
               :
-              Data.slice(0).reverse().map(item => {
-                return (
-                  <ItemRecommend
-                    onPress={() => this.onPressItemRecommend(item)}
-                    key={item.id}
-                    itemData={item}
-                  />
-                );
-              })
+              <View style={styles.TabButton}>
+                <TouchableOpacity
+                  style={whatScreen == 1 ? styles.ChoseButton : styles.unChoseButton}
+                  onPress={this.onPressDungNhieu}
+                >
+                  <Text style={whatScreen == 1 ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Dùng nhiều</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={whatScreen == 2 ? styles.ChoseButton : styles.unChoseButton}
+                  onPress={this.onPressGanToi}
+                >
+                  <Text style={whatScreen == 2 ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Gần tôi</Text>
+                </TouchableOpacity>
+              </View>
+          }
+          <ScrollView contentContainerStyle={styles.ListDanhMuc}>
+            {
+              whatScreen == 1 ? // 1 = screen dùng nhìu , 2 = screen gần tôi, 3 = screen lịch sử
+                List.map(item => {
+                  return (
+                    <ItemRecommend
+                      onPress={() => this.onPressItemRecommend(item)}
+                      key={item.id}
+                      itemData={item}
+                    />
+                  );
+                })
+                : whatScreen == 2 ?
+                  List.slice(0).reverse().map(item => {
+                    return (
+                      <ItemRecommend
+                        onPress={() => this.onPressItemRecommend(item)}
+                        key={item.id}
+                        itemData={item}
+                      />
+                    );
+                  })
+                  :
+                  List.map(item => {
+                    if (item.id > 4)
+                      return (
+                        <ItemRecommend
+                          onPress={() => this.onPressItemRecommend(item)}
+                          key={item.id}
+                          itemData={item}
+                        />
+                      );
+                  })
             }
           </ScrollView>
         </View>

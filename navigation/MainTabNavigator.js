@@ -11,6 +11,7 @@ import MainHome from '../screens/MainHome';
 import ItemDetail from '../screens/ItemDetail';
 import ItemAddress from '../screens/ItemAddress';
 import Direction from '../screens/Direction';
+import SearchScreen from '../screens/SearchScreen';
 
 //home stack
 const HomeStack = createStackNavigator(
@@ -21,6 +22,7 @@ const HomeStack = createStackNavigator(
     ItemDetail: ItemDetail,
     ItemAddress: ItemAddress,
     Direction: Direction,
+    SearchScreen : SearchScreen,
   },
   {
     headerMode: 'none',

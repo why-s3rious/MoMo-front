@@ -18,19 +18,31 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      textSearch: '',
     };
-  }
+  };
   navigateModal = () => {
     this.props.navigation.navigate("Modal");
-  }
+  };
   onPressCategoryButton = item => {
-    this.props.navigation.navigate("MainHome",{data : item});
-  }
+    this.props.navigation.navigate("MainHome", { data: item });
+  };
+  onEndEditingSearch = textSearch => {
+    this.setState({
+      textSearch: '', 
+    })
+    this.props.navigation.navigate("SearchScreen", { search: textSearch });
+  };
   render() {
+    const { textSearch } = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
-          <SearchBox />
+          <SearchBox
+            text={textSearch}
+            onChangeText={(text) => this.setState({ textSearch: text })}
+            onEndEditing={() => this.onEndEditingSearch(textSearch)}
+          />
           <View>
             <TouchableOpacity style={styles.buttonLoc} onPress={this.navigateModal}>
               <Text>Lọc</Text>
