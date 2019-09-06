@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, KeyboardAvoidingView } from 'react-native';
 import RadioForm from 'react-native-simple-radio-button';
 const types = [
     { label: '10.000 - 200.000', value: 0 },
@@ -42,61 +42,98 @@ export default class Modal extends Component {
         console.log(this.state.inputTextFrom)
     }
     render() {
-        const { inputTextFrom, inputTextTo } = this.state
         return (
-            <View style={styles.container}>
-                <View>
+            <KeyboardAvoidingView enabled behavior="padding" style={styles.container}>
+                <View style={styles.goBack}>
                     <TouchableOpacity style={styles.btnBack} onPress={() => this.props.navigation.goBack()}>
                         <Text style={styles.txtBack}> Trở về </Text>
                     </TouchableOpacity>
                 </View>
-                <View>
+                <View style={styles.title}>
                     <Text style={styles.txtTitle}>Cái này là Modal</Text>
                 </View>
-                <View>
-                    <Text>Mức tiền có thể chi trả được</Text>
-                </View>
-                <View>
-                    <RadioForm
-                        radio_props={types}
-                        initial={0}
-                        formHorizontal={false}
-                        labelHorizontal={true}
-                        buttonColor={'#2196f3'}
-                        animation={true}
-                        onPress={(value) => this.onPressRadio(value)}
-                    />
-                </View>
-                {this.state.isDiffrent && (
-                    <View>
-                        <TextInput style={styles.textInput} autoFocus keyboardType='number-pad' onChangeText={this.onChangeTo} />
-                        <Text>Đến</Text>
-                        <TextInput style={styles.textInput} keyboardType='number-pad' onChangeText={this.onchangeFrom} />
+                <View style={styles.content}>
+                    <Text style={styles.txtContent}>Mức tiền có thể chi trả được</Text>
+                    <View style={styles.radioFrom}>
+                        <RadioForm
+                            radio_props={types}
+                            initial={0}
+                            formHorizontal={false}
+                            labelHorizontal={true}
+                            buttonColor={'#2196f3'}
+                            animation={true}
+                            onPress={(value) => this.onPressRadio(value)}
+                        />
+                        {this.state.isDiffrent && (
+                            <View sytle={styles.isDiffrent}>
+                                <TextInput style={styles.textInput} autoFocus keyboardType='number-pad' onChangeText={this.onChangeTo} />
+                                <Text>Đến</Text>
+                                <TextInput style={styles.textInput} keyboardType='number-pad' onChangeText={this.onchangeFrom} />
+                            </View>
+                        )}
                     </View>
-                )}
-            </View>
+                </View>
+            </KeyboardAvoidingView>
         );
     }
 }
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: 30,
+        backgroundColor: 'white'
+    },
+    goBack: {
+        flex: 0.1,
+        marginVertical: 30,
+        marginHorizontal: 15,
+        justifyContent: 'flex-start'
+    },
+    title: {
+        flex: 0.1,
+        justifyContent: 'center',
+        alignItems: "center",
+        marginVertical: 5,
+    },
+    content: {
+        flex: 0.8,
+        marginVertical: 5,
+        justifyContent: 'flex-start',
+        alignItems: 'center', 
+        flexDirection: 'column'
+    },
+    btnBack: {
+        borderRadius: 10,
+        height: 30,
+        width: 80,
+        backgroundColor: 'gray',
         justifyContent: 'center',
         alignItems: 'center'
     },
-    btnBack: {
-
-    },
     txtBack: {
-
+        fontWeight: '400'
     },
     txtTitle: {
-
+        fontWeight: 'bold',
+        fontSize: 35
     },
     textInput: {
         width: 100,
         height: 30,
-        borderWidth: 1
+        borderWidth: 1,
+        borderRadius: 15,
+        paddingHorizontal: 10,
     },
+    txtContent: {
+        fontSize: 25,
+        fontWeight: '600',
+        marginVertical: 5,
+    },
+    radioFrom: {
+        marginVertical: 5,
+        width: '90%',
+        flexDirection: 'column'
+    },
+    isDiffrent: {
+        flexDirection: 'row'
+    }
 })
