@@ -78,6 +78,14 @@ export default class MainHome extends Component {
       textSearch
     } = this.state;
 
+    let list = [];
+
+    switch (whatScreen) {
+      case 1: list = List; break;
+      case 2: list = List.slice(0).reverse(); break;
+      default: list = List.filter(item => item.id > 4);
+    }
+
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
@@ -135,38 +143,17 @@ export default class MainHome extends Component {
           }
           <ScrollView contentContainerStyle={styles.ListDanhMuc}>
             {
-              whatScreen == 1 ? // 1 = screen dùng nhìu , 2 = screen gần tôi, 3 = screen lịch sử
-                List.map(item => {
-                  return (
-                    <ItemRecommend
-                      onPress={() => this.onPressItemRecommend(item)}
-                      key={item.id}
-                      itemData={item}
-                    />
-                  );
-                })
-                : whatScreen == 2 ?
-                  List.slice(0).reverse().map(item => {
-                    return (
-                      <ItemRecommend
-                        onPress={() => this.onPressItemRecommend(item)}
-                        key={item.id}
-                        itemData={item}
-                      />
-                    );
-                  })
-                  :
-                  List.map(item => {
-                    if (item.id > 4)
-                      return (
-                        <ItemRecommend
-                          onPress={() => this.onPressItemRecommend(item)}
-                          key={item.id}
-                          itemData={item}
-                        />
-                      );
-                  })
+              list.map(item => {
+                return (
+                  <ItemRecommend
+                    onPress={() => this.onPressItemRecommend(item)}
+                    key={item.id}
+                    itemData={item}
+                  />
+                )
+              })
             }
+
           </ScrollView>
         </View>
       </View>
