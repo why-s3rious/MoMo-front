@@ -61,7 +61,10 @@ class SearchBox extends Component {
           onChangeText={onChangeText}
           placeholder='Tìm kiếm'
           renderItem={
-            ({ item }) => <Text>{item.name}</Text>
+            ({ item }) =>
+              <TouchableOpacity onPress={()=>onPressItemAuto(item)}>
+                <Text>{item.name}</Text>
+              </TouchableOpacity>
           }
           keyExtractor={(item, index) => index.toString()}
           onEndEditing={onEndEditing}

@@ -45,6 +45,9 @@ export default class Home extends Component {
       this.props.navigation.navigate("SearchScreen", { search: textSearch });
     }
   };
+  onPressItemAuto = (item) => {
+    this.props.navigation.navigate("SearchScreen", { search: item.name });
+  }
   render() {
     const { textSearch } = this.state;
     return (
@@ -54,7 +57,8 @@ export default class Home extends Component {
             text={textSearch}
             onChangeText={(text) => this.setState({ textSearch: text })}
             onEndEditing={() => this.onEndEditingSearch(textSearch)}
-          />
+            onPressItemAuto={this.onPressItemAuto}
+        />
           <View>
             <TouchableOpacity style={styles.buttonLoc} onPress={this.navigateModal}>
               <Text>Lọc</Text>

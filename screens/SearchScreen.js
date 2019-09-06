@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Keyboard } from 'react-native';
 
 import SearchBox from '../components/SearchBox';
 import ItemRecommend from '../components/ItemRecommend';
@@ -80,12 +80,14 @@ export default class SearchScreen extends Component {
                 textSearch: '',
             })
         }
-        else {
-            const { navigation } = this.props;
-            navigation.navigate('Home');
-        }
     }
-
+    onPressItemAuto = (item) => {
+        Keyboard.dismiss();
+        this.setState({
+            textSearch: item.name
+        })
+        this.onEndEditingSearch(item.name);
+    }
     render() {
         const {
             List,
@@ -95,6 +97,16 @@ export default class SearchScreen extends Component {
             title,
         } = this.state;
 
+        let list = [...List]
+        switch (whatScreen) {
+            case 1:
+                break;
+            case 2: list = list.splice(0).reverse();
+                break;
+            default: list = list.filter(item => item.id > 2);
+                break;
+        }
+
         return (
             <View style={styles.container}>
                 <View style={styles.Header}>
@@ -102,6 +114,7 @@ export default class SearchScreen extends Component {
                         text={textSearch}
                         onChangeText={(text) => this.setState({ textSearch: text })}
                         onEndEditing={() => this.onEndEditingSearch(textSearch)}
+                        onPressItemAuto={this.onPressItemAuto}
                     />
                     <View>
                         <TouchableOpacity style={styles.buttonLoc} onPress={this.navigateModal}>
@@ -151,23 +164,10 @@ export default class SearchScreen extends Component {
                             </View>
                     }
                     <ScrollView contentContainerStyle={styles.ListDanhMuc}>
-                        {   List.length < 1 ? 
-                            <View>
-                                <Text>Không tìm thấy!</Text>
-                            </View>
-                            :
-                            whatScreen == 1 ? // 1 = screen dùng nhìu , 2 = screen gần tôi, 3 = screen lịch sử
-                                List.map(item => {
-                                    return (
-                                        <ItemRecommend
-                                            onPress={() => this.onPressItemRecommend(item)}
-                                            key={item.id}
-                                            itemData={item}
-                                        />
-                                    );
-                                })
-                                : whatScreen == 2 ?
-                                    List.slice(0).reverse().map(item => {
+                        {
+                            List.map(item => {
+                                switch (whatScreen) {
+                                    case 1:
                                         return (
                                             <ItemRecommend
                                                 onPress={() => this.onPressItemRecommend(item)}
@@ -175,18 +175,24 @@ export default class SearchScreen extends Component {
                                                 itemData={item}
                                             />
                                         );
-                                    })
-                                    :
-                                    List.map(item => {
-                                        if (item.id > 4)
-                                            return (
-                                                <ItemRecommend
-                                                    onPress={() => this.onPressItemRecommend(item)}
-                                                    key={item.id}
-                                                    itemData={item}
-                                                />
-                                            );
-                                    })
+                                    case 2:
+                                        return (
+                                            <ItemRecommend
+                                                onPress={() => this.onPressItemRecommend(item)}
+                                                key={item.id}
+                                                itemData={item}
+                                            />
+                                        );
+                                    case 3:
+                                        return (
+                                            <ItemRecommend
+                                                onPress={() => this.onPressItemRecommend(item)}
+                                                key={item.id}
+                                                itemData={item}
+                                            />
+                                        );
+                                }
+                            })
                         }
                     </ScrollView>
                 </View>
