@@ -20,7 +20,17 @@ export default class Home extends Component {
     this.state = {
       textSearch: '',
     };
-  };
+
+    this.didFocusSubscription = props.navigation.addListener(
+      'willFocus',
+      payload => {
+        this.setState({
+          textSearch: '',
+        })
+      }
+    );
+  }
+
   navigateModal = () => {
     this.props.navigation.navigate("Modal");
   };
@@ -28,10 +38,12 @@ export default class Home extends Component {
     this.props.navigation.navigate("MainHome", { data: item });
   };
   onEndEditingSearch = textSearch => {
-    this.setState({
-      textSearch: '', 
-    })
-    this.props.navigation.navigate("SearchScreen", { search: textSearch });
+    if (textSearch != '') {
+      this.setState({
+        textSearch: '',
+      })
+      this.props.navigation.navigate("SearchScreen", { search: textSearch });
+    }
   };
   render() {
     const { textSearch } = this.state;

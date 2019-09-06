@@ -76,6 +76,7 @@ export default class SearchScreen extends Component {
             });
             this.setState({
                 List: newData,
+                title: textSearch,
                 textSearch: '',
             })
         }

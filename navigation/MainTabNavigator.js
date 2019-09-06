@@ -12,6 +12,7 @@ import ItemDetail from '../screens/ItemDetail';
 import ItemAddress from '../screens/ItemAddress';
 import Direction from '../screens/Direction';
 import SearchScreen from '../screens/SearchScreen';
+import UploadPicture from '../screens/UploadPicture';
 
 //home stack
 const HomeStack = createStackNavigator(
@@ -22,7 +23,7 @@ const HomeStack = createStackNavigator(
     ItemDetail: ItemDetail,
     ItemAddress: ItemAddress,
     Direction: Direction,
-    SearchScreen : SearchScreen,
+    SearchScreen: SearchScreen,
   },
   {
     headerMode: 'none',
@@ -46,6 +47,7 @@ HomeStack.navigationOptions = {
 const AccountStack = createStackNavigator(
   {
     Account: Account,
+    UploadPicture: UploadPicture,
   },
   {
     headerMode: 'none',

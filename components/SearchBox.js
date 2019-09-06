@@ -16,7 +16,6 @@ class SearchBox extends Component {
     super(props);
     this.state = {
       list: Data,
-      query: '',
     };
   }
 
@@ -41,9 +40,6 @@ class SearchBox extends Component {
       onEndEditing,
       onPressItemAuto,
     } = this.props;
-    const {
-      query
-    } = this.state;
     const list = this.findFilm(text);
     return (
       // <View>
@@ -61,12 +57,13 @@ class SearchBox extends Component {
           autoCorrect={false}
           containerStyle={styles.textBox}
           data={list}
-          defaultValue={query}
+          defaultValue={text}
           onChangeText={onChangeText}
           placeholder='Tìm kiếm'
-          renderItem={({ item, i }) => (
-            <Text>{item.name}</Text>
-          )}
+          renderItem={
+            ({ item }) => <Text>{item.name}</Text>
+          }
+          keyExtractor={(item, index) => index.toString()}
           onEndEditing={onEndEditing}
         />
       </View>
@@ -75,18 +72,14 @@ class SearchBox extends Component {
 }
 
 const styles = StyleSheet.create({
-  searchBar:{
-    height:50,
-    width:200,
-    flexDirection:'column',
+  searchBar: {
+    height: 50,
+    width: 200,
+    flexDirection: 'column',
   },
   textBox: {
-    justifyContent:'center',
+    justifyContent: 'center',
     marginRight: 10
-  },
-  itemText: {
-    fontSize: 15,
-    margin: 2,
   },
 });
 
