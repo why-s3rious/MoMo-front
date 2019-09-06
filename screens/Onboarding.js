@@ -2,6 +2,8 @@ import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 
+import Modal from '../screens/Modal'
+
 const slides = [
     {
         key: 'slide1',

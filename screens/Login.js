@@ -19,7 +19,11 @@ export default class Login extends Component {
         })
     }
     onPressLogin = () => {
-        this.props.navigation.navigate("Main");
+        if(this.state.inputTextPass.length < 6) {
+            alert("Mật khẩu cần nhiều hơn 6 kí tự")
+        }
+        else
+            this.props.navigation.navigate("Main");
     }
     onPressSignUp = () => {
         this.props.navigation.navigate("Register");
@@ -32,8 +36,23 @@ export default class Login extends Component {
                     <Text style={styles.txtTitle}>Welcome to OKE</Text>
                 </View>
                 <View style={styles.inputGroup}>
-                    <TextInput style={styles.textInput} placeholder="Email" onChangeText={this.onchangeUser} value={inputTextUser} />
-                    <TextInput style={styles.textInput} placeholder="Password" onChangeText={this.onchangePass} value={inputTextPass} />
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Email"
+                        onChangeText={this.onchangeUser}
+                        value={inputTextUser}
+                        onSubmitEditing={() => this.passwordRef.focus()}
+                        blurOnSubmit={false}
+                        keyboardType={'email-address'}
+                    />
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Password"
+                        onChangeText={this.onchangePass}
+                        value={inputTextPass}
+                        ref={ref => this.passwordRef = ref}
+                        secureTextEntry={true}
+                    />
                 </View>
                 <View style={styles.buttonGroup}>
                     <TouchableOpacity style={styles.btnSignin} onPress={this.onPressLogin}>

@@ -20,9 +20,30 @@ export default class Register extends Component {
                     <Text style={styles.txtTitle}>Sign Up</Text>
                 </View>
                 <View style={styles.inputGroup}>
-                    <TextInput style={styles.textInput} placeholder="Email" onChangeText={this.onchangeEmail} />
-                    <TextInput style={styles.textInput} placeholder="Password" onChangeText={this.onchangePass} />
-                    <TextInput style={styles.textInput} placeholder="Confirm Password" onChangeText={this.onchangeConfirm} />
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Email"
+                        onChangeText={this.onchangeEmail}
+                        onSubmitEditing={() => this.passwordRef.focus()}
+                        blurOnSubmit={false}
+                        keyboardType={'email-address'}
+                    />
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Password"
+                        onChangeText={this.onchangePass}
+                        ref={ref => this.passwordRef = ref}
+                        onSubmitEditing={() => this.confirmpasswordRef.focus()}
+                        blurOnSubmit={false}
+                        secureTextEntry={true}
+                    />
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Confirm Password"
+                        onChangeText={this.onchangeConfirm}
+                        ref={ref => this.confirmpasswordRef = ref}
+                        secureTextEntry={true}
+                    />
                 </View>
                 <View style={styles.buttonGroup}>
                     <TouchableOpacity style={styles.btnNext} onPress={this.onPressNext}>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, KeyboardAvoidingView, Keyboard } from 'react-native';
 import RadioForm from 'react-native-simple-radio-button';
 const types = [
     { label: '10.000 - 200.000', value: 0 },
@@ -42,6 +42,7 @@ export default class Modal extends Component {
         console.log(this.state.inputTextFrom)
     }
     render() {
+        const { isDiffrent } = this.state; 
         return (
             <KeyboardAvoidingView enabled behavior="padding" style={styles.container}>
                 <View style={styles.goBack}>
@@ -64,11 +65,24 @@ export default class Modal extends Component {
                             animation={true}
                             onPress={(value) => this.onPressRadio(value)}
                         />
-                        {this.state.isDiffrent && (
-                            <View sytle={styles.isDiffrent}>
-                                <TextInput style={styles.textInput} autoFocus keyboardType='number-pad' onChangeText={this.onChangeTo} />
-                                <Text>Đến</Text>
-                                <TextInput style={styles.textInput} keyboardType='number-pad' onChangeText={this.onchangeFrom} />
+                        {isDiffrent && (
+                            <View style={styles.isDiffrentView}>
+                                <TextInput
+                                    style={styles.textInput}
+                                    autoFocus
+                                    keyboardType='number-pad'
+                                    onChangeText={this.onChangeTo}
+                                    onSubmitEditing={() => this.inputfromref.focus()}
+                                    blurOnSubmit={false}
+                                />
+                                <Text>-></Text>
+                                <TextInput
+                                    style={styles.textInput}
+                                    keyboardType='number-pad'
+                                    onChangeText={this.onchangeFrom}
+                                    ref={ref => this.inputfromref = ref}
+                                    onSubmitEditing={Keyboard.dismiss}
+                                />
                             </View>
                         )}
                     </View>
@@ -98,8 +112,22 @@ const styles = StyleSheet.create({
         flex: 0.8,
         marginVertical: 5,
         justifyContent: 'flex-start',
-        alignItems: 'center', 
+        alignItems: 'center',
+        flexDirection: 'column', 
+    },
+    txtContent: {
+        fontSize: 25,
+        fontWeight: '600',
+        marginVertical: 5,
+    },
+    radioFrom: {
+        marginVertical: 5,
+        width: '90%',
         flexDirection: 'column'
+    },
+    isDiffrentView: {
+        flex: 1,
+        flexDirection: 'row',
     },
     btnBack: {
         borderRadius: 10,
@@ -123,17 +151,4 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         paddingHorizontal: 10,
     },
-    txtContent: {
-        fontSize: 25,
-        fontWeight: '600',
-        marginVertical: 5,
-    },
-    radioFrom: {
-        marginVertical: 5,
-        width: '90%',
-        flexDirection: 'column'
-    },
-    isDiffrent: {
-        flexDirection: 'row'
-    }
 })
