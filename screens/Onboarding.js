@@ -1,43 +1,75 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Image } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
-
-import Modal from '../screens/Modal'
 
 const slides = [
     {
         key: 'slide1',
         title: 'Title 1',
+        image: require('../assets/Momo_1.jpg'),
         text: 'Description.\nRecommend theo xu hướng',
-        backgroundColor: '#59b2ab',
     },
     {
         key: 'slide2',
         title: 'Title 2',
+        image: require('../assets/Momo_1.jpg'),
         text: 'Description.\nRecommend theo túi tiền',
-        backgroundColor: '#febe29',
     },
     {
         key: 'slide3',
         title: 'Title 3',
+        image: require('../assets/Momo_1.jpg'),
         text: 'Description.\nRecommend theo vị trí',
-        backgroundColor: '#22bcb5',
     }
 ];
 export default class Onboarding extends React.Component {
     onDone = () => {
-        this.props.navigation.navigate("Login")
+        this.props.navigation.navigate("Logo")
+    }
+    renderItem = ({ item }) => {
+        return (
+            <View style={styles.mainContent}>
+                <Text style={styles.title}>{item.title}</Text>
+                <Image style={styles.image} source={item.image} />
+                <Text style={styles.text}>{item.text}</Text>
+            </View>
+        );
     }
     render() {
         return (
-            <AppIntroSlider
-                slides={slides}
-                showNextButton
-                showSkipButton
-                showDoneButton
-                onSkip={this.onDone}
-                onDone={this.onDone}
-            />
+                <AppIntroSlider
+                    renderItem={this.renderItem}
+                    slides={slides}
+                    showNextButton
+                    showSkipButton
+                    showDoneButton
+                    onSkip={this.onDone}
+                    onDone={this.onDone}
+                    backgroundColor='gray'
+                />
         );
     }
 }
+const styles = StyleSheet.create({
+    mainContent: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 30,
+    },
+    image: {
+        width: 50,
+        height: 50,
+        marginVertical: 10,
+    },
+    text: {
+        color: 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: 'transparent',
+        textAlign: 'center',
+    },
+    title: {
+        fontSize: 22,
+        color: 'black',
+        textAlign: 'center',
+    },
+});
