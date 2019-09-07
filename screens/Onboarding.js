@@ -26,7 +26,7 @@ const slides = [
 ];
 export default class Onboarding extends React.Component {
     onDone = () => {
-        this.props.navigation.navigate("Login")
+        this.props.navigation.navigate("Logo")
     }
     render() {
         return (
