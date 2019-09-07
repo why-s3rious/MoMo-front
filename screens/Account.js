@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image,TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 export default class Home extends Component {
   constructor(props) {
@@ -8,12 +8,19 @@ export default class Home extends Component {
     };
   }
 
+  onPressLogoutButton = ()=>{
+    this.props.navigation.navigate("Login");
+  }
+  onPressDoneButton = ()=>{
+    this.props.navigation.navigate("Home");
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
           <TouchableOpacity style={{ width: 200, height: 200, borderRadius: 100 }}
-            onPress = {()=>{
+            onPress={() => {
               this.props.navigation.navigate("UploadPicture");
             }}
           >
@@ -27,6 +34,14 @@ export default class Home extends Component {
           <Text style={styles.InfoText}>Tên tài khoản: 0356775770</Text>
           <Text style={styles.InfoText}>Tên tài khoản: Ngọc Thiện</Text>
           <Text style={styles.InfoText}>Thông tin cơ bản: Đẹp trai khoai to 15cm 30 phút</Text>
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity onPress={this.onPressLogoutButton} style={styles.logoutButton}>
+              <Text style={{ fontSize: 15, fontWeight: '400', color: 'white' }}>Đăng xuất</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.onPressDoneButton} style={styles.doneButton}>
+              <Text style={{ fontSize: 15, fontWeight: '400', color: 'red' }}>Xong</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     );
@@ -48,11 +63,33 @@ const styles = StyleSheet.create({
   },
   Content: {
     flex: 0.5,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'space-around',
   },
   InfoText: {
     marginVertical: 10,
-  }
+  },
+  buttonGroup: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  logoutButton: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+    width: 100,
+    borderRadius: 10,
+    backgroundColor: "#3578E5",
+  },
+  doneButton: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+    width: 100,
+    borderRadius: 10,
+    backgroundColor: "white",
+  },
 });

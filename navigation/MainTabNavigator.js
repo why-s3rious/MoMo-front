@@ -29,7 +29,8 @@ const HomeStack = createStackNavigator(
     headerMode: 'none',
     navigationOptions: {
       headerVisible: false,
-    }
+    },
+    initialRouteName: 'Home',
   }
 );
 

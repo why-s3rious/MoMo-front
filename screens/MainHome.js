@@ -44,7 +44,7 @@ export default class MainHome extends Component {
     const { navigation } = this.props;
     navigation.navigate('ItemDetail', { data: item });
   }
-  onEndEditingSearch = async textSearch => { // Xử lí tìm kiếm
+  onEndEditingSearch = async (textSearch) => { // Xử lí tìm kiếm
     if (textSearch != '') {
       await this.setState({
         List: Data,
@@ -58,12 +58,15 @@ export default class MainHome extends Component {
       });
       this.setState({
         List: newData,
+        textSearch: ''
       })
+      console.log("text != empty")
     }
     else {
       this.setState({
         List: Data,
       })
+      console.log("text == empty")
     }
   }
   onPressItemAuto = (item) => {
@@ -95,15 +98,13 @@ export default class MainHome extends Component {
         break;
     }
 
-    console.log(List)
-
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
+          <TouchableOpacity onPress={() => { this.props.navigation.goBack() }}><Text>Trở về</Text></TouchableOpacity>
           <SearchBox
             text={textSearch}
             onChangeText={(text) => this.setState({ textSearch: text })}
-            onEndEditing={() => this.onEndEditingSearch(textSearch)}
             onPressItemAuto={this.onPressItemAuto}
           />
           <View>
@@ -113,7 +114,6 @@ export default class MainHome extends Component {
           </View>
         </View>
         <View style={styles.Content}>
-          <TouchableOpacity onPress={() => { this.props.navigation.goBack() }}><Text>Trở về</Text></TouchableOpacity>
           <Text style={styles.TextDanhMuc}>{Category.name}</Text>
           {
             isOldUser ? // nếu là user cũ => 3 nút, User mới => 2 nút
@@ -181,13 +181,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   Header: {
-    flex: 0.2,
+    flex: 0.18,
     justifyContent: 'space-around',
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
+    marginBottom: 50,
   },
   buttonLoc: {
-    marginLeft: 15,
     justifyContent: 'center',
     alignItems: 'center',
     borderTopColor: 'gray',
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     width: 40,
   },
   Content: {
-    flex: 0.8,
+    flex: 0.82,
     flexDirection: 'column',
   },
   TextDanhMuc: {

@@ -37,7 +37,6 @@ class SearchBox extends Component {
     const {
       text,
       onChangeText,
-      onEndEditing,
       onPressItemAuto,
     } = this.props;
     const list = this.findFilm(text);
@@ -55,19 +54,19 @@ class SearchBox extends Component {
         <Autocomplete
           autoCapitalize="none"
           autoCorrect={false}
-          containerStyle={styles.textBox}
+          containerStyle={styles.autoContainerStyle}
+          listContainerStyle ={styles.listContainerStyle}
           data={list}
           defaultValue={text}
           onChangeText={onChangeText}
           placeholder='Tìm kiếm'
           renderItem={
             ({ item }) =>
-              <TouchableOpacity onPress={()=>onPressItemAuto(item)}>
+              <TouchableOpacity onPress={() => onPressItemAuto(item)}>
                 <Text>{item.name}</Text>
               </TouchableOpacity>
           }
           keyExtractor={(item, index) => index.toString()}
-          onEndEditing={onEndEditing}
         />
       </View>
     );
@@ -76,14 +75,16 @@ class SearchBox extends Component {
 
 const styles = StyleSheet.create({
   searchBar: {
-    height: 50,
     width: 200,
+    height: 40,
     flexDirection: 'column',
   },
-  textBox: {
-    justifyContent: 'center',
-    marginRight: 10
+  autoContainerStyle: {
   },
+  listContainerStyle:{
+    backgroundColor: 'rgba(255,255,255,1.0)',
+    height:60,
+  }
 });
 
 

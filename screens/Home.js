@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
-import SearchBox from '../components/SearchBox';
 import CategoryButton from '../components/CategoryButton';
 
 const Data = [
@@ -17,18 +16,6 @@ const Data = [
 export default class Home extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      textSearch: '',
-    };
-
-    this.didFocusSubscription = props.navigation.addListener(
-      'willFocus',
-      payload => {
-        this.setState({
-          textSearch: '',
-        })
-      }
-    );
   }
 
   navigateModal = () => {
@@ -37,28 +24,11 @@ export default class Home extends Component {
   onPressCategoryButton = item => {
     this.props.navigation.navigate("MainHome", { data: item });
   };
-  onEndEditingSearch = textSearch => {
-    if (textSearch != '') {
-      this.setState({
-        textSearch: '',
-      })
-      this.props.navigation.navigate("SearchScreen", { search: textSearch });
-    }
-  };
-  onPressItemAuto = (item) => {
-    this.props.navigation.navigate("SearchScreen", { search: item.name });
-  }
   render() {
-    const { textSearch } = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
-          <SearchBox
-            text={textSearch}
-            onChangeText={(text) => this.setState({ textSearch: text })}
-            onEndEditing={() => this.onEndEditingSearch(textSearch)}
-            onPressItemAuto={this.onPressItemAuto}
-        />
+          <Text style={{ fontWeight: '400', fontSize: 30, marginBottom: 10, }}>TRANG CHỦ</Text>
           <View>
             <TouchableOpacity style={styles.buttonLoc} onPress={this.navigateModal}>
               <Text>Lọc</Text>
@@ -94,13 +64,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   Header: {
-    flex: 0.2,
+    flex: 0.15,
     justifyContent: 'space-around',
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end'
   },
   buttonLoc: {
-    marginLeft: 15,
+    marginBottom: 10,
     justifyContent: 'center',
     alignItems: 'center',
     borderTopColor: 'gray',
@@ -111,12 +81,12 @@ const styles = StyleSheet.create({
     width: 40,
   },
   Content: {
-    flex: 0.8,
+    flex: 0.85,
     flexDirection: 'column',
   },
   TextDanhMuc: {
     marginLeft: 25,
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: '400',
   },
   ListDanhMuc: {

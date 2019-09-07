@@ -84,7 +84,7 @@ export default class SearchScreen extends Component {
     onPressItemAuto = (item) => {
         Keyboard.dismiss();
         this.setState({
-            textSearch: item.name
+            textSearch: item.name,
         })
         this.onEndEditingSearch(item.name);
     }
@@ -96,7 +96,7 @@ export default class SearchScreen extends Component {
             textSearch,
             title,
         } = this.state;
-
+        console.log("hello")
         let list = [...List]
         switch (whatScreen) {
             case 1:
