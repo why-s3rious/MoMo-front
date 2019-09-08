@@ -117,6 +117,7 @@ export default class MainHome extends Component {
           <Text style={styles.TextDanhMuc}>{Category.name}</Text>
           {
             isOldUser ? // nếu là user cũ => 3 nút, User mới => 2 nút
+              //user cũ 
               <View style={styles.TabButton}>
                 <TouchableOpacity
                   style={whatScreen == 1 ? styles.ChoseButton : styles.unChoseButton}
@@ -138,6 +139,7 @@ export default class MainHome extends Component {
                 </TouchableOpacity>
               </View>
               :
+              //user mới
               <View style={styles.TabButton}>
                 <TouchableOpacity
                   style={whatScreen == 1 ? styles.ChoseButton : styles.unChoseButton}
