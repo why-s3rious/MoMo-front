@@ -20,7 +20,7 @@ export default class ItemDetail extends Component {
                 </View>
                 <View style={styles.Content}>
                     <Image style={styles.MainImage}
-                        source={data.image}
+                        source={{uri: data.image}}
                     />
                     <View style={styles.infoRow1}>
                         <View style={styles.infocolumn1}>

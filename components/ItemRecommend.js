@@ -11,11 +11,12 @@ class ItemRecommend extends Component {
       <View style={styles.RecommendItem}>
         <TouchableOpacity onPress={onPress}>
             <Image 
-                source={itemData.image}
+                source={{uri: itemData.image}}
                 style ={styles.ItemImage}
             />
             <Text style={styles.NameText}>Tên cửa hàng : {itemData.name}</Text>
             <Text style={styles.AddressText}>Địa chỉ: {itemData.address}</Text>
+            <Text> Danh mục : {itemData.categodyid}</Text>
         </TouchableOpacity>
       </View>
     );

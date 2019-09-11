@@ -1,23 +1,17 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Keyboard,ActivityIndicator } from 'react-native';
 
 import SearchBox from '../components/SearchBox';
 import ItemRecommend from '../components/ItemRecommend';
 
-const Data = [
-  { id: 1, name: 'Phúc Long', image: require('../assets/Momo_1.jpg'), address: 'quận 1', longdis: '7km', price: '100.000 - 200.000' },
-  { id: 2, name: 'The Coffee House', image: require('../assets/Momo_2.jpg'), address: 'quận 2', longdis: '6km', price: '150.000 - 200.000' },
-  { id: 3, name: 'Hoàng Yến Buffet', image: require('../assets/Momo_3.jpg'), address: 'quận 3', longdis: '5km', price: '300.000 - 400.000' },
-  { id: 4, name: 'Phúc Long', image: require('../assets/Momo_1.jpg'), address: 'quận 4', longdis: '4km', price: '250.000 - 300.000' },
-  { id: 5, name: 'The Coffee House', image: require('../assets/Momo_2.jpg'), address: 'quận 5', longdis: '3km', price: '50.000- 100.000' },
-  { id: 6, name: 'Hoàng Yến Buffet', image: require('../assets/Momo_3.jpg'), address: 'quận 6', longdis: '2km', price: '500.000 - 1.000.000' },
-];
+
 export default class MainHome extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      // isLoading : true, // đợi call api 
       textSearch: '',
-      List: Data,
+      List: this.props.categoryListItem,
       whatScreen: 1,
       isOldUser: true,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
     };
@@ -82,6 +76,7 @@ export default class MainHome extends Component {
     const Category = navigation.getParam('data');
 
     const {
+      isLoading,
       whatScreen,
       isOldUser,
       List,
@@ -97,7 +92,14 @@ export default class MainHome extends Component {
       default: list = list.filter(item => item.id > 2);
         break;
     }
-
+    if(isLoading)
+      return (
+        <View style={styles.container}>
+            <Text style={{fontSize:20,}}></Text>
+            <ActivityIndicator size="large" color="black" />
+        </View>
+      )
+    
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
