@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Keyboard,ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Keyboard, ActivityIndicator } from 'react-native';
 
 import SearchBox from '../components/SearchBox';
 import ItemRecommend from '../components/ItemRecommend';
@@ -15,6 +15,14 @@ export default class MainHome extends Component {
       whatScreen: 1,
       isOldUser: true,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
     };
+    this.didFocusSubscription = props.navigation.addListener(
+      'willFocus',
+      payload => {
+        this.setState({
+          List: this.props.categoryListItem,
+        })
+      }
+    );
   }
   navigateModal = () => {
     this.props.navigation.navigate("Modal");
@@ -39,12 +47,9 @@ export default class MainHome extends Component {
     navigation.navigate('ItemDetail', { data: item });
   }
   onEndEditingSearch = async (textSearch) => { // Xử lí tìm kiếm
+    console.log(textSearch)
     if (textSearch != '') {
-      await this.setState({
-        List: Data,
-      })
-      const { List } = this.state;
-      const newData = List.filter(function (item) {
+      const newData = await this.props.categoryListItem.filter(function (item) {
         //applying filter for the inserted text in search bar
         const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
         const textData = textSearch.toUpperCase();
@@ -54,14 +59,13 @@ export default class MainHome extends Component {
         List: newData,
         textSearch: ''
       })
-      console.log("text != empty")
+      console.log("text != empty");
+      return;
     }
-    else {
-      this.setState({
-        List: Data,
-      })
-      console.log("text == empty")
-    }
+    this.setState({
+      List: this.props.categoryListItem,
+    })
+    console.log("text == empty")
   }
   onPressItemAuto = (item) => {
     Keyboard.dismiss();
@@ -92,20 +96,21 @@ export default class MainHome extends Component {
       default: list = list.filter(item => item.id > 2);
         break;
     }
-    if(isLoading)
+    if (isLoading)
       return (
         <View style={styles.container}>
-            <Text style={{fontSize:20,}}></Text>
-            <ActivityIndicator size="large" color="black" />
+          <Text style={{ fontSize: 20, }}></Text>
+          <ActivityIndicator size="large" color="black" />
         </View>
       )
-    
+
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
           <TouchableOpacity onPress={() => { this.props.navigation.goBack() }}><Text>Trở về</Text></TouchableOpacity>
           <SearchBox
             text={textSearch}
+            list={list}
             onChangeText={(text) => this.setState({ textSearch: text })}
             onPressItemAuto={this.onPressItemAuto}
           />

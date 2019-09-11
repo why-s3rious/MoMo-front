@@ -11,8 +11,6 @@ export default class ItemDetail extends Component {
 
         const { navigation } = this.props;
         const data = navigation.getParam('data');
-        console.log(data);
-
         return (
             <View style={styles.container}>
                 <View style={styles.Header}>
