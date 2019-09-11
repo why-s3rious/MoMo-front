@@ -56,7 +56,7 @@ export default class Login extends Component {
                 </View>
                 <View style={styles.buttonGroup}>
                     <TouchableOpacity style={styles.btnSignin} onPress={this.onPressLogin}>
-                        <Text style={styles.txtSignin}>Sign in</Text>
+                        <Text style={styles.txtSignin}>Sign In</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.txtGroup}>
