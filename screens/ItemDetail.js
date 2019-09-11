@@ -11,8 +11,6 @@ export default class ItemDetail extends Component {
 
         const { navigation } = this.props;
         const data = navigation.getParam('data');
-        console.log(data);
-
         return (
             <View style={styles.container}>
                 <View style={styles.Header}>
@@ -20,7 +18,7 @@ export default class ItemDetail extends Component {
                 </View>
                 <View style={styles.Content}>
                     <Image style={styles.MainImage}
-                        source={data.image}
+                        source={{uri: data.image}}
                     />
                     <View style={styles.infoRow1}>
                         <View style={styles.infocolumn1}>
