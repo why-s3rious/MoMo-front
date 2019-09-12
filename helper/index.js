@@ -10,6 +10,6 @@ export const requestStoreApi = async (endpoint, method, data, categoryName) => {
         herder: header,
         data: data,
     })
-        .then(response => { console.log(response.data); return response.data })
+        .then(response => { return response.data })
         .catch(er => console.log("er: ", er));
 }

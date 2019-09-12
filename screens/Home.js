@@ -21,9 +21,7 @@ export default class Home extends Component {
   navigateModal = () => {
     this.props.navigation.navigate("Modal");
   };
-  onPressCategoryButton = async item => {
-    await this.props.onGetCategoryListItem(item.name);
-    console.log("Called api success")
+  onPressCategoryButton = item => {
     this.props.navigation.navigate("MainHome", { data: item });
   };
   render() {
