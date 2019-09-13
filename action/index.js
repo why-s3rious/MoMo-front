@@ -22,3 +22,19 @@ export const onGetLichSuListItem = (listItem) => {
         listItem: listItem
     }
 }
+export const onLogin = (account) => {
+    return {
+        type: "LOGIN",
+        account
+    }
+}
+export const onRegister = (account) => {
+    return {
+        type: "REGISTER",
+        id: account.id,
+        name: account.name,
+        phoneNumber: account.phoneNumber,
+        passwork: account.passwork,
+        class: account.class
+    }
+}

@@ -13,3 +13,15 @@ export const requestStoreApi = async (endpoint, method, data, categoryName) => {
         .then(response => { console.log(response.data); return response.data })
         .catch(er => console.log("er: ", er));
 }
+
+export const requestAccountApi = async (endpoint, method, data) => {
+    const header = 'fake user token';
+    return axios({
+        method: method,
+        url: `${hostAPI}/${localHost}/${endpoint}`,
+        herder: header,
+        data: data,
+    })
+        .then(response => { console.log(response.data); return response.data })
+        .catch(er => console.log("er: ", er));
+}

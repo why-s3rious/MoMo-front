@@ -4,16 +4,49 @@ export default class Register extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            name: "",
+            passwork: "",
+            confirm: "",
         };
     }
+    onchangeEmail = textMail => {
+        this.setState({
+            name: textMail
+        })
+    }
+    onchangePass = textPass => {
+        this.setState({
+            passwork: textPass
+        })
+    }
+    onchangeConfirm = textConfirm => {
+        this.setState({
+            confirm: textConfirm
+        })
+    }
     onPressNext = () => {
-        this.props.navigation.navigate("Term")
+        const { name, passwork, confirm } = this.state;
+        if (name == "" || passwork == "" || confirm == "") {
+            alert("Không được để trống")
+            return false
+        }
+        if (passwork.length < 6) {
+            alert("Mật khẩu cần nhiều hơn 6 kí tự")
+            return false;
+        }
+        if (passwork != confirm) {
+            alert("Nhập lại mật khẩu chưa trùng khớp")
+            return false
+        }
+        else {
+            this.props.navigation.navigate("Term", { name: name, pass: passwork })
+        }
     }
     onPressCancel = () => {
         this.props.navigation.goBack();
     }
     render() {
+        const { confirm, passwork } = this.state;
         return (
             <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-100" style={styles.container}>
                 <View style={styles.title}>
@@ -44,6 +77,7 @@ export default class Register extends Component {
                         ref={ref => this.confirmpasswordRef = ref}
                         secureTextEntry={true}
                     />
+                    {confirm === passwork && confirm != '' && passwork != '' && <Text>Trùng khớp</Text>}
                 </View>
                 <View style={styles.buttonGroup}>
                     <TouchableOpacity style={styles.btnNext} onPress={this.onPressNext}>

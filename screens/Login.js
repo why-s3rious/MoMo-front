@@ -6,7 +6,15 @@ export default class Login extends Component {
         this.state = {
             inputTextUser: '',
             inputTextPass: '',
+            account: [],
         };
+    }
+    componentDidMount = async () => {
+        await this.props.onLogin();
+        this.setState({
+            account: this.props.account,
+        })
+        console.log("load login", this.state.account)
     }
     onchangeUser = textUser => {
         this.setState({
@@ -19,17 +27,30 @@ export default class Login extends Component {
         })
     }
     onPressLogin = () => {
-        if(this.state.inputTextPass.length < 6) {
-            alert("Mật khẩu cần nhiều hơn 6 kí tự")
+        const { inputTextUser, inputTextPass, account } = this.state;
+        if (inputTextPass == "" || inputTextUser == "") {
+            alert("Chưa nhập tài khoản hoặc mật khẩu")
+            return false;
         }
-        else
-            this.props.navigation.navigate("Main");
+        if (inputTextPass.length < 6) {
+            alert("Mật khẩu cần nhiều hơn 6 kí tự")
+            return false;
+        }
+        if (account.some(account => account.name === inputTextUser) && account.some(account => account.passwork === inputTextPass)) {
+            this.props.navigation.navigate("Home");
+        }
+        else {
+            alert("Sai tài khoản hoặc mật khẩu");
+            return false;
+        }
     }
     onPressSignUp = () => {
         this.props.navigation.navigate("Register");
     }
     render() {
-        const { inputTextUser, inputTextPass } = this.state
+        const { inputTextPass, inputTextUser } = this.state;
+        console.log("user", inputTextUser)
+        console.log("pass", inputTextPass)
         return (
             <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-120" style={styles.container}>
                 <View style={styles.title}>

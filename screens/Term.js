@@ -5,10 +5,30 @@ export default class Term extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            check: false
+            check: false,
+            account: [],
         };
     }
-    onPressDone = () => {
+    componentDidMount = async () => {
+        await this.props.onLogin();
+        this.setState({
+            account: this.props.account,
+        })
+    }
+    onPressDone = async (name, passwork) => {
+        const {check} = this.state;
+        const accountLocal = {
+            id: this.state.account.length + 1,
+            name: name,
+            phoneNumber: "default",
+            passwork: passwork,
+            class: "default"
+        }
+        if(!check){
+            alert("Cần đồng ý điều khoản để tiếp tục")
+            return false
+        }
+        await this.props.onRegister(accountLocal); 
         this.props.navigation.navigate("Login")
     }
     onPressCancel = () => {
@@ -16,6 +36,9 @@ export default class Term extends Component {
     }
     render() {
         const { check } = this.state;
+        const { navigation } = this.props;
+        const name = navigation.getParam("name");
+        const passwork = navigation.getParam("pass");
         return (
             <View enabled behavior="padding" keyboardVerticalOffset="-100" style={styles.container}>
                 <View style={styles.title}>
@@ -29,7 +52,7 @@ export default class Term extends Component {
                     <Text termText>Điều 5: </Text>
                 </View>
                 <View style={styles.checkBoxWrap}>
-                    <CheckBox 
+                    <CheckBox
                         containerStyle={styles.checkBox}
                         title="I accept all term of OKE"
                         checked={check}
@@ -37,7 +60,7 @@ export default class Term extends Component {
                     />
                 </View>
                 <View style={styles.buttonGroup}>
-                    <TouchableOpacity style={styles.btnDone} onPress={this.onPressDone}>
+                    <TouchableOpacity style={styles.btnDone} onPress={() => this.onPressDone(name, passwork)}>
                         <Text style={styles.txtDone}>Done</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.btnCancel} onPress={this.onPressCancel}>
@@ -86,7 +109,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
     },
     checkBox: {
-        
+
     },
     buttonGroup: {
         flex: 0.3,

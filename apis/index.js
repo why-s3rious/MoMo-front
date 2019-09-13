@@ -1,3 +1,3 @@
 import * as apiStore from './storeOfCategoryApi';
-
-export {apiStore};
+import * as accountStore from './storeOfAccountApi';
+export {apiStore, accountStore};

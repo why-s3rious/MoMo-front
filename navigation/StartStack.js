@@ -2,10 +2,10 @@ import React from 'react';
 
 import { createStackNavigator } from 'react-navigation-stack';
 
-import Login from '../screens/Login';
+import LoginContainer from '../container/LoginScreen';
 import Onboarding from '../screens/Onboarding';
 import Register from '../screens/Register';
-import Term from '../screens/Term';
+import TermContainer from '../container/RegisterScreen';
 import Logo from '../screens/Logo';
 
 //home stack
@@ -14,9 +14,9 @@ const StartStack = createStackNavigator(
     //add login, onboarding, logo, register, term
     Onboarding: Onboarding,
     Logo: Logo,
-    Login: Login,
+    Login: LoginContainer,
     Register: Register,
-    Term: Term
+    Term: TermContainer
   },
   {
     headerMode: 'none',
