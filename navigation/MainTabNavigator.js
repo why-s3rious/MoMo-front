@@ -10,7 +10,6 @@ import Modal from '../screens/Modal';
 import MainHomeContainer from '../container/MainHomeScreen';
 import ItemDetail from '../screens/ItemDetail';
 import ItemAddress from '../screens/ItemAddress';
-import Direction from '../screens/Direction';
 import UploadPicture from '../screens/UploadPicture';
 
 //home stack
@@ -21,7 +20,6 @@ const HomeStack = createStackNavigator(
     MainHome: MainHomeContainer,
     ItemDetail: ItemDetail,
     ItemAddress: ItemAddress,
-    Direction: Direction,
   },
   {
     headerMode: 'none',

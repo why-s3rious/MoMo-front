@@ -4,8 +4,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 export default class ItemDetail extends Component {
 
-    onPressAddressButton = address => {
-        this.props.navigation.navigate("ItemAddress", { address: address });
+    onPressAddressButton = data => {
+        this.props.navigation.navigate("ItemAddress", { data: data });
     }
     render() {
 
@@ -26,7 +26,7 @@ export default class ItemDetail extends Component {
                             <Text style={styles.Textinfo}>Địa chỉ: {data.address}</Text>
                         </View>
                         <TouchableOpacity
-                            onPress={() => { this.onPressAddressButton(data.address) }}
+                            onPress={() => { this.onPressAddressButton(data) }}
                             style={styles.infocolumn2}>
                             <Text style={{}}>ảnh google map</Text>
                         </TouchableOpacity>
