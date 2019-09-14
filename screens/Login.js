@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, AsyncStorage } from 'react-native';
 export default class Login extends Component {
     constructor(props) {
         super(props);
@@ -8,14 +8,24 @@ export default class Login extends Component {
             inputTextPass: '',
             account: [],
         };
+        this.didFocusSubscription = props.navigation.addListener(
+            'willFocus',
+            payload => {
+                this.getAllAccount();
+            }
+        );
     }
-    componentDidMount = async () => {
-        await this.props.onLogin();
+    async getAllAccount() {
+        await this.props.onGetAllAccount();
         this.setState({
             account: this.props.account,
         })
         console.log("load login", this.state.account)
     }
+    componentDidMount = () => {
+        this.getAllAccount();
+    }
+
     onchangeUser = textUser => {
         this.setState({
             inputTextUser: textUser
@@ -26,8 +36,25 @@ export default class Login extends Component {
             inputTextPass: textPass
         })
     }
+    async saveKey(value) {
+        try {
+            await AsyncStorage.setItem('@Token', value);
+            console.log("Lưu token thành công")
+        } catch (error) {
+            console.log("Error saving Token" + error);
+        }
+    }
+    async getKey() {
+        try {
+            const value = await AsyncStorage.getItem('@Token');
+            console.log("Token: " + value)
+        } catch (error) {
+            console.log("Error getting Token" + error);
+        }
+    }
     onPressLogin = () => {
         const { inputTextUser, inputTextPass, account } = this.state;
+        const resultLogin = account.find(({ username }) => username === inputTextUser);
         if (inputTextPass == "" || inputTextUser == "") {
             alert("Chưa nhập tài khoản hoặc mật khẩu")
             return false;
@@ -36,12 +63,20 @@ export default class Login extends Component {
             alert("Mật khẩu cần nhiều hơn 6 kí tự")
             return false;
         }
-        if (account.some(account => account.name === inputTextUser) && account.some(account => account.passwork === inputTextPass)) {
-            this.props.navigation.navigate("Home");
+        if (resultLogin === undefined) {
+            alert("Tên tài khoản không tồn tại");
+            return false
         }
         else {
-            alert("Sai tài khoản hoặc mật khẩu");
-            return false;
+            if (resultLogin.password === inputTextPass) {
+                this.saveKey(resultLogin.jwt);
+                this.getKey();
+                this.props.navigation.navigate("Main")
+            }
+            else {
+                alert("Mật khẩu không chính xác, vui lòng kiểm tra lại")
+                return false;
+            }
         }
     }
     onPressSignUp = () => {

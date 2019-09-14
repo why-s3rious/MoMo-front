@@ -1,6 +1,6 @@
 import { requestAccountApi } from '../helper/index';
 
-export const checkLoginApi = () => {
+export const getAllAccountApi = () => {
     return requestAccountApi('user', 'get', null)
 }
 export const registerApi = (account) => {

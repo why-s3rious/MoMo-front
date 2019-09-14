@@ -8,9 +8,9 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = dispatch => {
     return {
-        onLogin: async () => {
-            const account = await accountStore.checkLoginApi();
-            dispatch(action.onLogin(account));
+        onGetAllAccount: async () => {
+            const account = await accountStore.getAllAccountApi();
+            dispatch(action.onGetAllAccount(account));
         }
     }
 }

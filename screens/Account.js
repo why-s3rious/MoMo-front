@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage } from 'react-native';
 
 export default class Home extends Component {
   constructor(props) {
@@ -8,10 +8,29 @@ export default class Home extends Component {
     };
   }
 
-  onPressLogoutButton = ()=>{
+  async resetKey() {
+    try {
+      await AsyncStorage.removeItem('@Token');
+      console.log("Token remove")
+    } catch (error) {
+      console.log("Error resetting data" + error);
+    }
+  }
+  async getKey() {
+    try {
+      const value = await AsyncStorage.getItem('@Token');
+      console.log("Token: " + value)
+    } catch (error) {
+      console.log("Error getting Token" + error);
+    }
+  }
+  onPressLogoutButton = () => {
+    this.getKey();
+    this.resetKey();
+    this.getKey();
     this.props.navigation.navigate("Login");
   }
-  onPressDoneButton = ()=>{
+  onPressDoneButton = () => {
     this.props.navigation.navigate("Home");
   }
 

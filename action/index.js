@@ -22,9 +22,9 @@ export const onGetLichSuListItem = (listItem) => {
         listItem: listItem
     }
 }
-export const onLogin = (account) => {
+export const onGetAllAccount = (account) => {
     return {
-        type: "LOGIN",
+        type: "GET_ALL_ACCOUNT",
         account
     }
 }
@@ -32,9 +32,8 @@ export const onRegister = (account) => {
     return {
         type: "REGISTER",
         id: account.id,
-        name: account.name,
-        phoneNumber: account.phoneNumber,
-        passwork: account.passwork,
-        class: account.class
+        username: account.username,
+        password: account.password,
+        jwt: account.jwt
     }
 }

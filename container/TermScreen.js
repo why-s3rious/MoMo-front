@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import Register from '../screens/Register';
+import Term from '../screens/Term';
 import * as action from '../action/index';
 import { accountStore } from '../apis/index';
 
@@ -11,9 +11,12 @@ const mapDispatchToProps = dispatch => {
         onGetAllAccount: async () => {
             const account = await accountStore.getAllAccountApi();
             dispatch(action.onGetAllAccount(account));
+        },
+        onRegister: async account => {
+            accountStore.registerApi(account)
+            dispatch(action.onRegister(account))
         }
-    }
+    }   
 }
-
-const RegisterContainer = connect(mapStateToProps, mapDispatchToProps)(Register)
-export default RegisterContainer;
+const TermContainer = connect(mapStateToProps,mapDispatchToProps)(Term);
+export default TermContainer;

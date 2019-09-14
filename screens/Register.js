@@ -4,19 +4,27 @@ export default class Register extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: "",
-            passwork: "",
+            username: "",
+            password: "",
             confirm: "",
-        };
+        }
     }
+    async getAllAccount() {
+        await this.props.onGetAllAccount();
+        console.log("load register", this.props.account)
+    }
+    componentDidMount = () => {
+        this.getAllAccount();
+    }
+
     onchangeEmail = textMail => {
         this.setState({
-            name: textMail
+            username: textMail
         })
     }
     onchangePass = textPass => {
         this.setState({
-            passwork: textPass
+            password: textPass
         })
     }
     onchangeConfirm = textConfirm => {
@@ -25,28 +33,29 @@ export default class Register extends Component {
         })
     }
     onPressNext = () => {
-        const { name, passwork, confirm } = this.state;
-        if (name == "" || passwork == "" || confirm == "") {
+        const { username, password, confirm } = this.state;
+        if (username == "" || password == "" || confirm == "") {
             alert("Không được để trống")
             return false
         }
-        if (passwork.length < 6) {
+        if (password.length < 6) {
             alert("Mật khẩu cần nhiều hơn 6 kí tự")
             return false;
         }
-        if (passwork != confirm) {
+        if (password != confirm) {
             alert("Nhập lại mật khẩu chưa trùng khớp")
             return false
         }
         else {
-            this.props.navigation.navigate("Term", { name: name, pass: passwork })
+            this.props.navigation.navigate("Term", { username: username, password: password })
         }
     }
     onPressCancel = () => {
         this.props.navigation.goBack();
     }
     render() {
-        const { confirm, passwork } = this.state;
+        const usernameExist = this.props.account.find(({ username }) => username === this.state.username);
+        const { confirm, password } = this.state;
         return (
             <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-100" style={styles.container}>
                 <View style={styles.title}>
@@ -61,6 +70,7 @@ export default class Register extends Component {
                         blurOnSubmit={false}
                         keyboardType={'email-address'}
                     />
+                    {usernameExist !== undefined && <Text>Tên tài khoản đã tồn tại</Text>}
                     <TextInput
                         style={styles.textInput}
                         placeholder="Password"
@@ -77,7 +87,7 @@ export default class Register extends Component {
                         ref={ref => this.confirmpasswordRef = ref}
                         secureTextEntry={true}
                     />
-                    {confirm === passwork && confirm != '' && passwork != '' && <Text>Trùng khớp</Text>}
+                    {confirm === password && confirm != '' && password != '' && <Text>Trùng khớp</Text>}
                 </View>
                 <View style={styles.buttonGroup}>
                     <TouchableOpacity style={styles.btnNext} onPress={this.onPressNext}>

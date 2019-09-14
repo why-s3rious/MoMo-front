@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CheckBox } from 'react-native-elements';
+let randomJwt = (Math.random().toString(36).substring(2, 16) + Math.random().toString(36).substring(2, 16));
 export default class Term extends Component {
     constructor(props) {
         super(props);
@@ -10,19 +11,18 @@ export default class Term extends Component {
         };
     }
     componentDidMount = async () => {
-        await this.props.onLogin();
+        await this.props.onGetAllAccount();
         this.setState({
             account: this.props.account,
         })
     }
-    onPressDone = async (name, passwork) => {
+    onPressDone = async (username, password) => {
         const {check} = this.state;
         const accountLocal = {
             id: this.state.account.length + 1,
-            name: name,
-            phoneNumber: "default",
-            passwork: passwork,
-            class: "default"
+            username: username,
+            password: password,
+            jwt: randomJwt,
         }
         if(!check){
             alert("Cần đồng ý điều khoản để tiếp tục")
@@ -37,8 +37,8 @@ export default class Term extends Component {
     render() {
         const { check } = this.state;
         const { navigation } = this.props;
-        const name = navigation.getParam("name");
-        const passwork = navigation.getParam("pass");
+        const username = navigation.getParam("username");
+        const password = navigation.getParam("password");
         return (
             <View enabled behavior="padding" keyboardVerticalOffset="-100" style={styles.container}>
                 <View style={styles.title}>
@@ -60,7 +60,7 @@ export default class Term extends Component {
                     />
                 </View>
                 <View style={styles.buttonGroup}>
-                    <TouchableOpacity style={styles.btnDone} onPress={() => this.onPressDone(name, passwork)}>
+                    <TouchableOpacity style={styles.btnDone} onPress={() => this.onPressDone(username, password)}>
                         <Text style={styles.txtDone}>Done</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.btnCancel} onPress={this.onPressCancel}>
