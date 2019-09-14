@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Dimensions, ActivityIndicator
 import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-
+import { getRegionForCoordinates } from '../costants/CaculateRegion';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -13,29 +13,40 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 export default class ItemDetail extends Component {
     state = {
         userCoordinate: null,
-        storeCoordinate: {
-            latitude: 10.7718541,
-            longitude: 106.6554608,
+        storeCoordinate: {              // địa chỉ cửa hàng (sẽ get param)
+            latitude: 10.7623244,
+            longitude: 106.7056788,
         },
         errorMessage: '',
         isDirectionRequest: false,
-        directionPoints: [
+        directionPoints: [              // fake direction api, sẽ sửa sau
             {
-                latitude: 10.7718541,
-                longitude: 106.6554608,
+                latitude: 10.7623244,
+                longitude: 106.7056788,
             }
         ],
-        isUserCoordinateReady: false,
-
+        isUserCoordinateReady: false,       // kiểm tra xem đã get được local address chưa
+        isMapViewReady: false,
+        initialRegion: null,
     }
     componentWillMount = async () => {
-        await this._getLocationAsync();
+        const { storeCoordinate } = this.state;
+        await this._getLocationAsync();         // get local address
         this.setState({
             isUserCoordinateReady: true,
+            isMapViewReady: true,
+            initialRegion:
+            {
+                latitude: storeCoordinate.latitude,
+                longitude: storeCoordinate.longitude,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA,
+            }
+
         })
     }
 
-    _getLocationAsync = async () => {
+    _getLocationAsync = async () => {  // get local address
         let { status } = await Permissions.askAsync(Permissions.LOCATION);
         if (status !== 'granted') {
             this.setState({
@@ -62,20 +73,22 @@ export default class ItemDetail extends Component {
         console.log(e.nativeEvent);
     }
 
-    onPressDirectButton = () => {
+    onPressDirectButton = async () => {   /// click vào chỉ đường
         const { userCoordinate, directionPoints } = this.state;
+        let newArrayOfCoordinate = [...directionPoints, { latitude: userCoordinate.latitude, longitude: userCoordinate.longitude }];
         this.setState({
             isDirectionRequest: true,
-            directionPoints: [...directionPoints, { latitude: userCoordinate.latitude, longitude: userCoordinate.longitude }]
-        })
+            directionPoints: newArrayOfCoordinate,
+            initialRegion: getRegionForCoordinates(newArrayOfCoordinate)
+        });
     }
     render() {
         const { navigation } = this.props;
         const data = navigation.getParam('data');
         const {
-            storeCoordinate, errorMessage, userCoordinate, isDirectionRequest, directionPoints, isUserCoordinateReady
+            storeCoordinate, errorMessage, userCoordinate, isDirectionRequest,
+            directionPoints, isUserCoordinateReady, initialRegion, isMapViewReady
         } = this.state;
-        const initialRegion = isDirectionRequest ? userCoordinate : storeCoordinate;
         if (errorMessage != '') {
             <View style={styles.container}>
                 <Text> {errorMessage} </Text>
@@ -87,46 +100,54 @@ export default class ItemDetail extends Component {
                     <TouchableOpacity onPress={() => { this.props.navigation.goBack() }}><Text>Trở về</Text></TouchableOpacity>
                 </View>
                 <View style={styles.Content}>
-                    <MapView style={styles.MapViewContent}
-                        provider={PROVIDER_GOOGLE}
-                        onPress={this.onPress}
-                        onLongPress={this.onLongPress}
-                        initialRegion={{
-                            latitude: initialRegion.latitude,
-                            longitude: initialRegion.longitude,
-                            latitudeDelta: LATITUDE_DELTA,
-                            longitudeDelta: LONGITUDE_DELTA,
-                        }}
-                    >
-                        <Polyline
-                            coordinates={directionPoints}
-                            strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-                            strokeColors={[
-                                '#7F0000',
-                                '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
-                                '#B24112',
-                                '#E5845C',
-                                '#238C23',
-                                '#7F0000'
-                            ]}
-                            strokeWidth={6}
-                        />
-                        {
-                            isDirectionRequest ?
+                    {
+                        isMapViewReady ?
+                            <MapView style={styles.MapViewContent}
+                                provider={PROVIDER_GOOGLE}
+                                onPress={this.onPress}
+                                onLongPress={this.onLongPress}
+                                region={{
+                                    latitude: initialRegion.latitude,
+                                    longitude: initialRegion.longitude,
+                                    latitudeDelta: LATITUDE_DELTA,
+                                    longitudeDelta: LONGITUDE_DELTA,
+                                }}
+                            >
+                                <Polyline
+                                    coordinates={directionPoints}
+                                    strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+                                    strokeColors={[
+                                        '#7F0000',
+                                        '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
+                                        '#B24112',
+                                        '#E5845C',
+                                        '#238C23',
+                                        '#7F0000'
+                                    ]}
+                                    strokeWidth={3}
+                                />
+                                {
+                                    isDirectionRequest ?
+                                        <Marker
+                                            coordinate={userCoordinate}
+                                            title={"Your address"}
+                                        >
+                                            <View style={styles.MarkerRadius}>
+                                                <View style={styles.UserMarker}></View>
+                                            </View>
+                                        </Marker>
+                                        : null
+                                }
                                 <Marker
-                                    coordinate={userCoordinate}
-                                    title={"Your address"}
+                                    coordinate={storeCoordinate}
+                                    title={data.address}
+                                    description={data.name}
                                 >
                                 </Marker>
-                                : null
-                        }
-                        <Marker
-                            coordinate={storeCoordinate}
-                            title={data.address}
-                            description={data.name}
-                        >
-                        </Marker>
-                    </MapView>
+                            </MapView>
+                            :
+                            <Text>Waiting...</Text>
+                    }
                     <Text> Đỉa chỉ: {data.address}</Text>
                     {
                         isUserCoordinateReady ?
@@ -178,17 +199,22 @@ const styles = StyleSheet.create({
         height: height * 0.4,
         backgroundColor: 'red'
     },
-    circle: {
+    MarkerRadius: {
         width: 30,
         height: 30,
         borderRadius: 30 / 2,
-        backgroundColor: 'red',
+        overflow: 'hidden',
+        backgroundColor: 'rgba(0,112,255,0.3)',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
-    pinText: {
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-        fontSize: 20,
-        marginBottom: 10,
+    UserMarker: {
+        height: 15,
+        width: 15,
+        borderWidth: 3,
+        borderColor: 'white',
+        borderRadius: 15 / 2,
+        overflow: 'hidden',
+        backgroundColor: '#007AFF'
     },
 });
