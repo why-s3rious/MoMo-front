@@ -55,16 +55,8 @@ export default class Login extends Component {
     onPressLogin = () => {
         const { inputTextUser, inputTextPass, account } = this.state;
         const resultLogin = account.find(({ username }) => username === inputTextUser);
-        if (inputTextPass == "" || inputTextUser == "") {
-            alert("Chưa nhập tài khoản hoặc mật khẩu")
-            return false;
-        }
-        if (inputTextPass.length < 6) {
-            alert("Mật khẩu cần nhiều hơn 6 kí tự")
-            return false;
-        }
         if (resultLogin === undefined) {
-            alert("Tên tài khoản không tồn tại");
+            alert("Số điện thoại này chưa đăng kí");
             return false
         }
         else {
@@ -94,12 +86,12 @@ export default class Login extends Component {
                 <View style={styles.inputGroup}>
                     <TextInput
                         style={styles.textInput}
-                        placeholder="Email"
+                        placeholder="Your phone number"
                         onChangeText={this.onchangeUser}
                         value={inputTextUser}
                         onSubmitEditing={() => this.passwordRef.focus()}
                         blurOnSubmit={false}
-                        keyboardType={'email-address'}
+                        keyboardType={'number-pad'}
                     />
                     <TextInput
                         style={styles.textInput}

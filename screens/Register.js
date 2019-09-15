@@ -7,6 +7,8 @@ export default class Register extends Component {
             username: "",
             password: "",
             confirm: "",
+            isWrongPhone: false,
+            isWrongPass: false
         }
     }
     async getAllAccount() {
@@ -17,9 +19,9 @@ export default class Register extends Component {
         this.getAllAccount();
     }
 
-    onchangeEmail = textMail => {
+    onChangePhone = textPhone => {
         this.setState({
-            username: textMail
+            username: textPhone
         })
     }
     onchangePass = textPass => {
@@ -53,9 +55,35 @@ export default class Register extends Component {
     onPressCancel = () => {
         this.props.navigation.goBack();
     }
+    checkPhone = () => {
+        const { username } = this.state
+        if ((username.length < 10 || username.length > 11) && username.length != 0) {
+            this.setState({
+                isWrongPhone: true
+            })
+        }
+        else {
+            this.setState({
+                isWrongPhone: false
+            })
+        }
+    }
+    checkPass = () => {
+        const { password } = this.state
+        if (password.length < 6 && password.length != 0) {
+            this.setState({
+                isWrongPass: true
+            })
+        }
+        else {
+            this.setState({
+                isWrongPass: false
+            })
+        }
+    }
     render() {
         const usernameExist = this.props.account.find(({ username }) => username === this.state.username);
-        const { confirm, password } = this.state;
+        const { confirm, password, isWrongPhone, isWrongPass } = this.state;
         return (
             <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-100" style={styles.container}>
                 <View style={styles.title}>
@@ -64,13 +92,14 @@ export default class Register extends Component {
                 <View style={styles.inputGroup}>
                     <TextInput
                         style={styles.textInput}
-                        placeholder="Email"
-                        onChangeText={this.onchangeEmail}
+                        placeholder="Your phone number"
+                        onChangeText={this.onChangePhone}
                         onSubmitEditing={() => this.passwordRef.focus()}
                         blurOnSubmit={false}
-                        keyboardType={'email-address'}
+                        onEndEditing={this.checkPhone}
+                        keyboardType={'number-pad'}
                     />
-                    {usernameExist !== undefined && <Text>Tên tài khoản đã tồn tại</Text>}
+                    {usernameExist !== undefined && <Text>Số điện thoại đã được đăng kí</Text> || isWrongPhone && <Text>Số điện thoại không tồn tại</Text>}
                     <TextInput
                         style={styles.textInput}
                         placeholder="Password"
@@ -78,8 +107,10 @@ export default class Register extends Component {
                         ref={ref => this.passwordRef = ref}
                         onSubmitEditing={() => this.confirmpasswordRef.focus()}
                         blurOnSubmit={false}
+                        onEndEditing={this.checkPass}
                         secureTextEntry={true}
                     />
+                    {isWrongPass && <Text>Mật khẩu phải nhiều hơn 6 kí tự</Text>}
                     <TextInput
                         style={styles.textInput}
                         placeholder="Confirm Password"

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { CheckBox } from 'react-native-elements';
+import AwesomeAlert from 'react-native-awesome-alerts';
+
+
 let randomJwt = (Math.random().toString(36).substring(2, 16) + Math.random().toString(36).substring(2, 16));
 export default class Term extends Component {
     constructor(props) {
@@ -8,34 +11,59 @@ export default class Term extends Component {
         this.state = {
             check: false,
             account: [],
+            showAlert: false
         };
+        this.didFocusSubscription = props.navigation.addListener(
+            'willFocus',
+            payload => {
+                this.getAllAccount();
+            }
+        );
     }
-    componentDidMount = async () => {
+    async getAllAccount() {
         await this.props.onGetAllAccount();
         this.setState({
             account: this.props.account,
         })
     }
+    componentDidMount = () => {
+        this.getAllAccount();
+    }
     onPressDone = async (username, password) => {
-        const {check} = this.state;
+        const { check } = this.state;
         const accountLocal = {
             id: this.state.account.length + 1,
             username: username,
             password: password,
             jwt: randomJwt,
         }
-        if(!check){
+        if (!check) {
             alert("Cần đồng ý điều khoản để tiếp tục")
             return false
         }
-        await this.props.onRegister(accountLocal); 
+        await this.props.onRegister(accountLocal);
         this.props.navigation.navigate("Login")
     }
     onPressCancel = () => {
-        this.props.navigation.navigate("Login");
+        // Alert.alert(
+        //     'Cancel Sign Up',
+        //     'Are you sure you want to cancel?'
+        //     [
+        //     {
+        //         text: 'Cancel',
+        //         onPress: () => console.log('Cancel Pressed'),
+        //         style: 'cancel'
+        //     },
+        //     { text: 'OK', onPress: () => this.props.navigation.navigate("Login") }
+        //     ],
+        //     { cancelable: true }
+        // );
+        this.setState({
+            showAlert: true
+        })
     }
     render() {
-        const { check } = this.state;
+        const { check, showAlert } = this.state;
         const { navigation } = this.props;
         const username = navigation.getParam("username");
         const password = navigation.getParam("password");
@@ -67,6 +95,25 @@ export default class Term extends Component {
                         <Text style={styles.txtCancel}>Cancel</Text>
                     </TouchableOpacity>
                 </View>
+                <AwesomeAlert
+                    show={showAlert}
+                    showProgress={false}
+                    title="Cancel Sign up"
+                    message="Are you sure you want to cancel?"
+                    closeOnTouchOutside={true}
+                    closeOnHardwareBackPress={false}
+                    showCancelButton={true}
+                    showConfirmButton={true}
+                    confirmText="Yes, cancel it"
+                    cancelText="No, thanks"
+                    confirmButtonColor="#DD6B55"
+                    onCancelPressed={() => {
+                        this.setState({ showAlert: false })
+                    }}
+                    onConfirmPressed={() => {
+                        this.props.navigation.navigate("Login");
+                    }}
+                />
             </View>
         );
     }
@@ -74,7 +121,7 @@ export default class Term extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#B48DFA'
+        backgroundColor: '#B48DFA',
     },
     title: {
         flex: 0.2,
