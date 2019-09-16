@@ -4,16 +4,12 @@ import Autocomplete from 'react-native-autocomplete-input';
 
 
 class SearchBox extends Component {
-  state = {
-    list : this.props.list
-  }
 
-  findFilm(query) {
+  findStore(query) {
     if (query === '') {
       return [];
     }
-    const { list } = this.state;
-    const newData = list.filter(function (item) {
+    const newData = this.props.list.filter(function (item) {
       //applying filter for the inserted text in search bar
       const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
       const textData = query.toUpperCase();
@@ -27,8 +23,9 @@ class SearchBox extends Component {
       text,
       onChangeText,
       onPressItemAuto,
+      onEndEditingSearch,
     } = this.props;
-    const list = this.findFilm(text);
+    const list = this.findStore(text);
     return (
       // <View>
       //   {/* <TextInput style={styles.textBox}
@@ -41,6 +38,7 @@ class SearchBox extends Component {
       // </View>
       <View style={styles.searchBar}>
         <Autocomplete
+          onEndEditing = {onEndEditingSearch}
           autoCapitalize="none"
           autoCorrect={false}
           containerStyle={styles.autoContainerStyle}

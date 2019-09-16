@@ -9,9 +9,9 @@ export default class MainHome extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // isLoading : true, // đợi call api 
+      isLoading: true, // đợi call api 
       textSearch: '',
-      List: this.props.categoryListItem,
+      List: [],
       whatScreen: 1,
       isOldUser: true,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
     };
@@ -24,6 +24,17 @@ export default class MainHome extends Component {
       }
     );
   }
+  // call api
+  componentWillMount = async () => {
+
+    await this.props.onGetCategoryListItem(this.props.navigation.getParam('data').name);
+    this.setState({
+      isLoading: false,
+      List: this.props.categoryListItem
+    })
+  }
+
+
   navigateModal = () => {
     this.props.navigation.navigate("Modal");
   }
@@ -47,7 +58,6 @@ export default class MainHome extends Component {
     navigation.navigate('ItemDetail', { data: item });
   }
   onEndEditingSearch = async (textSearch) => { // Xử lí tìm kiếm
-    console.log(textSearch)
     if (textSearch != '') {
       const newData = await this.props.categoryListItem.filter(function (item) {
         //applying filter for the inserted text in search bar
@@ -59,20 +69,18 @@ export default class MainHome extends Component {
         List: newData,
         textSearch: ''
       })
-      console.log("text != empty");
       return;
     }
     this.setState({
       List: this.props.categoryListItem,
     })
-    console.log("text == empty")
   }
   onPressItemAuto = (item) => {
     Keyboard.dismiss();
     this.setState({
       textSearch: item.name
     })
-    this.onEndEditingSearch(item.name);
+    // this.onEndEditingSearch(item.name);
   }
   render() {
 
@@ -96,23 +104,16 @@ export default class MainHome extends Component {
       default: list = list.filter(item => item.id > 2);
         break;
     }
-    if (isLoading)
-      return (
-        <View style={styles.container}>
-          <Text style={{ fontSize: 20, }}></Text>
-          <ActivityIndicator size="large" color="black" />
-        </View>
-      )
-
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
           <TouchableOpacity onPress={() => { this.props.navigation.goBack() }}><Text>Trở về</Text></TouchableOpacity>
           <SearchBox
             text={textSearch}
-            list={list}
+            list={this.props.categoryListItem}
             onChangeText={(text) => this.setState({ textSearch: text })}
             onPressItemAuto={this.onPressItemAuto}
+            onEndEditingSearch={() => this.onEndEditingSearch(textSearch)}
           />
           <View>
             <TouchableOpacity style={styles.buttonLoc} onPress={this.navigateModal}>
@@ -162,19 +163,27 @@ export default class MainHome extends Component {
                 </TouchableOpacity>
               </View>
           }
-          <ScrollView contentContainerStyle={styles.ListDanhMuc}>
-            {
-              list.map(item => {
-                return (
-                  <ItemRecommend
-                    onPress={() => this.onPressItemRecommend(item)}
-                    key={item.id}
-                    itemData={item}
-                  />
-                );
-              })
-            }
-          </ScrollView>
+          {
+            isLoading ?
+              <View style={styles.container}>
+                <Text style={{ fontSize: 20, }}></Text>
+                <ActivityIndicator size="large" color="black" />
+              </View>
+              :
+              <ScrollView contentContainerStyle={styles.ListDanhMuc}>
+                {
+                  list.map(item => {
+                    return (
+                      <ItemRecommend
+                        onPress={() => this.onPressItemRecommend(item)}
+                        key={item.id}
+                        itemData={item}
+                      />
+                    );
+                  })
+                }
+              </ScrollView>
+          }
         </View>
       </View>
     );
