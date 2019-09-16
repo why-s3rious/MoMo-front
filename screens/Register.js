@@ -4,16 +4,86 @@ export default class Register extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            username: "",
+            password: "",
+            confirm: "",
+            isWrongPhone: false,
+            isWrongPass: false
+        }
+    }
+    async getAllAccount() {
+        await this.props.onGetAllAccount();
+        console.log("load register", this.props.account)
+    }
+    componentDidMount = () => {
+        this.getAllAccount();
+    }
 
-        };
+    onChangePhone = textPhone => {
+        this.setState({
+            username: textPhone
+        })
+    }
+    onchangePass = textPass => {
+        this.setState({
+            password: textPass
+        })
+    }
+    onchangeConfirm = textConfirm => {
+        this.setState({
+            confirm: textConfirm
+        })
     }
     onPressNext = () => {
-        this.props.navigation.navigate("Term")
+        const { username, password, confirm } = this.state;
+        if (username == "" || password == "" || confirm == "") {
+            alert("Không được để trống")
+            return false
+        }
+        if (password.length < 6) {
+            alert("Mật khẩu cần nhiều hơn 6 kí tự")
+            return false;
+        }
+        if (password != confirm) {
+            alert("Nhập lại mật khẩu chưa trùng khớp")
+            return false
+        }
+        else {
+            this.props.navigation.navigate("Term", { username: username, password: password })
+        }
     }
     onPressCancel = () => {
         this.props.navigation.goBack();
     }
+    checkPhone = () => {
+        const { username } = this.state
+        if ((username.length < 10 || username.length > 11) && username.length != 0) {
+            this.setState({
+                isWrongPhone: true
+            })
+        }
+        else {
+            this.setState({
+                isWrongPhone: false
+            })
+        }
+    }
+    checkPass = () => {
+        const { password } = this.state
+        if (password.length < 6 && password.length != 0) {
+            this.setState({
+                isWrongPass: true
+            })
+        }
+        else {
+            this.setState({
+                isWrongPass: false
+            })
+        }
+    }
     render() {
+        const usernameExist = this.props.account.find(({ username }) => username === this.state.username);
+        const { confirm, password, isWrongPhone, isWrongPass } = this.state;
         return (
             <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-100" style={styles.container}>
                 <View style={styles.title}>
@@ -22,12 +92,14 @@ export default class Register extends Component {
                 <View style={styles.inputGroup}>
                     <TextInput
                         style={styles.textInput}
-                        placeholder="Email"
-                        onChangeText={this.onchangeEmail}
+                        placeholder="Your phone number"
+                        onChangeText={this.onChangePhone}
                         onSubmitEditing={() => this.passwordRef.focus()}
                         blurOnSubmit={false}
-                        keyboardType={'email-address'}
+                        onEndEditing={this.checkPhone}
+                        keyboardType={'number-pad'}
                     />
+                    {usernameExist !== undefined && <Text>Số điện thoại đã được đăng kí</Text> || isWrongPhone && <Text>Số điện thoại không tồn tại</Text>}
                     <TextInput
                         style={styles.textInput}
                         placeholder="Password"
@@ -35,8 +107,10 @@ export default class Register extends Component {
                         ref={ref => this.passwordRef = ref}
                         onSubmitEditing={() => this.confirmpasswordRef.focus()}
                         blurOnSubmit={false}
+                        onEndEditing={this.checkPass}
                         secureTextEntry={true}
                     />
+                    {isWrongPass && <Text>Mật khẩu phải nhiều hơn 6 kí tự</Text>}
                     <TextInput
                         style={styles.textInput}
                         placeholder="Confirm Password"
@@ -44,6 +118,7 @@ export default class Register extends Component {
                         ref={ref => this.confirmpasswordRef = ref}
                         secureTextEntry={true}
                     />
+                    {confirm === password && confirm != '' && password != '' && <Text>Trùng khớp</Text>}
                 </View>
                 <View style={styles.buttonGroup}>
                     <TouchableOpacity style={styles.btnNext} onPress={this.onPressNext}>

@@ -4,15 +4,13 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 export default class ItemDetail extends Component {
 
-    onPressAddressButton = address => {
-        this.props.navigation.navigate("ItemAddress", { address: address });
+    onPressAddressButton = data => {
+        this.props.navigation.navigate("ItemAddress", { data: data });
     }
     render() {
 
         const { navigation } = this.props;
         const data = navigation.getParam('data');
-        console.log(data);
-
         return (
             <View style={styles.container}>
                 <View style={styles.Header}>
@@ -20,7 +18,7 @@ export default class ItemDetail extends Component {
                 </View>
                 <View style={styles.Content}>
                     <Image style={styles.MainImage}
-                        source={data.image}
+                        source={{uri: data.image}}
                     />
                     <View style={styles.infoRow1}>
                         <View style={styles.infocolumn1}>
@@ -28,7 +26,7 @@ export default class ItemDetail extends Component {
                             <Text style={styles.Textinfo}>Địa chỉ: {data.address}</Text>
                         </View>
                         <TouchableOpacity
-                            onPress={() => { this.onPressAddressButton(data.address) }}
+                            onPress={() => { this.onPressAddressButton(data) }}
                             style={styles.infocolumn2}>
                             <Text style={{}}>ảnh google map</Text>
                         </TouchableOpacity>

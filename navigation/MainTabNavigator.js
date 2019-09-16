@@ -4,26 +4,22 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import TabBarIcon from '../components/TabBarIcon';
-import Home from '../screens/Home';
+import HomeContainer from '../container/HomeScreen';
 import Account from '../screens/Account';
 import Modal from '../screens/Modal';
-import MainHome from '../screens/MainHome';
+import MainHomeContainer from '../container/MainHomeScreen';
 import ItemDetail from '../screens/ItemDetail';
 import ItemAddress from '../screens/ItemAddress';
-import Direction from '../screens/Direction';
-import SearchScreen from '../screens/SearchScreen';
 import UploadPicture from '../screens/UploadPicture';
 
 //home stack
 const HomeStack = createStackNavigator(
   {
-    Home: Home,
+    Home: HomeContainer,
     Modal: Modal,
-    MainHome: MainHome,
+    MainHome: MainHomeContainer,
     ItemDetail: ItemDetail,
     ItemAddress: ItemAddress,
-    Direction: Direction,
-    SearchScreen: SearchScreen,
   },
   {
     headerMode: 'none',

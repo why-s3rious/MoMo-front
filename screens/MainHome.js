@@ -1,27 +1,40 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Keyboard, ActivityIndicator } from 'react-native';
 
 import SearchBox from '../components/SearchBox';
 import ItemRecommend from '../components/ItemRecommend';
 
-const Data = [
-  { id: 1, name: 'Phúc Long', image: require('../assets/Momo_1.jpg'), address: 'quận 1', longdis: '7km', price: '100.000 - 200.000' },
-  { id: 2, name: 'The Coffee House', image: require('../assets/Momo_2.jpg'), address: 'quận 2', longdis: '6km', price: '150.000 - 200.000' },
-  { id: 3, name: 'Hoàng Yến Buffet', image: require('../assets/Momo_3.jpg'), address: 'quận 3', longdis: '5km', price: '300.000 - 400.000' },
-  { id: 4, name: 'Phúc Long', image: require('../assets/Momo_1.jpg'), address: 'quận 4', longdis: '4km', price: '250.000 - 300.000' },
-  { id: 5, name: 'The Coffee House', image: require('../assets/Momo_2.jpg'), address: 'quận 5', longdis: '3km', price: '50.000- 100.000' },
-  { id: 6, name: 'Hoàng Yến Buffet', image: require('../assets/Momo_3.jpg'), address: 'quận 6', longdis: '2km', price: '500.000 - 1.000.000' },
-];
+
 export default class MainHome extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isLoading: true, // đợi call api 
       textSearch: '',
-      List: Data,
+      List: [],
       whatScreen: 1,
       isOldUser: true,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
     };
+    this.didFocusSubscription = props.navigation.addListener(
+      'willFocus',
+      payload => {
+        this.setState({
+          List: this.props.categoryListItem,
+        })
+      }
+    );
   }
+  // call api
+  componentWillMount = async () => {
+
+    await this.props.onGetCategoryListItem(this.props.navigation.getParam('data').name);
+    this.setState({
+      isLoading: false,
+      List: this.props.categoryListItem
+    })
+  }
+
+
   navigateModal = () => {
     this.props.navigation.navigate("Modal");
   }
@@ -46,11 +59,7 @@ export default class MainHome extends Component {
   }
   onEndEditingSearch = async (textSearch) => { // Xử lí tìm kiếm
     if (textSearch != '') {
-      await this.setState({
-        List: Data,
-      })
-      const { List } = this.state;
-      const newData = List.filter(function (item) {
+      const newData = await this.props.categoryListItem.filter(function (item) {
         //applying filter for the inserted text in search bar
         const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
         const textData = textSearch.toUpperCase();
@@ -60,21 +69,18 @@ export default class MainHome extends Component {
         List: newData,
         textSearch: ''
       })
-      console.log("text != empty")
+      return;
     }
-    else {
-      this.setState({
-        List: Data,
-      })
-      console.log("text == empty")
-    }
+    this.setState({
+      List: this.props.categoryListItem,
+    })
   }
   onPressItemAuto = (item) => {
     Keyboard.dismiss();
     this.setState({
       textSearch: item.name
     })
-    this.onEndEditingSearch(item.name);
+    // this.onEndEditingSearch(item.name);
   }
   render() {
 
@@ -82,6 +88,7 @@ export default class MainHome extends Component {
     const Category = navigation.getParam('data');
 
     const {
+      isLoading,
       whatScreen,
       isOldUser,
       List,
@@ -97,15 +104,16 @@ export default class MainHome extends Component {
       default: list = list.filter(item => item.id > 2);
         break;
     }
-
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
           <TouchableOpacity onPress={() => { this.props.navigation.goBack() }}><Text>Trở về</Text></TouchableOpacity>
           <SearchBox
             text={textSearch}
+            list={this.props.categoryListItem}
             onChangeText={(text) => this.setState({ textSearch: text })}
             onPressItemAuto={this.onPressItemAuto}
+            onEndEditingSearch={() => this.onEndEditingSearch(textSearch)}
           />
           <View>
             <TouchableOpacity style={styles.buttonLoc} onPress={this.navigateModal}>
@@ -117,6 +125,7 @@ export default class MainHome extends Component {
           <Text style={styles.TextDanhMuc}>{Category.name}</Text>
           {
             isOldUser ? // nếu là user cũ => 3 nút, User mới => 2 nút
+              //user cũ 
               <View style={styles.TabButton}>
                 <TouchableOpacity
                   style={whatScreen == 1 ? styles.ChoseButton : styles.unChoseButton}
@@ -138,6 +147,7 @@ export default class MainHome extends Component {
                 </TouchableOpacity>
               </View>
               :
+              //user mới
               <View style={styles.TabButton}>
                 <TouchableOpacity
                   style={whatScreen == 1 ? styles.ChoseButton : styles.unChoseButton}
@@ -153,19 +163,27 @@ export default class MainHome extends Component {
                 </TouchableOpacity>
               </View>
           }
-          <ScrollView contentContainerStyle={styles.ListDanhMuc}>
-            {
-              list.map(item => {
-                return (
-                  <ItemRecommend
-                    onPress={() => this.onPressItemRecommend(item)}
-                    key={item.id}
-                    itemData={item}
-                  />
-                );
-              })
-            }
-          </ScrollView>
+          {
+            isLoading ?
+              <View style={styles.container}>
+                <Text style={{ fontSize: 20, }}></Text>
+                <ActivityIndicator size="large" color="black" />
+              </View>
+              :
+              <ScrollView contentContainerStyle={styles.ListDanhMuc}>
+                {
+                  list.map(item => {
+                    return (
+                      <ItemRecommend
+                        onPress={() => this.onPressItemRecommend(item)}
+                        key={item.id}
+                        itemData={item}
+                      />
+                    );
+                  })
+                }
+              </ScrollView>
+          }
         </View>
       </View>
     );

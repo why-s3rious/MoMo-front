@@ -1,17 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text,StyleSheet , TouchableOpacity } from 'react-native';
 import AppNavigator from './navigation/AppNavigator';
+import { Provider } from 'react-redux';
+import store from './store';
 
 export default class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-    };
-  }
-
   render() {
     return (
-      <AppNavigator />
+      <Provider store = {store}>
+        <AppNavigator />
+      </Provider>
     );
   }
 }
