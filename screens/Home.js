@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-
+import * as Location from 'expo-location';
+import * as Permissions from 'expo-permissions';
 import CategoryButton from '../components/CategoryButton';
 
 const Data = [
@@ -14,8 +15,19 @@ const Data = [
 ];
 
 export default class Home extends Component {
-  constructor(props) {
-    super(props);
+
+  componentWillMount = async () => {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status == 'granted') {
+      let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+      let lat = location.coords.latitude;
+      let long = location.coords.longitude;
+      let coords = {
+        latitude: lat,
+        longitude: long,
+      }
+      this.props.onGetLocation(coords);
+    }
   }
 
   navigateModal = () => {

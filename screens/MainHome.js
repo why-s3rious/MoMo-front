@@ -12,7 +12,7 @@ export default class MainHome extends Component {
       isLoading: true, // đợi call api 
       textSearch: '',
       List: [],
-      whatScreen: 1,
+      whatScreen: "match",
       isOldUser: true,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
     };
     this.didFocusSubscription = props.navigation.addListener(
@@ -25,9 +25,19 @@ export default class MainHome extends Component {
     );
   }
   // call api
-  componentWillMount = async () => {
+  componentWillMount() {
+    this.callApiGetListItem("match");
+  }
 
-    await this.props.onGetCategoryListItem(this.props.navigation.getParam('data').name);
+  callApiGetListItem = async (whatScreen) => {
+    this.setState({
+      isLoading: true,
+    })
+    let data = this.props.navigation.getParam('data');
+    let location = this.props.location;
+    let locationUser = `${location.latitude},${location.longitude}`
+    const { textSearch } = this.state;
+    await this.props.onGetCategoryListItem(textSearch, whatScreen, 1, data.id, locationUser);
     this.setState({
       isLoading: false,
       List: this.props.categoryListItem
@@ -40,41 +50,33 @@ export default class MainHome extends Component {
   }
   onPressDungNhieu = () => {
     this.setState({
-      whatScreen: 1,
+      whatScreen: "match",
     })
+    this.callApiGetListItem("match");
   }
   onPressGanToi = () => {
     this.setState({
-      whatScreen: 2,
+      whatScreen: "distance",
     })
+    this.callApiGetListItem("distance");
   }
   onPressLishSu = () => {
     this.setState({
-      whatScreen: 3,
+      whatScreen: "time",
     })
+    this.callApiGetListItem("time");
   }
   onPressItemRecommend = item => {
+    console.log("press!")
     const { navigation } = this.props;
     navigation.navigate('ItemDetail', { data: item });
   }
-  onEndEditingSearch = async (textSearch) => { // Xử lí tìm kiếm
-    if (textSearch != '') {
-      const newData = await this.props.categoryListItem.filter(function (item) {
-        //applying filter for the inserted text in search bar
-        const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
-        const textData = textSearch.toUpperCase();
-        return itemData.indexOf(textData) > -1;
-      });
-      this.setState({
-        List: newData,
-        textSearch: ''
-      })
-      return;
-    }
-    this.setState({
-      List: this.props.categoryListItem,
-    })
+
+  onEndEditingSearch = async () => { // Xử lí tìm kiếm
+    const { whatScreen } = this.state;
+    this.callApiGetListItem(whatScreen);
   }
+
   onPressItemAuto = (item) => {
     Keyboard.dismiss();
     this.setState({
@@ -94,16 +96,6 @@ export default class MainHome extends Component {
       List,
       textSearch
     } = this.state;
-
-    let list = [...List]
-    switch (whatScreen) {
-      case 1:
-        break;
-      case 2: list = list.splice(0).reverse();
-        break;
-      default: list = list.filter(item => item.id > 2);
-        break;
-    }
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
@@ -128,38 +120,38 @@ export default class MainHome extends Component {
               //user cũ 
               <View style={styles.TabButton}>
                 <TouchableOpacity
-                  style={whatScreen == 1 ? styles.ChoseButton : styles.unChoseButton}
+                  style={whatScreen == "match" ? styles.ChoseButton : styles.unChoseButton}
                   onPress={this.onPressDungNhieu}
                 >
-                  <Text style={whatScreen == 1 ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Dùng nhiều</Text>
+                  <Text style={whatScreen == "match" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Dùng nhiều</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={whatScreen == 2 ? styles.ChoseButton : styles.unChoseButton}
+                  style={whatScreen == "distance" ? styles.ChoseButton : styles.unChoseButton}
                   onPress={this.onPressGanToi}
                 >
-                  <Text style={whatScreen == 2 ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Gần tôi</Text>
+                  <Text style={whatScreen == "distance" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Gần tôi</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={whatScreen == 3 ? styles.ChoseButton : styles.unChoseButton}
+                  style={whatScreen == "time" ? styles.ChoseButton : styles.unChoseButton}
                   onPress={this.onPressLishSu}
                 >
-                  <Text style={whatScreen == 3 ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Lịch sử</Text>
+                  <Text style={whatScreen == "time" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Lịch sử</Text>
                 </TouchableOpacity>
               </View>
               :
               //user mới
               <View style={styles.TabButton}>
                 <TouchableOpacity
-                  style={whatScreen == 1 ? styles.ChoseButton : styles.unChoseButton}
+                  style={whatScreen == "match" ? styles.ChoseButton : styles.unChoseButton}
                   onPress={this.onPressDungNhieu}
                 >
-                  <Text style={whatScreen == 1 ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Dùng nhiều</Text>
+                  <Text style={whatScreen == "match" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Dùng nhiều</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={whatScreen == 2 ? styles.ChoseButton : styles.unChoseButton}
+                  style={whatScreen == "distance" ? styles.ChoseButton : styles.unChoseButton}
                   onPress={this.onPressGanToi}
                 >
-                  <Text style={whatScreen == 2 ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Gần tôi</Text>
+                  <Text style={whatScreen == "distance" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Gần tôi</Text>
                 </TouchableOpacity>
               </View>
           }
@@ -172,7 +164,7 @@ export default class MainHome extends Component {
               :
               <ScrollView contentContainerStyle={styles.ListDanhMuc}>
                 {
-                  list.map(item => {
+                  List.map(item => {
                     return (
                       <ItemRecommend
                         onPress={() => this.onPressItemRecommend(item)}

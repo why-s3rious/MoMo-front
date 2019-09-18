@@ -3,16 +3,21 @@ import axios from 'axios';
 const localHostLogin = 'v1/auth';
 const localHost = 'v1';
 
-export const requestStoreApi = async (endpoint, method, data, categoryName) => {
+export const requestStoreApi = async (endpoint, method, searchText, sort, page, categoryId, location) => {
+    console.log(`${hostAPI}${localHost}/${endpoint}?q=${searchText}&sort=${sort}&p=${page}&category=${categoryId}&location=${location}`)
     const header = 'fake user token';
     return axios({
         method: method,
-        url: `${hostAPI}/${localHost}/${endpoint}?filter=${categoryName}`,
-        herder: header,
-        data: data,
+        url: `${hostAPI}${localHost}/${endpoint}?q=${searchText}&sort=${sort}&p=${page}&category=${categoryId}&location=${location}`,
+        headers: { 'Authorization': `bearer ${token}` }
     })
-        .then(response => { return response.data })
-        .catch(er => console.log("er: ", er));
+        .then(response => {
+            return response.data.stores;
+        })
+        .catch(er => {
+            console.log(er.response.status)
+            // handle er
+        });
 }
 
 export const requestAccountApi = async (headers, endpoint, method, data) => {
