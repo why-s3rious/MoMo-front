@@ -4,6 +4,13 @@ export const onGetCategoryListItem = (categoryListItem) => {
         categoryListItem: categoryListItem
     }
 }
+export const onGetLocation = (location) => {
+    return {
+        type: "GET_LOCATION",
+        location: location
+    }
+}
+
 export const onGetDungNhieuListItem = (listItem) => {
     return {
         type: "GET_DUNGNHIEU_LIST_ITEM",

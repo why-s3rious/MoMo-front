@@ -34,9 +34,10 @@ export default class MainHome extends Component {
       isLoading: true,
     })
     let data = this.props.navigation.getParam('data');
+    let location = this.props.location;
+    let locationUser = `${location.latitude},${location.longitude}`
     const { textSearch } = this.state;
-    await this.props.onGetCategoryListItem(textSearch, whatScreen, 1, data.id, null);
-    console.log("done")
+    await this.props.onGetCategoryListItem(textSearch, whatScreen, 1, data.id, locationUser);
     this.setState({
       isLoading: false,
       List: this.props.categoryListItem
@@ -66,6 +67,7 @@ export default class MainHome extends Component {
     this.callApiGetListItem("time");
   }
   onPressItemRecommend = item => {
+    console.log("press!")
     const { navigation } = this.props;
     navigation.navigate('ItemDetail', { data: item });
   }
@@ -162,16 +164,15 @@ export default class MainHome extends Component {
               :
               <ScrollView contentContainerStyle={styles.ListDanhMuc}>
                 {
-                  // List.map(item => {
-                  //   return (
-                  //     <ItemRecommend
-                  //       onPress={() => this.onPressItemRecommend(item)}
-                  //       key={item.id}
-                  //       itemData={item}
-                  //     />
-                  //   );
-                  // })
-                  <Text>{whatScreen}</Text>
+                  List.map(item => {
+                    return (
+                      <ItemRecommend
+                        onPress={() => this.onPressItemRecommend(item)}
+                        key={item.id}
+                        itemData={item}
+                      />
+                    );
+                  })
                 }
               </ScrollView>
           }

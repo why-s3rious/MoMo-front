@@ -4,7 +4,10 @@ import * as action from '../action/index';
 import { apiStore } from '../apis/index';
 
 const mapStateToProps = function (state) {
-    return { categoryListItem: state.categoryListItem }
+    return {
+        categoryListItem: state.categoryListItem,
+        location : state.location
+    }
 }
 
 const mapDispatchToProps = function (dispatch) {
