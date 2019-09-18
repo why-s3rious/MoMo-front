@@ -18,7 +18,7 @@ export default class ItemDetail extends Component {
                 </View>
                 <View style={styles.Content}>
                     <Image style={styles.MainImage}
-                        source={{uri: data.image}}
+                        source={require('../assets/Momo_3.jpg')}
                     />
                     <View style={styles.infoRow1}>
                         <View style={styles.infocolumn1}>
@@ -32,8 +32,8 @@ export default class ItemDetail extends Component {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.infoRow2}>
-                        <Text style={styles.Textinfo}>Khoảng cách từ bạn: {data.longdis}</Text>
-                        <Text style={styles.Textinfo}>Giá trung bình: {data.price} VNĐ</Text>
+                        <Text style={styles.Textinfo}>Khoảng cách từ bạn: xx</Text>
+                        <Text style={styles.Textinfo}>Giá trung bình: xx </Text>
                     </View>
                 </View>
             </View>
@@ -71,13 +71,12 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     infocolumn1: {
-
+        flex:0.7,
     },
     infocolumn2: {
+        flex:0.3,
         justifyContent: 'center',
         alignItems: 'center',
-        width: 100,
-        height: 100,
         backgroundColor: 'pink'
     },
     Textinfo: {

@@ -3,17 +3,20 @@ import Login from '../screens/Login';
 import * as action from '../action/index';
 import { accountStore } from '../apis/index';
 
+// goi cai state login o day. 
 const mapStateToProps = state => {
-    return { account: state.account }   
+    return { successLogin: state.loginReducer }
 }
+
+
 const mapDispatchToProps = dispatch => {
     return {
-        onGetAllAccount: async () => {
-            const account = await accountStore.getAllAccountApi();
-            dispatch(action.onGetAllAccount(account));
+        onLogin: async (data) => {
+            let token = await accountStore.loginApi(data)
+            dispatch(action.onLogin(token));
         }
     }
 }
 
-const LoginContainer = connect(mapStateToProps, mapDispatchToProps)(Login)
+const LoginContainer = connect(mapStateToProps, mapDispatchToProps)(Login) // truyen vao
 export default LoginContainer;

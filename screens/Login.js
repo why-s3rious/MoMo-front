@@ -6,25 +6,25 @@ export default class Login extends Component {
         this.state = {
             inputTextUser: '',
             inputTextPass: '',
-            account: [],
+            // account: [],
         };
-        this.didFocusSubscription = props.navigation.addListener(
-            'willFocus',
-            payload => {
-                this.getAllAccount();
-            }
-        );
+        // this.didFocusSubscription = props.navigation.addListener(
+        //     'willFocus',
+        //     payload => {
+        //         this.getAllAccount();
+        //     }
+        // );
     }
-    async getAllAccount() {
-        await this.props.onGetAllAccount();
-        this.setState({
-            account: this.props.account,
-        })
-        console.log("load login", this.state.account)
-    }
-    componentDidMount = () => {
-        this.getAllAccount();
-    }
+    // async getAllAccount() {
+    //     await this.props.onGetAllAccount();
+    //     this.setState({
+    //         account: this.props.account,
+    //     })
+    //     console.log("load login", this.state.account)
+    // }
+    // componentDidMount = () => {
+    //     this.getAllAccount();
+    // }
 
     onchangeUser = textUser => {
         this.setState({
@@ -52,32 +52,50 @@ export default class Login extends Component {
             console.log("Error getting Token" + error);
         }
     }
-    onPressLogin = () => {
-        const { inputTextUser, inputTextPass, account } = this.state;
-        const resultLogin = account.find(({ username }) => username === inputTextUser);
-        if (resultLogin === undefined) {
-            alert("Số điện thoại này chưa đăng kí");
-            return false
+    onPressLogin = async () => {
+        const { inputTextUser, inputTextPass } = this.state;
+        let data = {
+            "phone": inputTextUser,
+            "password": inputTextPass
+        }
+        await this.props.onLogin(data); // cai OnLogin phai tra ve cai gi do. vay ne giờ gán nó do 1 cái biến result xem nó tra ve gì rồi if
+        const islogin = this.props.successLogin // chay sau cai await tren. gio tuy vao m return true false hay return token ma lam tiep
+        if (islogin === 404) {
+            alert("Sai tài khoản hoặc mật khẩu");
+            return false;
         }
         else {
-            if (resultLogin.password === inputTextPass) {
-                this.saveKey(resultLogin.jwt);
-                this.getKey();
-                this.props.navigation.navigate("Main")
-            }
-            else {
-                alert("Mật khẩu không chính xác, vui lòng kiểm tra lại")
-                return false;
-            }
+            this.saveKey(islogin.token);
+            this.getKey();
+            this.props.navigation.navigate("Main");
         }
+        // return token di
+        //if(islogin){ luu token asyncsto, chuyen qua trang sau.} else {báo sai tai khoan hoac mat khau. cho lam lai}
+
+        // const resultLogin = account.find(({ username }) => username === inputTextUser);
+        // if (resultLogin === undefined) {
+        //     alert("Số điện thoại này chưa đăng kí");
+        //     return false
+        // }
+        // else {
+        //     if (resultLogin.password === inputTextPass) {
+        //         this.saveKey(resultLogin.jwt);
+        //         this.getKey();
+        //         this.props.navigation.navigate("Main")
+        //     }
+        //     else {
+        //         alert("Mật khẩu không chính xác, vui lòng kiểm tra lại")
+        //         return false;
+        //     }
+        // }
     }
     onPressSignUp = () => {
         this.props.navigation.navigate("Register");
     }
     render() {
         const { inputTextPass, inputTextUser } = this.state;
-        console.log("user", inputTextUser)
-        console.log("pass", inputTextPass)
+        // console.log("user", inputTextUser)
+        // console.log("pass", inputTextPass)
         return (
             <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-120" style={styles.container}>
                 <View style={styles.title}>

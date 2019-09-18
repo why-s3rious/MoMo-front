@@ -5,6 +5,7 @@ export default class Logo extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            
         };
     }
     onPressSignIn = () => {
@@ -26,7 +27,7 @@ export default class Logo extends Component {
                     <TouchableOpacity style={styles.buttonSignIn} onPress={this.onPressSignIn}>
                         <Text style={styles.textSignIn}>Sign In</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity  style={styles.buttonSignUp} onPress={this.onPressSignUp}>
+                    <TouchableOpacity style={styles.buttonSignUp} onPress={this.onPressSignUp}>
                         <Text style={styles.textSignUp}>Sign Up</Text>
                     </TouchableOpacity>
                 </View>

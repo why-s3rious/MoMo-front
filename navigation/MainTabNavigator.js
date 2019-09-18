@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeContainer from '../container/HomeScreen';
-import Account from '../screens/Account';
+import AccountContainer from '../container/AccountScreen';
 import Modal from '../screens/Modal';
 import MainHomeContainer from '../container/MainHomeScreen';
 import ItemDetail from '../screens/ItemDetail';
@@ -43,7 +43,7 @@ HomeStack.navigationOptions = {
 // Account Stack
 const AccountStack = createStackNavigator(
   {
-    Account: Account,
+    Account: AccountContainer,
     UploadPicture: UploadPicture,
   },
   {
