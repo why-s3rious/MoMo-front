@@ -1,13 +1,31 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, AsyncStorage } from 'react-native';
 export default class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
             inputTextUser: '',
             inputTextPass: '',
+            account: [],
         };
+        this.didFocusSubscription = props.navigation.addListener(
+            'willFocus',
+            payload => {
+                this.getAllAccount();
+            }
+        );
     }
+    async getAllAccount() {
+        await this.props.onGetAllAccount();
+        this.setState({
+            account: this.props.account,
+        })
+        console.log("load login", this.state.account)
+    }
+    componentDidMount = () => {
+        this.getAllAccount();
+    }
+
     onchangeUser = textUser => {
         this.setState({
             inputTextUser: textUser
@@ -18,18 +36,48 @@ export default class Login extends Component {
             inputTextPass: textPass
         })
     }
-    onPressLogin = () => {
-        if(this.state.inputTextPass.length < 6) {
-            alert("Mật khẩu cần nhiều hơn 6 kí tự")
+    async saveKey(value) {
+        try {
+            await AsyncStorage.setItem('@Token', value);
+            console.log("Lưu token thành công")
+        } catch (error) {
+            console.log("Error saving Token" + error);
         }
-        else
-            this.props.navigation.navigate("Main");
+    }
+    async getKey() {
+        try {
+            const value = await AsyncStorage.getItem('@Token');
+            console.log("Token: " + value)
+        } catch (error) {
+            console.log("Error getting Token" + error);
+        }
+    }
+    onPressLogin = () => {
+        const { inputTextUser, inputTextPass, account } = this.state;
+        const resultLogin = account.find(({ username }) => username === inputTextUser);
+        if (resultLogin === undefined) {
+            alert("Số điện thoại này chưa đăng kí");
+            return false
+        }
+        else {
+            if (resultLogin.password === inputTextPass) {
+                this.saveKey(resultLogin.jwt);
+                this.getKey();
+                this.props.navigation.navigate("Main")
+            }
+            else {
+                alert("Mật khẩu không chính xác, vui lòng kiểm tra lại")
+                return false;
+            }
+        }
     }
     onPressSignUp = () => {
         this.props.navigation.navigate("Register");
     }
     render() {
-        const { inputTextUser, inputTextPass } = this.state
+        const { inputTextPass, inputTextUser } = this.state;
+        console.log("user", inputTextUser)
+        console.log("pass", inputTextPass)
         return (
             <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-120" style={styles.container}>
                 <View style={styles.title}>
@@ -38,12 +86,12 @@ export default class Login extends Component {
                 <View style={styles.inputGroup}>
                     <TextInput
                         style={styles.textInput}
-                        placeholder="Email"
+                        placeholder="Your phone number"
                         onChangeText={this.onchangeUser}
                         value={inputTextUser}
                         onSubmitEditing={() => this.passwordRef.focus()}
                         blurOnSubmit={false}
-                        keyboardType={'email-address'}
+                        keyboardType={'number-pad'}
                     />
                     <TextInput
                         style={styles.textInput}
@@ -56,7 +104,7 @@ export default class Login extends Component {
                 </View>
                 <View style={styles.buttonGroup}>
                     <TouchableOpacity style={styles.btnSignin} onPress={this.onPressLogin}>
-                        <Text style={styles.txtSignin}>Sign in</Text>
+                        <Text style={styles.txtSignin}>Sign In</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.txtGroup}>

@@ -22,3 +22,18 @@ export const onGetLichSuListItem = (listItem) => {
         listItem: listItem
     }
 }
+export const onGetAllAccount = (account) => {
+    return {
+        type: "GET_ALL_ACCOUNT",
+        account
+    }
+}
+export const onRegister = (account) => {
+    return {
+        type: "REGISTER",
+        id: account.id,
+        username: account.username,
+        password: account.password,
+        jwt: account.jwt
+    }
+}
