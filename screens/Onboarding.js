@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import { StyleSheet, View, Text, Image, AsyncStorage, ActivityIndicator } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 
 const slides = [
@@ -23,8 +23,22 @@ const slides = [
     }
 ];
 export default class Onboarding extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: false
+        };
+    }
     onDone = () => {
-        this.props.navigation.navigate("Logo")
+        this.setState({ isLoading: true })
+        setTimeout(async () => {
+            if (await AsyncStorage.getItem('@Token') !== null) {
+                this.props.navigation.navigate('Main')
+            }
+            else {
+                this.props.navigation.navigate("Logo")
+            }
+        }, 2000)
     }
     renderItem = ({ item }) => {
         return (
@@ -36,7 +50,17 @@ export default class Onboarding extends React.Component {
         );
     }
     render() {
-        return (
+        const { isLoading } = this.state;
+        if (isLoading) {
+            return (
+                <View style={styles.mainContent}>
+                    <ActivityIndicator size="large" color="black" />
+                    <Text style={{color: 'gray', fontSize: 13, marginTop: 5}}>Vui lòng chờ trong giây lát</Text>
+                </View>
+            )
+        }
+        else {
+            return (
                 <AppIntroSlider
                     renderItem={this.renderItem}
                     slides={slides}
@@ -47,7 +71,8 @@ export default class Onboarding extends React.Component {
                     onDone={this.onDone}
                     backgroundColor='gray'
                 />
-        );
+            );
+        }
     }
 }
 const styles = StyleSheet.create({

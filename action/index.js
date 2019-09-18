@@ -22,10 +22,16 @@ export const onGetLichSuListItem = (listItem) => {
         listItem: listItem
     }
 }
-export const onGetAllAccount = (account) => {
+export const onLogin = (token) => {
     return {
-        type: "GET_ALL_ACCOUNT",
-        account
+        type: "LOGIN",
+        token: token
+    }
+}
+export const onGetInfo = (info) => {
+    return {
+        type: 'GET_INFO',
+        info: info
     }
 }
 export const onRegister = (account) => {

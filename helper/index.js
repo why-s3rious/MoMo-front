@@ -1,6 +1,7 @@
 import { hostAPI } from '../configs/index';
 import axios from 'axios';
-const localHost = 'api/vi';
+const localHostLogin = 'v1/auth';
+const localHost = 'v1';
 
 export const requestStoreApi = async (endpoint, method, data, categoryName) => {
     const header = 'fake user token';
@@ -14,14 +15,13 @@ export const requestStoreApi = async (endpoint, method, data, categoryName) => {
         .catch(er => console.log("er: ", er));
 }
 
-export const requestAccountApi = async (endpoint, method, data) => {
-    const header = 'fake user token';
+export const requestAccountApi = async (headers, endpoint, method, data) => {
     return axios({
         method: method,
-        url: `${hostAPI}/${localHost}/${endpoint}`,
-        herder: header,
-        data: data,
+        url: `${hostAPI}/${localHostLogin}/${endpoint}`,
+        headers: headers,
+        data: data
     })
         .then(response => { console.log(response.data); return response.data })
-        .catch(er => console.log("er: ", er));
+        .catch(er => {console.log("error: ", er.response.status); return er.response.status});
 }

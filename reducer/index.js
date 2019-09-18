@@ -1,11 +1,16 @@
 import { combineReducers } from 'redux';
 import categoryListItem from './categoryReducer';
-import account from './accountReducer';
+import loginReducer from './loginReducer';
+import infoReducer from './infoReducer';
 
 
-const reducer =  combineReducers({
-    categoryListItem, account
+const appReducer = combineReducers({
+    categoryListItem, loginReducer, infoReducer
+
     // visibilityFilter,
 })
+const reducer = (state, action) => {
+    return appReducer(state, action);
+}
 
 export default reducer;

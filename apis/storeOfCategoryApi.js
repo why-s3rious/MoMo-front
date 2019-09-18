@@ -1,5 +1,5 @@
 import { requestStoreApi } from '../helper/index';
 
 export const getCategoryListItemApi = categoryName => {
-    return requestStoreApi('store', 'get', null, categoryName);
+    return requestStoreApi('categories', 'get', null, categoryName);
 }

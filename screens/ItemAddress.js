@@ -29,9 +29,9 @@ export default class ItemDetail extends Component {
         isMapViewReady: false,
         initialRegion: null,
     }
-    componentWillMount = async () => {
+    componentWillMount = () => {
         const { storeCoordinate } = this.state;
-        await this._getLocationAsync();         // get local address
+        this._getLocationAsync();         // get local address
         this.setState({
             isUserCoordinateReady: true,
             isMapViewReady: true,
@@ -46,7 +46,7 @@ export default class ItemDetail extends Component {
         })
     }
 
-    _getLocationAsync = async () => {  // get local address
+    async _getLocationAsync() {  // get local address
         let { status } = await Permissions.askAsync(Permissions.LOCATION);
         if (status !== 'granted') {
             this.setState({

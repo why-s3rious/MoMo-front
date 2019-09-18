@@ -1,8 +1,5 @@
-const account = (state = [], action) => {
+const registerReducer = (state = [], action) => {
     switch (action.type) {
-        case 'GET_ALL_ACCOUNT': {
-            return action.account
-        }
         case 'REGISTER': {
             return [
                 {
@@ -18,4 +15,4 @@ const account = (state = [], action) => {
     }
 }
 
-export default account;
+export default registerReducer;

@@ -5,9 +5,19 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      info: {}
     };
   }
-
+  async getInfo() {
+      const token = await AsyncStorage.getItem("@Token");
+      await this.props.onGetInfo(token);
+      this.setState({
+          info: this.props.info,
+      })
+  }
+  componentDidMount = () => {
+      this.getInfo();
+  }
   async resetKey() {
     try {
       await AsyncStorage.removeItem('@Token');
@@ -25,9 +35,7 @@ export default class Home extends Component {
     }
   }
   onPressLogoutButton = () => {
-    this.getKey();
     this.resetKey();
-    this.getKey();
     this.props.navigation.navigate("Login");
   }
   onPressDoneButton = () => {
@@ -35,6 +43,7 @@ export default class Home extends Component {
   }
 
   render() {
+    const {info}=this.state
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
@@ -50,8 +59,8 @@ export default class Home extends Component {
           </TouchableOpacity>
         </View>
         <View style={styles.Content}>
-          <Text style={styles.InfoText}>Tên tài khoản: 0356775770</Text>
-          <Text style={styles.InfoText}>Tên tài khoản: Ngọc Thiện</Text>
+          <Text style={styles.InfoText}>Số điện thoại: {info.phone} </Text>
+          <Text style={styles.InfoText}>Tên tài khoản: {info.name}</Text>
           <Text style={styles.InfoText}>Thông tin cơ bản: Đẹp trai khoai to 15cm 30 phút</Text>
           <View style={styles.buttonGroup}>
             <TouchableOpacity onPress={this.onPressLogoutButton} style={styles.logoutButton}>
