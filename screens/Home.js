@@ -18,7 +18,11 @@ export default class Home extends Component {
 
   componentWillMount = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status == 'granted') {
+    if (status !== 'granted') {
+      this.props.onGetLocation(null);
+      console.log("location permission denine");
+    }
+    else {
       let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
       let lat = location.coords.latitude;
       let long = location.coords.longitude;
@@ -27,9 +31,9 @@ export default class Home extends Component {
         longitude: long,
       }
       this.props.onGetLocation(coords);
+      console.log("get location success");
     }
   }
-
   navigateModal = () => {
     this.props.navigation.navigate("Modal");
   };

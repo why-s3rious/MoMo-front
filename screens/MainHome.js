@@ -11,7 +11,7 @@ export default class MainHome extends Component {
     this.state = {
       isLoading: true, // đợi call api 
       textSearch: '',
-      List: [],
+      List: null,
       whatScreen: "match",
       isOldUser: true,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
     };
@@ -35,7 +35,10 @@ export default class MainHome extends Component {
     })
     let data = this.props.navigation.getParam('data');
     let location = this.props.location;
-    let locationUser = `${location.latitude},${location.longitude}`
+    let locationUser = null;
+    if (location != null) {
+      locationUser = `${location.latitude},${location.longitude}`
+    }
     const { textSearch } = this.state;
     await this.props.onGetCategoryListItem(textSearch, whatScreen, 1, data.id, locationUser);
     this.setState({
@@ -75,6 +78,9 @@ export default class MainHome extends Component {
   onEndEditingSearch = async () => { // Xử lí tìm kiếm
     const { whatScreen } = this.state;
     this.callApiGetListItem(whatScreen);
+    this.setState({
+      textSearch: ''
+    })
   }
 
   onPressItemAuto = (item) => {
@@ -94,7 +100,7 @@ export default class MainHome extends Component {
       whatScreen,
       isOldUser,
       List,
-      textSearch
+      textSearch,
     } = this.state;
     return (
       <View style={styles.container}>
@@ -164,15 +170,21 @@ export default class MainHome extends Component {
               :
               <ScrollView contentContainerStyle={styles.ListDanhMuc}>
                 {
-                  List.map(item => {
-                    return (
-                      <ItemRecommend
-                        onPress={() => this.onPressItemRecommend(item)}
-                        key={item.id}
-                        itemData={item}
-                      />
-                    );
-                  })
+                  List !== null ?
+                    List.map(item => {
+                      return (
+                        <ItemRecommend
+                          onPress={() => this.onPressItemRecommend(item)}
+                          key={item.id}
+                          itemData={item}
+                        />
+                      );
+                    })
+                    :
+                    <View>
+                      <Text style={{fontSize:30, color:'black',fontWeight:'bold',flex:1}}>Server lỗi hoặc quá tải</Text>
+                      <Text style={{fontSize:25, color:'black',fontWeight:'bold',flex:1}}>Vui lòng thử lại sau</Text>
+                    </View>
                 }
               </ScrollView>
           }
