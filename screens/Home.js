@@ -3,17 +3,17 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import CategoryButton from '../components/CategoryButton';
-import {screenWidth, screenHeight} from '../costants/DeviceSize';
+import { screenWidth, screenHeight } from '../costants/DeviceSize';
 
 export default class Home extends Component {
-  state ={
-    Data : [],
+  state = {
+    Data: [],
   }
   componentWillMount = async () => {
     //ask for list category
     await this.props.onGetListCategory();
     this.setState({
-      Data : this.props.listCategory
+      Data: this.props.listCategory
     })
     // ask for location
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -57,14 +57,20 @@ export default class Home extends Component {
           <Text style={styles.TextDanhMuc}>DANH MỤC</Text>
           <ScrollView contentContainerStyle={styles.ListDanhMuc}>
             {
-              Data.map(item => {
-                return (
-                  <CategoryButton
-                    onPress={() => this.onPressCategoryButton(item)}
-                    Data={item}
-                    key={item.id} />
-                )
-              })
+              Data != [] ?
+                Data.map(item => {
+                  return (
+                    <CategoryButton
+                      onPress={() => this.onPressCategoryButton(item)}
+                      Data={item}
+                      key={item.id} />
+                  )
+                })
+                :
+                <View>
+                  <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold', flex: 1 }}>Server lỗi hoặc quá tải</Text>
+                  <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold', flex: 1 }}>Vui lòng thử lại sau</Text>
+                </View>
             }
           </ScrollView>
         </View>

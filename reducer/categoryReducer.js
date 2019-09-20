@@ -1,5 +1,5 @@
 
-const category = (state = null, action) => {
+const category = (state = [], action) => {
     switch (action.type) {
         case 'GET_CATEGORY_LIST_ITEM': {
             return action.categoryListItem
