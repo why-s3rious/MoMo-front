@@ -5,7 +5,7 @@ import { apiStore } from '../apis/index';
 
 const mapStateToProps = function (state) {
     return {
-        categoryListItem: state.categoryListItem,
+        categoryListItem: state.category,
         location : state.location
     }
 }

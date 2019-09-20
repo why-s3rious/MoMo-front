@@ -13,6 +13,23 @@ let getTokenFromAsyncStorage = async () => {
         return null;
     }
 }
+
+export const requestListCategoryApi = async (endpoint, method) => {
+    const token = await getTokenFromAsyncStorage();
+    console.log(`${hostAPI}/${localHost}/${endpoint}`)
+    return axios({
+        method: method,
+        url: `${hostAPI}/${localHost}/${endpoint}`,
+        headers: { 'Authorization': `bearer ${token}` }
+    })
+        .then(response => {
+            return response.data;
+        })
+        .catch(er => {
+            console.log(er.response.status)
+            return null;
+        });
+}
 export const requestStoreApi = async (endpoint, method, searchText, sort, page, categoryId, location) => {
     const token = await getTokenFromAsyncStorage();
     console.log(`${hostAPI}/${localHost}/${endpoint}?q=${searchText}&sort=${sort}&p=${page}&category=${categoryId}&location=${location}`)

@@ -3,20 +3,19 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import CategoryButton from '../components/CategoryButton';
-
-const Data = [
-  { id: 1, name: 'Cafe/Dessert' },
-  { id: 2, name: 'Nhà hàng' },
-  { id: 3, name: 'Siêu thị' },
-  { id: 4, name: 'Mua sắm' },
-  { id: 5, name: 'Giải trí' },
-  { id: 6, name: 'Du lịch' },
-  { id: 7, name: 'Khác' },
-];
+import {screenWidth, screenHeight} from '../costants/DeviceSize';
 
 export default class Home extends Component {
-
+  state ={
+    Data : [],
+  }
   componentWillMount = async () => {
+    //ask for list category
+    await this.props.onGetListCategory();
+    this.setState({
+      Data : this.props.listCategory
+    })
+    // ask for location
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== 'granted') {
       this.props.onGetLocation(null);
@@ -41,6 +40,9 @@ export default class Home extends Component {
     this.props.navigation.navigate("MainHome", { data: item });
   };
   render() {
+    const {
+      Data
+    } = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
