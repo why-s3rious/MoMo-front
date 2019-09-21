@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, AsyncStorage } from 'react-native';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import CategoryButton from '../components/CategoryButton';
@@ -8,12 +8,20 @@ import { screenWidth, screenHeight } from '../costants/DeviceSize';
 export default class Home extends Component {
   state = {
     Data: [],
+    isLoading: true,
   }
   componentWillMount = async () => {
     //ask for list category
     await this.props.onGetListCategory();
+    if (this.props.listCategory === 401) {
+      alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
+      await AsyncStorage.removeItem('@Token');
+      this.props.navigation.navigate("Login");
+      return;
+    }
     this.setState({
-      Data: this.props.listCategory
+      Data: this.props.listCategory,
+      isLoading: false,
     })
     // ask for location
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -41,8 +49,22 @@ export default class Home extends Component {
   };
   render() {
     const {
-      Data
+      Data,
+      isLoading
     } = this.state;
+    if (isLoading) {
+      return (
+        <View style={styles.container}>
+          <View style={styles.Header}>
+            <Text style={{ fontWeight: '400', fontSize: 30, marginBottom: 10, }}>TRANG CHỦ</Text>
+          </View>
+          <View style={{ justifyContent: 'center', alignItems: 'center', flex: 0.85 }}>
+            <ActivityIndicator size="large" color="black" />
+            <Text style={{ color: 'gray', fontSize: 13, marginTop: 5 }}>Đang tải dữ liệu...</Text>
+          </View>
+        </View>
+      )
+    }
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
@@ -57,7 +79,7 @@ export default class Home extends Component {
           <Text style={styles.TextDanhMuc}>DANH MỤC</Text>
           <ScrollView contentContainerStyle={styles.ListDanhMuc}>
             {
-              Data != [] ?
+              Data.length > 0 ?
                 Data.map(item => {
                   return (
                     <CategoryButton

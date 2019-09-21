@@ -58,7 +58,7 @@ export default class MainHome extends Component {
     await this.setState({
       List: [],
       whatScreen: "match",
-      pageNum :1
+      pageNum: 1
     })
     this.callApiGetListItem("match", 1);
   }
@@ -66,7 +66,7 @@ export default class MainHome extends Component {
     await this.setState({
       List: [],
       whatScreen: "distance",
-      pageNum :1
+      pageNum: 1
     })
     this.callApiGetListItem("distance", 1);
   }
@@ -74,7 +74,7 @@ export default class MainHome extends Component {
     await this.setState({
       List: [],
       whatScreen: "time",
-      pageNum :1
+      pageNum: 1
     })
     this.callApiGetListItem("time", 1);
   }
@@ -110,9 +110,9 @@ export default class MainHome extends Component {
   onEndEditingSearch = async () => { // Xử lí tìm kiếm
     const { whatScreen } = this.state;
     await this.setState({
-      List : [],
+      List: [],
     })
-    this.callApiGetListItem(whatScreen,1);
+    this.callApiGetListItem(whatScreen, 1);
     this.setState({
       textSearch: ''
     })
@@ -196,14 +196,15 @@ export default class MainHome extends Component {
           }
           {
             isLoading ?
-              <View style={styles.container}>
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={{ fontSize: 20, }}></Text>
                 <ActivityIndicator size="large" color="black" />
+                <Text style={{ color: 'gray', fontSize: 13, marginTop: 5 }}>Đang tải dữ liệu...</Text>
               </View>
               :
               <View style={styles.ListDanhMuc}>
                 {
-                  List != [] ?
+                  List.length > 0 ?
                     <FlatList style={styles.Flatlist}
                       ref={(ref) => { this.flatListRef = ref; }}
                       data={List}

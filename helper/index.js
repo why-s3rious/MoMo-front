@@ -27,7 +27,7 @@ export const requestListCategoryApi = async (endpoint, method) => {
         })
         .catch(er => {
             console.log(er.response.status)
-            return null;
+            return er.response.status;
         });
 }
 export const requestStoreApi = async (endpoint, method, searchText, sort, page, categoryId, location) => {
@@ -43,7 +43,7 @@ export const requestStoreApi = async (endpoint, method, searchText, sort, page, 
         })
         .catch(er => {
             console.log(er.response.status)
-            return null;
+            return er.response.status;
         });
 }
 

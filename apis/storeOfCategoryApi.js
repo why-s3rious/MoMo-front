@@ -12,6 +12,6 @@ export const getCategoryListItemApi = (searchText, sort, page, categoryId, locat
 
 export const getCategoryListApi = () => {
     return requestListCategoryApi('categories', 'get')
-        .then(rs => { return rs })
+        .then(rs => {  return rs })
         .catch(er => { console.log("error: ",er); return [] });
 }

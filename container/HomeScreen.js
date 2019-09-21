@@ -17,6 +17,7 @@ const mapDispatchToProps = function (dispatch) {
         },
         onGetListCategory: async () => {
             const listCategory = await apiStore.getCategoryListApi();
+            console.log(listCategory)
             dispatch(action.onGetListCategory(listCategory));
         }
     }
