@@ -39,7 +39,7 @@ export const requestStoreApi = async (endpoint, method, searchText, sort, page, 
         headers: { 'Authorization': `bearer ${token}` }
     })
         .then(response => {
-            return response.data.stores;
+            return response.data;
         })
         .catch(er => {
             console.log(er.response.status)

@@ -20,7 +20,7 @@ export default class MainHome extends Component {
       'willFocus',
       payload => {
         this.setState({
-          List: this.props.categoryListItem,
+          List: this.props.categoryListItem.stores,
         })
       }
     );
@@ -46,7 +46,7 @@ export default class MainHome extends Component {
     await this.props.onGetCategoryListItem(textSearch, whatScreen, page, data.id, locationUser);
     this.setState({
       isLoading: false,
-      List: List.concat(this.props.categoryListItem)
+      List: List.concat(this.props.categoryListItem.stores)
     })
   }
 
@@ -134,13 +134,15 @@ export default class MainHome extends Component {
       List,
       textSearch,
     } = this.state;
+
+
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
           <TouchableOpacity onPress={() => { this.props.navigation.goBack() }}><Text>Trở về</Text></TouchableOpacity>
           <SearchBox
             text={textSearch}
-            list={this.props.categoryListItem}
+            list={this.props.categoryListItem.stores}
             onChangeText={(text) => this.setState({ textSearch: text })}
             onPressItemAuto={this.onPressItemAuto}
             onEndEditingSearch={() => this.onEndEditingSearch(textSearch)}
