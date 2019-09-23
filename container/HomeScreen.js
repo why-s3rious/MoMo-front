@@ -2,10 +2,11 @@ import { connect } from 'react-redux';
 import Home from '../screens/Home';
 import * as action from '../action/index';
 import { apiStore } from '../apis/index';
+import { accountStore } from '../apis/index';
 
 const mapStateToProps = function (state) {
     return {
-        listCategory: state.category
+        listCategory: state.category,
     }
 }
 
@@ -17,9 +18,13 @@ const mapDispatchToProps = function (dispatch) {
         },
         onGetListCategory: async () => {
             const listCategory = await apiStore.getCategoryListApi();
-            console.log(listCategory)
             dispatch(action.onGetListCategory(listCategory));
+        },
+        onGetInfo: async (token) => {
+            const info = await accountStore.infoApi(token);
+            dispatch(action.onGetInfo(info))
         }
+
     }
 }
 

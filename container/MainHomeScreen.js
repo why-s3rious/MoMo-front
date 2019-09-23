@@ -6,7 +6,8 @@ import { apiStore } from '../apis/index';
 const mapStateToProps = function (state) {
     return {
         categoryListItem: state.category,
-        location : state.location
+        location : state.location,
+        infoUser : state.infoReducer
     }
 }
 
@@ -22,6 +23,7 @@ const mapDispatchToProps = function (dispatch) {
             const categoryListItem = await apiStore.getCategoryListItemApi(searchText, sort, page, categoryId, location);
             dispatch(action.onGetCategoryListItem(categoryListItem));
         }
+        
 
     }
 }

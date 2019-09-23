@@ -19,6 +19,9 @@ export default class Home extends Component {
       this.props.navigation.navigate("Login");
       return;
     }
+    const token = await AsyncStorage.getItem('@Token');
+    await this.props.onGetInfo(token);
+
     this.setState({
       Data: this.props.listCategory,
       isLoading: false,

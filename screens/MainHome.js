@@ -14,7 +14,7 @@ export default class MainHome extends Component {
       List: [],
       pageNum: 1,
       whatScreen: "match",
-      isOldUser: true,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
+      isNewUser: this.props.infoUser.is_new,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
     };
     this.didFocusSubscription = props.navigation.addListener(
       'willFocus',
@@ -127,11 +127,10 @@ export default class MainHome extends Component {
   render() {
     const { navigation } = this.props;
     const Category = navigation.getParam('data');
-
     const {
       isLoading,
       whatScreen,
-      isOldUser,
+      isNewUser,
       List,
       textSearch,
     } = this.state;
@@ -155,8 +154,24 @@ export default class MainHome extends Component {
         <View style={styles.Content}>
           <Text style={styles.TextDanhMuc}>{Category.name}</Text>
           {
-            isOldUser ? // nếu là user cũ => 3 nút, User mới => 2 nút
-              //user cũ 
+            isNewUser ? // nếu là user mới (true) => 2 nút, User cũ (false) => 2 nút
+              //user mới
+              <View style={styles.TabButton}>
+                <TouchableOpacity
+                  style={whatScreen == "match" ? styles.ChoseButton : styles.unChoseButton}
+                  onPress={this.onPressDungNhieu}
+                >
+                  <Text style={whatScreen == "match" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Dùng nhiều</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={whatScreen == "distance" ? styles.ChoseButton : styles.unChoseButton}
+                  onPress={this.onPressGanToi}
+                >
+                  <Text style={whatScreen == "distance" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Gần tôi</Text>
+                </TouchableOpacity>
+              </View>
+              :
+              //user cũ
               <View style={styles.TabButton}>
                 <TouchableOpacity
                   style={whatScreen == "match" ? styles.ChoseButton : styles.unChoseButton}
@@ -175,22 +190,6 @@ export default class MainHome extends Component {
                   onPress={this.onPressLishSu}
                 >
                   <Text style={whatScreen == "time" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Lịch sử</Text>
-                </TouchableOpacity>
-              </View>
-              :
-              //user mới
-              <View style={styles.TabButton}>
-                <TouchableOpacity
-                  style={whatScreen == "match" ? styles.ChoseButton : styles.unChoseButton}
-                  onPress={this.onPressDungNhieu}
-                >
-                  <Text style={whatScreen == "match" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Dùng nhiều</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={whatScreen == "distance" ? styles.ChoseButton : styles.unChoseButton}
-                  onPress={this.onPressGanToi}
-                >
-                  <Text style={whatScreen == "distance" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Gần tôi</Text>
                 </TouchableOpacity>
               </View>
           }
