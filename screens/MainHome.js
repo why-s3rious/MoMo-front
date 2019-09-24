@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Keyboard, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Keyboard, ActivityIndicator, FlatList } from 'react-native';
 
 import SearchBox from '../components/SearchBox';
 import ItemRecommend from '../components/ItemRecommend';
@@ -12,35 +12,41 @@ export default class MainHome extends Component {
       isLoading: true, // đợi call api 
       textSearch: '',
       List: [],
+      pageNum: 1,
       whatScreen: "match",
-      isOldUser: true,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
+      isNewUser: this.props.infoUser.is_new,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
     };
     this.didFocusSubscription = props.navigation.addListener(
       'willFocus',
       payload => {
         this.setState({
-          List: this.props.categoryListItem,
+          List: this.props.categoryListItem.stores,
         })
       }
     );
   }
   // call api
   componentWillMount() {
-    this.callApiGetListItem("match");
+    this.callApiGetListItem("match", this.state.pageNum);
   }
 
-  callApiGetListItem = async (whatScreen) => {
-    this.setState({
-      isLoading: true,
-    })
+  callApiGetListItem = async (whatScreen, page) => {
+    if (page == 1) {
+      this.setState({
+        isLoading: true,
+      })
+    }
     let data = this.props.navigation.getParam('data');
     let location = this.props.location;
-    let locationUser = `${location.latitude},${location.longitude}`
-    const { textSearch } = this.state;
-    await this.props.onGetCategoryListItem(textSearch, whatScreen, 1, data.id, locationUser);
+    let locationUser = null;
+    if (location != null) {
+      locationUser = `${location.latitude},${location.longitude}`
+    }
+    const { textSearch, List } = this.state;
+    await this.props.onGetCategoryListItem(textSearch, whatScreen, page, data.id, locationUser);
     this.setState({
       isLoading: false,
-      List: this.props.categoryListItem
+      List: List.concat(this.props.categoryListItem.stores)
     })
   }
 
@@ -48,35 +54,69 @@ export default class MainHome extends Component {
   navigateModal = () => {
     this.props.navigation.navigate("Modal");
   }
-  onPressDungNhieu = () => {
-    this.setState({
+  onPressDungNhieu = async () => {
+    await this.setState({
+      List: [],
       whatScreen: "match",
+      pageNum: 1
     })
-    this.callApiGetListItem("match");
+    this.callApiGetListItem("match", 1);
   }
-  onPressGanToi = () => {
-    this.setState({
+  onPressGanToi = async () => {
+    await this.setState({
+      List: [],
       whatScreen: "distance",
+      pageNum: 1
     })
-    this.callApiGetListItem("distance");
+    this.callApiGetListItem("distance", 1);
   }
-  onPressLishSu = () => {
-    this.setState({
+  onPressLishSu = async () => {
+    await this.setState({
+      List: [],
       whatScreen: "time",
+      pageNum: 1
     })
-    this.callApiGetListItem("time");
+    this.callApiGetListItem("time", 1);
+  }
+
+  renderItem = ({ item }) => {
+    return (
+      <ItemRecommend
+        onPress={() => this.onPressItemRecommend(item)}
+        key={item.id}
+        itemData={item}
+      />
+    );
+  }
+  getMore = () => {
+    this.setState({
+      isReachedFooter: true,
+    })
+    const { whatScreen, pageNum } = this.state;
+    page = pageNum + 1;
+    this.callApiGetListItem(whatScreen, page);
+    this.setState({
+      pageNum: page
+    })
+  }
+  renderFooter = () => {
+    return <ActivityIndicator size="large" color='black' animating={true} />
   }
   onPressItemRecommend = item => {
-    console.log("press!")
     const { navigation } = this.props;
     navigation.navigate('ItemDetail', { data: item });
   }
 
   onEndEditingSearch = async () => { // Xử lí tìm kiếm
     const { whatScreen } = this.state;
-    this.callApiGetListItem(whatScreen);
+    await this.setState({
+      List: [],
+    })
+    this.callApiGetListItem(whatScreen, 1);
+    this.setState({
+      textSearch: ''
+    })
   }
-
   onPressItemAuto = (item) => {
     Keyboard.dismiss();
     this.setState({
@@ -85,24 +125,24 @@ export default class MainHome extends Component {
     // this.onEndEditingSearch(item.name);
   }
   render() {
-
     const { navigation } = this.props;
     const Category = navigation.getParam('data');
-
     const {
       isLoading,
       whatScreen,
-      isOldUser,
+      isNewUser,
       List,
-      textSearch
+      textSearch,
     } = this.state;
+
+
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
           <TouchableOpacity onPress={() => { this.props.navigation.goBack() }}><Text>Trở về</Text></TouchableOpacity>
           <SearchBox
             text={textSearch}
-            list={this.props.categoryListItem}
+            list={this.props.categoryListItem.stores}
             onChangeText={(text) => this.setState({ textSearch: text })}
             onPressItemAuto={this.onPressItemAuto}
             onEndEditingSearch={() => this.onEndEditingSearch(textSearch)}
@@ -116,8 +156,24 @@ export default class MainHome extends Component {
         <View style={styles.Content}>
           <Text style={styles.TextDanhMuc}>{Category.name}</Text>
           {
-            isOldUser ? // nếu là user cũ => 3 nút, User mới => 2 nút
-              //user cũ 
+            isNewUser ? // nếu là user mới (true) => 2 nút, User cũ (false) => 2 nút
+              //user mới
+              <View style={styles.TabButton}>
+                <TouchableOpacity
+                  style={whatScreen == "match" ? styles.ChoseButton : styles.unChoseButton}
+                  onPress={this.onPressDungNhieu}
+                >
+                  <Text style={whatScreen == "match" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Dùng nhiều</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={whatScreen == "distance" ? styles.ChoseButton : styles.unChoseButton}
+                  onPress={this.onPressGanToi}
+                >
+                  <Text style={whatScreen == "distance" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Gần tôi</Text>
+                </TouchableOpacity>
+              </View>
+              :
+              //user cũ
               <View style={styles.TabButton}>
                 <TouchableOpacity
                   style={whatScreen == "match" ? styles.ChoseButton : styles.unChoseButton}
@@ -138,43 +194,34 @@ export default class MainHome extends Component {
                   <Text style={whatScreen == "time" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Lịch sử</Text>
                 </TouchableOpacity>
               </View>
-              :
-              //user mới
-              <View style={styles.TabButton}>
-                <TouchableOpacity
-                  style={whatScreen == "match" ? styles.ChoseButton : styles.unChoseButton}
-                  onPress={this.onPressDungNhieu}
-                >
-                  <Text style={whatScreen == "match" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Dùng nhiều</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={whatScreen == "distance" ? styles.ChoseButton : styles.unChoseButton}
-                  onPress={this.onPressGanToi}
-                >
-                  <Text style={whatScreen == "distance" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Gần tôi</Text>
-                </TouchableOpacity>
-              </View>
           }
           {
             isLoading ?
-              <View style={styles.container}>
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={{ fontSize: 20, }}></Text>
                 <ActivityIndicator size="large" color="black" />
+                <Text style={{ color: 'gray', fontSize: 13, marginTop: 5 }}>Đang tải dữ liệu...</Text>
               </View>
               :
-              <ScrollView contentContainerStyle={styles.ListDanhMuc}>
+              <View style={styles.ListDanhMuc}>
                 {
-                  List.map(item => {
-                    return (
-                      <ItemRecommend
-                        onPress={() => this.onPressItemRecommend(item)}
-                        key={item.id}
-                        itemData={item}
-                      />
-                    );
-                  })
+                  List.length > 0 ?
+                    <FlatList style={styles.Flatlist}
+                      ref={(ref) => { this.flatListRef = ref; }}
+                      data={List}
+                      renderItem={this.renderItem}
+                      keyExtractor={(item, index) => index.toString()}
+                      onEndReached={this.getMore}
+                      onEndReachedThreshold={0.1}
+                      ListFooterComponent={this.renderFooter()}
+                    />
+                    :
+                    <View>
+                      <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold', flex: 1 }}>Server lỗi hoặc quá tải</Text>
+                      <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold', flex: 1 }}>Vui lòng thử lại sau</Text>
+                    </View>
                 }
-              </ScrollView>
+              </View>
           }
         </View>
       </View>
@@ -243,6 +290,7 @@ const styles = StyleSheet.create({
     color: 'gray'
   },
   ListDanhMuc: {
+    flex: 0.9,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center'

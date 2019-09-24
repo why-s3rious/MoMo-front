@@ -9,13 +9,16 @@ class SearchBox extends Component {
     if (query === '') {
       return [];
     }
-    const newData = this.props.list.filter(function (item) {
-      //applying filter for the inserted text in search bar
-      const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
-      const textData = query.toUpperCase();
-      return itemData.indexOf(textData) > -1;
-    });
-    return newData;
+    if (this.props.list != null) {
+      const newData = this.props.list.filter(function (item) {
+        //applying filter for the inserted text in search bar
+        const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
+        const textData = query.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      return newData;
+    }
+    return [];
   }
 
   render() {
@@ -38,11 +41,11 @@ class SearchBox extends Component {
       // </View>
       <View style={styles.searchBar}>
         <Autocomplete
-          onEndEditing = {onEndEditingSearch}
+          onEndEditing={onEndEditingSearch}
           autoCapitalize="none"
           autoCorrect={false}
           containerStyle={styles.autoContainerStyle}
-          listContainerStyle ={styles.listContainerStyle}
+          listContainerStyle={styles.listContainerStyle}
           data={list}
           defaultValue={text}
           onChangeText={onChangeText}
@@ -68,9 +71,9 @@ const styles = StyleSheet.create({
   },
   autoContainerStyle: {
   },
-  listContainerStyle:{
+  listContainerStyle: {
     backgroundColor: 'rgba(255,255,255,1.0)',
-    height:60,
+    height: 60,
   }
 });
 
