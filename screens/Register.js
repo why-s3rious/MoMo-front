@@ -11,14 +11,6 @@ export default class Register extends Component {
             isWrongPass: false
         }
     }
-    async getAllAccount() {
-        await this.props.onGetAllAccount();
-        console.log("load register", this.props.account)
-    }
-    componentDidMount = () => {
-        this.getAllAccount();
-    }
-
     onChangePhone = textPhone => {
         this.setState({
             username: textPhone
@@ -82,7 +74,6 @@ export default class Register extends Component {
         }
     }
     render() {
-        const usernameExist = this.props.account.find(({ username }) => username === this.state.username);
         const { confirm, password, isWrongPhone, isWrongPass } = this.state;
         return (
             <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-100" style={styles.container}>
@@ -99,7 +90,7 @@ export default class Register extends Component {
                         onEndEditing={this.checkPhone}
                         keyboardType={'number-pad'}
                     />
-                    {usernameExist !== undefined && <Text>Số điện thoại đã được đăng kí</Text> || isWrongPhone && <Text>Số điện thoại không tồn tại</Text>}
+                    {isWrongPhone && <Text>Số điện thoại không tồn tại</Text>}
                     <TextInput
                         style={styles.textInput}
                         placeholder="Password"

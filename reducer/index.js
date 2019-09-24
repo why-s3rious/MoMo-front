@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import categoryListItem from './categoryReducer';
+import category from './categoryReducer';
 import location from './locationReducer'
 import loginReducer from './loginReducer';
 import infoReducer from './infoReducer';
@@ -7,7 +7,7 @@ import infoReducer from './infoReducer';
 
 
 const reducer = combineReducers({
-    categoryListItem, loginReducer, infoReducer, location
+    category, loginReducer, infoReducer, location
     // visibilityFilter,
 })
 

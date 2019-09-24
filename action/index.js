@@ -1,3 +1,4 @@
+
 export const onGetCategoryListItem = (categoryListItem) => {
     return {
         type: "GET_CATEGORY_LIST_ITEM",
@@ -8,6 +9,12 @@ export const onGetLocation = (location) => {
     return {
         type: "GET_LOCATION",
         location: location
+    }
+}
+export const onGetListCategory = (listCategory) => {
+    return {
+        type: "GET_LIST_CATEGORY",
+        listCategory : listCategory
     }
 }
 

@@ -8,12 +8,15 @@ export default class Login extends Component {
             inputTextPass: '',
             // account: [],
         };
-        // this.didFocusSubscription = props.navigation.addListener(
-        //     'willFocus',
-        //     payload => {
-        //         this.getAllAccount();
-        //     }
-        // );
+        this.didFocusSubscription = props.navigation.addListener(
+            'willFocus',
+            payload => {
+                this.setState({
+                    inputTextPass: '',
+                    inputTextUser: ''
+                })
+            }
+        );
     }
     // async getAllAccount() {
     //     await this.props.onGetAllAccount();
@@ -23,7 +26,7 @@ export default class Login extends Component {
     //     console.log("load login", this.state.account)
     // }
     // componentDidMount = () => {
-    //     this.getAllAccount();
+        
     // }
 
     onchangeUser = textUser => {

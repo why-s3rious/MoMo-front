@@ -10,38 +10,15 @@ export default class Term extends Component {
         super(props);
         this.state = {
             check: false,
-            account: [],
             showAlert: false
         };
-        this.didFocusSubscription = props.navigation.addListener(
-            'willFocus',
-            payload => {
-                this.getAllAccount();
-            }
-        );
-    }
-    async getAllAccount() {
-        await this.props.onGetAllAccount();
-        this.setState({
-            account: this.props.account,
-        })
-    }
-    componentDidMount = () => {
-        this.getAllAccount();
     }
     onPressDone = async (username, password) => {
         const { check } = this.state;
-        const accountLocal = {
-            id: this.state.account.length + 1,
-            username: username,
-            password: password,
-            jwt: randomJwt,
-        }
         if (!check) {
             alert("Cần đồng ý điều khoản để tiếp tục")
             return false
         }
-        await this.props.onRegister(accountLocal);
         this.props.navigation.navigate("Login")
     }
     onPressCancel = () => {

@@ -53,7 +53,7 @@ export default class ItemDetail extends Component {
                 errorMessage: 'Permission to access location was denied',
             });
         }
-        let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+        let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: false, timeout: 2000 });
         let lat = location.coords.latitude;
         let long = location.coords.longitude;
         let coords = {
