@@ -11,8 +11,8 @@ import Logo from '../screens/Logo';
 const StartStack = createStackNavigator(
   {
     //add login, onboarding, logo, register, term
-    Onboarding: Onboarding,
-    Logo: Logo,
+    // Onboarding: Onboarding,
+    // Logo: Logo,
     Login: LoginContainer,
     Register: RegisterContainer,
     Term: TermContainer

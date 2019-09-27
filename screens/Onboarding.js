@@ -6,19 +6,19 @@ const slides = [
     {
         key: 'slide1',
         title: 'Title 1',
-        image: require('../assets/Momo_1.jpg'),
+        image: require('../assets/Onboarding1.png'),
         text: 'Description.\nRecommend theo xu hướng',
     },
     {
         key: 'slide2',
         title: 'Title 2',
-        image: require('../assets/Momo_1.jpg'),
+        image: require('../assets/Onboarding2.png'),
         text: 'Description.\nRecommend theo túi tiền',
     },
     {
         key: 'slide3',
         title: 'Title 3',
-        image: require('../assets/Momo_1.jpg'),
+        image: require('../assets/Onboarding3.png'),
         text: 'Description.\nRecommend theo vị trí',
     }
 ];
@@ -70,6 +70,9 @@ export default class Onboarding extends React.Component {
                     onSkip={this.onDone}
                     onDone={this.onDone}
                     backgroundColor='gray'
+                    buttonStyle={styles.buttonStyle}
+                    buttonTextStyle={styles.buttonTextStyle}
+                    activeDotStyle={styles.activeDotStyle}
                 />
             );
         }
@@ -77,14 +80,32 @@ export default class Onboarding extends React.Component {
 }
 const styles = StyleSheet.create({
     mainContent: {
-        flex: 1,
+        position: 'absolute', 
+        top: 0, 
+        left: 0, 
+        right: 0, 
+        bottom: 0, 
+        justifyContent: 'center', 
+        alignItems: 'center'
+    },
+    activeDotStyle: {
+        backgroundColor: 'black'
+    },
+    buttonStyle: {
+        width: 70,
+        height: 40,
+        borderWidth: 1,
+        borderColor: 'black',
+        borderRadius: 10,
         alignItems: 'center',
-        justifyContent: 'center',
-        marginVertical: 30,
+        justifyContent: 'center'
+    },
+    buttonTextStyle: {
+        color: 'black'
     },
     image: {
-        width: 50,
-        height: 50,
+        width: "100%",
+        height: "105%",
         marginVertical: 10,
     },
     text: {

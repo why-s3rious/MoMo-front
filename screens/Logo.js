@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 
 export default class Logo extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            
+
         };
     }
     onPressSignIn = () => {
@@ -16,51 +16,43 @@ export default class Logo extends Component {
     }
     render() {
         return (
-            <View style={styles.container}>
-                <View style={styles.image}>
-                    <Image
-                        source={require('../assets/logoOKE.png')}
-                        style={{ width: 200, height: 300 }}
-                    />
+            <ImageBackground source={require('../assets/LogoScreen.png')} style={{ width: "100%", height: "100%" }}>
+                <View style={styles.container}>
+                    <View style={styles.buttonGroup}>
+                        <TouchableOpacity style={styles.buttonSignIn} onPress={this.onPressSignIn}>
+                            <Text style={styles.textSignIn}>Sign In</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonSignUp} onPress={this.onPressSignUp}>
+                            <Text style={styles.textSignUp}>Sign Up</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <View style={styles.buttonGroup}>
-                    <TouchableOpacity style={styles.buttonSignIn} onPress={this.onPressSignIn}>
-                        <Text style={styles.textSignIn}>Sign In</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonSignUp} onPress={this.onPressSignUp}>
-                        <Text style={styles.textSignUp}>Sign Up</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            </ImageBackground>
         );
     }
 }
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white'
-    },
-    image: {
-        flex: 0.5,
         justifyContent: 'center',
-        alignItems: 'center',
-        marginVertical: 10,
+        alignItems: 'center'
     },
     buttonGroup: {
-        flex: 0.5,
+        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 5,
+        marginTop: 350,
         justifyContent: 'space-around',
         paddingHorizontal: 30
     },
     buttonSignIn: {
-        backgroundColor: 'blue',
+        backgroundColor: '#00CFB5',
         width: 130,
         height: 50,
         borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center',
+        marginRight: 15,
     },
     textSignIn: {
         color: 'white',
@@ -75,10 +67,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 2,
-        borderColor: 'blue'
+        borderColor: '#00CFB5'
     },
     textSignUp: {
-        color: 'blue',
+        color: '#00CFB5',
         fontSize: 25,
         fontWeight: '400'
     },

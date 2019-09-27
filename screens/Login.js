@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, AsyncStorage } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 export default class Login extends Component {
     constructor(props) {
         super(props);
@@ -26,7 +27,7 @@ export default class Login extends Component {
     //     console.log("load login", this.state.account)
     // }
     // componentDidMount = () => {
-        
+
     // }
 
     onchangeUser = textUser => {
@@ -105,32 +106,36 @@ export default class Login extends Component {
                     <Text style={styles.txtTitle}>Welcome to OKE</Text>
                 </View>
                 <View style={styles.inputGroup}>
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder="Your phone number"
-                        onChangeText={this.onchangeUser}
-                        value={inputTextUser}
-                        onSubmitEditing={() => this.passwordRef.focus()}
-                        blurOnSubmit={false}
-                        keyboardType={'number-pad'}
-                    />
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder="Password"
-                        onChangeText={this.onchangePass}
-                        value={inputTextPass}
-                        ref={ref => this.passwordRef = ref}
-                        secureTextEntry={true}
-                    />
+                    <View style={styles.input}>
+                        <Feather name={'phone'} size={27} color="gray" style={styles.icon} />
+                        <TextInput
+                            placeholder="Nhập số điện thoại"
+                            onChangeText={this.onchangeUser}
+                            value={inputTextUser}
+                            onSubmitEditing={() => this.passwordRef.focus()}
+                            blurOnSubmit={false}
+                            keyboardType={'number-pad'}
+                        />
+                    </View>
+                    <View style={styles.input}>
+                        <Feather name={'lock'} size={27} color="gray" style={styles.icon} />
+                        <TextInput
+                            placeholder="Nhập mật khẩu"
+                            onChangeText={this.onchangePass}
+                            value={inputTextPass}
+                            ref={ref => this.passwordRef = ref}
+                            secureTextEntry={true}
+                        />
+                    </View>
                 </View>
                 <View style={styles.buttonGroup}>
                     <TouchableOpacity style={styles.btnSignin} onPress={this.onPressLogin}>
-                        <Text style={styles.txtSignin}>Sign In</Text>
+                        <Text style={styles.txtSignin}>ĐĂNG NHẬP</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.txtGroup}>
-                    <Text style={styles.text} onPress={this.onPressSignUp}>Create Account</Text>
-                    <Text style={styles.text}>Forgot Password</Text>
+                    <Text style={styles.text} onPress={this.onPressSignUp}>Tạo tài khoản</Text>
+                    <Text style={styles.text}>Quên mật khẩu</Text>
                 </View>
             </KeyboardAvoidingView>
 
@@ -140,7 +145,7 @@ export default class Login extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#B48DFA'
+        backgroundColor: '#fff'
     },
     title: {
         flex: 0.3,
@@ -158,13 +163,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginVertical: 10,
     },
-    textInput: {
-        width: 300,
-        height: 50,
-        borderRadius: 50,
-        marginVertical: 10,
+    input: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#000',
         paddingHorizontal: 15,
-        backgroundColor: "#F6F8FA"
+        borderRadius: 50,
+        margin: 10,
+        width: 300,
+        height: 50
+    },
+    icon: {
+        marginRight: 10,
     },
     buttonGroup: {
         flex: 0.1,
@@ -172,7 +185,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column'
     },
     btnSignin: {
-        backgroundColor: 'pink',
+        backgroundColor: '#00CFB5',
         borderRadius: 50,
         height: 50,
         width: 300,
@@ -180,8 +193,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     txtSignin: {
-        color: 'black',
-        fontSize: 25,
+        color: 'white',
+        fontSize: 20,
         fontWeight: '400'
     },
     txtGroup: {
