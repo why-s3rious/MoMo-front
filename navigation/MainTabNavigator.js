@@ -31,11 +31,11 @@ const HomeStack = createStackNavigator(
 );
 
 HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+  tabBarLabel: 'Trang chính',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name='md-information-circle'
+      name='md-home'
     />
   ),
 };
@@ -70,6 +70,11 @@ HomeStack.path = '';
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
   AccountStack,
+}, {
+  tabBarOptions: {
+    activeTintColor: "#00CFB5",
+    inactiveTintColor: "#ddd"
+  }
 }
 );
 

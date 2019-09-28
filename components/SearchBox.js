@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Autocomplete from 'react-native-autocomplete-input';
+import { screenWidth, screenHeight } from '../costants/DeviceSize';
 
 
 class SearchBox extends Component {
@@ -30,26 +31,19 @@ class SearchBox extends Component {
     } = this.props;
     const list = this.findStore(text);
     return (
-      // <View>
-      //   {/* <TextInput style={styles.textBox}
-      //     value={text}
-      //     onChangeText={onChangeText}
-      //     placeholder='Tìm kiếm'
-      //     onEndEditing={onEndEditing}
-      //   /> */}
-
-      // </View>
-      <View style={styles.searchBar}>
+      <View style={styles.searchGroup}>
         <Autocomplete
           onEndEditing={onEndEditingSearch}
+          style={styles.inputText}
           autoCapitalize="none"
           autoCorrect={false}
-          containerStyle={styles.autoContainerStyle}
-          listContainerStyle={styles.listContainerStyle}
+          inputContainerStyle={styles.searchBar}  // css xung quanh cai input Text
+          listContainerStyle={styles.listContainerStyle} // xung quanh cai list result
+          listStyle={styles.listStyle} // cái list result
           data={list}
           defaultValue={text}
           onChangeText={onChangeText}
-          placeholder='Tìm kiếm'
+          placeholder='Nhập từ khóa tìm kiếm'
           renderItem={
             ({ item }) =>
               <TouchableOpacity onPress={() => onPressItemAuto(item)}>
@@ -64,17 +58,33 @@ class SearchBox extends Component {
 }
 
 const styles = StyleSheet.create({
-  searchBar: {
-    width: 200,
-    height: 40,
-    flexDirection: 'column',
+  searchGroup: {
+    width: screenWidth * 0.7,
+    height: 45,
   },
-  autoContainerStyle: {
+  searchBar: {
+    height:'100%',
+    backgroundColor: "#FBFBFB",
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#BDBDBD',
+    borderRadius: 20,
+  },
+  inputText: {
+    fontSize: 18,
+    height: 28,
+    width:screenWidth * 0.65
   },
   listContainerStyle: {
-    backgroundColor: 'rgba(255,255,255,1.0)',
-    height: 60,
-  }
+    borderColor:'white',
+    borderRadius:5,
+    height:80,
+    zIndex:1,
+  },
+  listStyle: {
+    
+  },
 });
 
 

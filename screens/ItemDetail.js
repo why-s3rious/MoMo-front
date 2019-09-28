@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { screenWidth, screenHeight } from '../costants/DeviceSize';
 
 
 export default class ItemDetail extends Component {
@@ -18,7 +19,7 @@ export default class ItemDetail extends Component {
                 </View>
                 <View style={styles.Content}>
                     <Image style={styles.MainImage}
-                        source={require('../assets/Momo_3.jpg')}
+                        source={data.image}
                     />
                     <View style={styles.infoRow1}>
                         <View style={styles.infocolumn1}>
@@ -71,10 +72,10 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     infocolumn1: {
-        flex:0.7,
+        flex: 0.7,
     },
     infocolumn2: {
-        flex:0.3,
+        flex: 0.3,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'pink'

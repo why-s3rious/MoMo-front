@@ -1,10 +1,44 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, AsyncStorage } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, AsyncStorage, Image } from 'react-native';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import CategoryButton from '../components/CategoryButton';
 import { screenWidth, screenHeight } from '../costants/DeviceSize';
 
+const datafake = [
+  {
+    "id": 1,
+    "name": "Mass Merchant"
+  },
+  {
+    "id": 2,
+    "name": "Coffee Chains and Milk Tea"
+  },
+  {
+    "id": 3,
+    "name": "CVS"
+  },
+  {
+    "id": 4,
+    "name": "Restaurant"
+  },
+  {
+    "id": 5,
+    "name": "Fast Food"
+  },
+  {
+    "id": 6,
+    "name": "Supermarket"
+  },
+  {
+    "id": 7,
+    "name": "Shopping"
+  },
+  {
+    "id": 8,
+    "name": "Mass Ecom"
+  }
+]
 export default class Home extends Component {
   state = {
     Data: [],
@@ -58,9 +92,6 @@ export default class Home extends Component {
     if (isLoading) {
       return (
         <View style={styles.container}>
-          <View style={styles.Header}>
-            <Text style={{ fontWeight: '400', fontSize: 30, marginBottom: 10, }}>TRANG CHỦ</Text>
-          </View>
           <View style={{ justifyContent: 'center', alignItems: 'center', flex: 0.85 }}>
             <ActivityIndicator size="large" color="black" />
             <Text style={{ color: 'gray', fontSize: 13, marginTop: 5 }}>Đang tải dữ liệu...</Text>
@@ -71,12 +102,10 @@ export default class Home extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
-          <Text style={{ fontWeight: '400', fontSize: 30, marginBottom: 10, }}>TRANG CHỦ</Text>
-          <View>
-            <TouchableOpacity style={styles.buttonLoc} onPress={this.navigateModal}>
-              <Text>Lọc</Text>
-            </TouchableOpacity>
-          </View>
+          <Image
+            style={{ width: 50, height: 50, marginLeft: screenWidth * 0.1 }}
+            source={require('../assets/momo-mini-logo.png')}
+          />
         </View>
         <View style={styles.Content}>
           <Text style={styles.TextDanhMuc}>DANH MỤC</Text>
@@ -92,10 +121,18 @@ export default class Home extends Component {
                   )
                 })
                 :
-                <View>
-                  <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold', flex: 1 }}>Server lỗi hoặc quá tải</Text>
-                  <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold', flex: 1 }}>Vui lòng thử lại sau</Text>
-                </View>
+                datafake.map(item => {
+                  return (
+                    <CategoryButton
+                      onPress={() => this.onPressCategoryButton(item)}
+                      Data={item}
+                      key={item.id} />
+                  )
+                })
+              // <View>
+              //   <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold', flex: 1 }}>Server lỗi hoặc quá tải</Text>
+              //   <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold', flex: 1 }}>Vui lòng thử lại sau</Text>
+              // </View>
             }
           </ScrollView>
         </View>
@@ -113,10 +150,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   Header: {
-    flex: 0.15,
-    justifyContent: 'space-around',
+    flex: 0.12,
     flexDirection: 'row',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
+    borderBottomWidth: 1,
+    borderColor: "rgba(51, 51, 51, 0.1)",
   },
   buttonLoc: {
     marginBottom: 10,
@@ -130,17 +168,19 @@ const styles = StyleSheet.create({
     width: 40,
   },
   Content: {
-    flex: 0.85,
+    flex: 0.88,
     flexDirection: 'column',
   },
   TextDanhMuc: {
-    marginLeft: 25,
+    marginLeft: screenWidth * 0.1,
     fontSize: 20,
     fontWeight: '400',
+    borderColor: 'black',
+    borderBottomWidth: 1,
+    width: screenWidth * 0.4,
   },
   ListDanhMuc: {
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center'
   }
 });
