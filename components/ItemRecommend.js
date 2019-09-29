@@ -1,18 +1,13 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { screenWidth, screenHeight } from '../costants/DeviceSize';
-import { STOREIMAGES } from '../costants/StoreImages';
 
 class ItemRecommend extends Component {
   render() {
     const {
       itemData,
       onPress,
-      categoryID,
     } = this.props;
-    let randImg = "";
-    const categoryImages = STOREIMAGES.find(cate => cate.id === categoryID);
-    randImg = categoryImages.imgUrl[Math.floor(Math.random() * categoryImages.imgUrl.length)];
     // let icon = '';
     // switch (screen) {
     //   case 'distance':
@@ -33,10 +28,10 @@ class ItemRecommend extends Component {
     // }
     return (
       <View style={styles.RecommendItem}>
-        <TouchableOpacity style={styles.content} onPress={() => onPress(itemData, randImg)}>
+        <TouchableOpacity style={styles.content} onPress={() => onPress(itemData)}>
             <Text style={styles.NameText}>{itemData.name}</Text>
           <Image
-            source={randImg}
+            source={itemData.image}
             style={styles.ItemImage}
           />
           <Text style={styles.AddressText}>{itemData.address}</Text>

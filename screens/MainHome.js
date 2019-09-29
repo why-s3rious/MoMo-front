@@ -5,53 +5,11 @@ import SearchBox from '../components/SearchBox';
 import ItemRecommend from '../components/ItemRecommend';
 import { screenWidth, screenHeight } from '../costants/DeviceSize';
 
-const datafake = [
-  {
-    "id": 1,
-    "name": "Fake item 1",
-    "address": "fake address 1, cái address này có chiều dài lên tới 2 dòng"
-  },
-  {
-    "id": 2,
-    "name": "Fake item 2",
-    "address": "fake address 2"
-  },
-  {
-    "id": 3,
-    "name": "Fake item 3",
-    "address": "fake address 3"
-  },
-  {
-    "id": 4,
-    "name": "Fake item 4",
-    "address": "fake address 4"
-  },
-  {
-    "id": 5,
-    "name": "Fake item 5",
-    "address": "fake address 5"
-  },
-  {
-    "id": 6,
-    "name": "Fake item 6",
-    "address": "fake address 6"
-  },
-  {
-    "id": 7,
-    "name": "Fake item 7",
-    "address": "fake address 7"
-  },
-  {
-    "id": 8,
-    "name": "Fake item 8",
-    "address": "fake address 8"
-  }
-];
 export default class MainHome extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: false, // đợi call api 
+      isLoading: true, // đợi call api 
       textSearch: '',
       List: [],
       pageNum: 1,
@@ -68,8 +26,14 @@ export default class MainHome extends Component {
     // );
   }
   // call api
-  componentWillMount() {
+  async componentWillMount() {
     // this.callApiGetListItem("match", this.state.pageNum);
+    const { List } = this.state;
+    await this.props.onGetCategoryListItem(this.props.navigation.getParam('data').id);
+    this.setState({
+      isLoading: false,
+      List: List.concat(this.props.categoryListItem)
+    })
   }
 
   callApiGetListItem = async (whatScreen, page) => {
@@ -145,9 +109,9 @@ export default class MainHome extends Component {
   renderFooter = () => {
     return <ActivityIndicator size="large" color='black' animating={true} />
   }
-  onPressItemRecommend = (item,img) => {
+  onPressItemRecommend = (item) => {
     const { navigation } = this.props;
-    navigation.navigate('ItemDetail', { data: {...item,image:img} });
+    navigation.navigate('ItemDetail', { data: item });
   }
 
   onEndEditingSearch = async () => { // Xử lí tìm kiếm
@@ -183,7 +147,7 @@ export default class MainHome extends Component {
           <SearchBox
             text={textSearch}
             // list={this.props.categoryListItem.stores}
-            list={datafake}
+            list={this.props.categoryListItem}
             onChangeText={(text) => this.setState({ textSearch: text })}
             onPressItemAuto={this.onPressItemAuto}
             onEndEditingSearch={() => this.onEndEditingSearch(textSearch)}
@@ -197,7 +161,7 @@ export default class MainHome extends Component {
         <View style={styles.Content}>
           {
             !isNewUser ? // nếu là user mới (true) => 2 nút, User cũ (false) => 2 nút
-              //user mới
+              //user mới dung de may cai nay` =]]]]]]
               <View style={styles.TabButton}>
                 <TouchableOpacity
                   style={whatScreen == "match" ? styles.ChoseButtonNew : styles.unChoseButtonNew}
@@ -236,7 +200,7 @@ export default class MainHome extends Component {
               </View>
           }
           <View style={styles.contentHeader}>
-            <TouchableOpacity onPress={() => { this.props.navigation.goBack() }}><Text style={{ color: '#ED3E7A' }}>← Trở về</Text></TouchableOpacity>
+            <TouchableOpacity style={{ height: 20, }} onPress={() => { this.props.navigation.goBack() }}><Text style={{ color: '#ED3E7A', fontSize: 17 }}>← Trở về</Text></TouchableOpacity>
             <View style={styles.viewTextDanhMuc}>
               <Text style={styles.TextDanhMuc}>{Category.name}</Text>
             </View>
@@ -262,19 +226,19 @@ export default class MainHome extends Component {
                       ListFooterComponent={this.renderFooter()}
                     />
                     :
-                    <FlatList style={styles.Flatlist}
-                      ref={(ref) => { this.flatListRef = ref; }}
-                      data={datafake}
-                      renderItem={this.renderItem}
-                      keyExtractor={(item, index) => index.toString()}
-                      onEndReached={this.getMore}
-                      onEndReachedThreshold={0.1}
-                      ListFooterComponent={this.renderFooter()}
-                    />
-                  // <View>
-                  //   <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold', flex: 1 }}>Server lỗi hoặc quá tải</Text>
-                  //   <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold', flex: 1 }}>Vui lòng thử lại sau</Text>
-                  // </View>
+                    // <FlatList style={styles.Flatlist}
+                    //   ref={(ref) => { this.flatListRef = ref; }}
+                    //   data={datafake}
+                    //   renderItem={this.renderItem}
+                    //   keyExtractor={(item, index) => index.toString()}
+                    //   onEndReached={this.getMore}
+                    //   onEndReachedThreshold={0.1}
+                    //   ListFooterComponent={this.renderFooter()}
+                    // />
+                    <View>
+                      <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold', flex: 1 }}>Server lỗi hoặc quá tải</Text>
+                      <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold', flex: 1 }}>Vui lòng thử lại sau</Text>
+                    </View>
                 }
               </View>
           }

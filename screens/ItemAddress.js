@@ -29,9 +29,9 @@ export default class ItemDetail extends Component {
         isMapViewReady: false,
         initialRegion: null,
     }
-    componentWillMount = () => {
+    componentWillMount = async () => {
         const { storeCoordinate } = this.state;
-        this._getLocationAsync();         // get local address
+        await this._getLocationAsync();         // get local address
         this.setState({
             isUserCoordinateReady: true,
             isMapViewReady: true,
@@ -42,8 +42,14 @@ export default class ItemDetail extends Component {
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA,
             }
-
         })
+        const { userCoordinate, directionPoints } = this.state;
+        let newArrayOfCoordinate = [...directionPoints, { latitude: userCoordinate.latitude, longitude: userCoordinate.longitude }];
+        this.setState({
+            isDirectionRequest: true,
+            directionPoints: newArrayOfCoordinate,
+            initialRegion: getRegionForCoordinates(newArrayOfCoordinate)
+        });
     }
 
     async _getLocationAsync() {  // get local address
@@ -53,7 +59,7 @@ export default class ItemDetail extends Component {
                 errorMessage: 'Permission to access location was denied',
             });
         }
-        let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: false, timeout: 2000 });
+        let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
         let lat = location.coords.latitude;
         let long = location.coords.longitude;
         let coords = {
@@ -74,13 +80,7 @@ export default class ItemDetail extends Component {
     }
 
     onPressDirectButton = async () => {   /// click vào chỉ đường
-        const { userCoordinate, directionPoints } = this.state;
-        let newArrayOfCoordinate = [...directionPoints, { latitude: userCoordinate.latitude, longitude: userCoordinate.longitude }];
-        this.setState({
-            isDirectionRequest: true,
-            directionPoints: newArrayOfCoordinate,
-            initialRegion: getRegionForCoordinates(newArrayOfCoordinate)
-        });
+
     }
     render() {
         const { navigation } = this.props;
@@ -197,7 +197,6 @@ const styles = StyleSheet.create({
     MapViewContent: {
         width: width * 0.95,
         height: height * 0.4,
-        backgroundColor: 'red'
     },
     MarkerRadius: {
         width: 30,
