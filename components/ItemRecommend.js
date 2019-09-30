@@ -1,13 +1,51 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import { screenWidth, screenHeight } from '../costants/DeviceSize';
-
+import Swipeout from 'react-native-swipeout';
 class ItemRecommend extends Component {
+  state = {
+    activeRowKey: null,
+  }
   render() {
     const {
       itemData,
       onPress,
     } = this.props;
+    const swipeSettings = {
+      autocClose: true,
+      style: styles.Swipeout,
+      buttonWidth: screenWidth * 0.4,
+      onClose: (secId, rowId, direction) => {
+        if (this.state.activeRowKey != null) {
+          this.setState({
+            activeRowKey: null,
+          })
+        }
+      },
+      onOpen: (secId, rowId, direction) => {
+        this.setState({
+          activeRowKey: itemData.id,
+        })
+      },
+      right: [
+        {
+          onPress: () => {
+            Alert.alert(
+              'Hey honey..',
+              "Are you sure you want to dislike :( ? ",
+              [
+                { text: 'No', onPress: () => console.log('Cancel Dislike!'), style: 'cancel' },
+                { text: 'Yes', onPress: () => console.log('Accept Dislike!'), style: 'cancel' }
+              ]
+            );
+          },
+          backgroundColor: 'rgba(241, 58, 58, 0.78)',
+          text: "Dislike!", type: 'delete'
+        }
+      ],
+      rowId: this.props.itemData.id,
+      sectionId: 1,
+    };
     // let icon = '';
     // switch (screen) {
     //   case 'distance':
@@ -27,27 +65,34 @@ class ItemRecommend extends Component {
     //     }
     // }
     return (
-      <View style={styles.RecommendItem}>
-        <TouchableOpacity style={styles.content} onPress={() => onPress(itemData)}>
+      <Swipeout {...swipeSettings} >
+        <View style={styles.RecommendItem}>
+          <TouchableOpacity style={styles.content} onPress={() => onPress(itemData)}>
             <Text style={styles.NameText}>{itemData.name}</Text>
-          <Image
-            source={itemData.image}
-            style={styles.ItemImage}
-          />
-          <Text style={styles.AddressText}>{itemData.address}</Text>
-        </TouchableOpacity>
-      </View>
+            <Image
+              source={itemData.image}
+              style={styles.ItemImage}
+            />
+            <Text style={styles.AddressText}>{itemData.address}</Text>
+          </TouchableOpacity>
+        </View>
+      </Swipeout>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  Swipeout: {
+    width: screenWidth,
+    height: screenHeight * 0.36,
+    backgroundColor: 'white',
+    marginTop: 30,
+  },
   RecommendItem: {
     alignSelf: 'center',
     backgroundColor: 'white',
     width: screenWidth * 0.9,
     height: screenHeight * 0.35,
-    marginTop: 30,
     borderRadius: 8,
     //shadow
     shadowColor: "#000",
@@ -61,6 +106,7 @@ const styles = StyleSheet.create({
 
   },
   content: {
+    zIndex: 1,
     flex: 1,
     borderTopColor: 'white',
     borderTopWidth: 0.5,
