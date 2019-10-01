@@ -13,17 +13,11 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 export default class ItemDetail extends Component {
     state = {
         userCoordinate: null,
-        storeCoordinate: {              // địa chỉ cửa hàng (sẽ get param)
-            latitude: 10.7623244,
-            longitude: 106.7056788,
-        },
+        storeCoordinate: this.props.navigation.getParam("coordinate"),
         errorMessage: '',
         isDirectionRequest: false,
         directionPoints: [              // fake direction api, sẽ sửa sau
-            {
-                latitude: 10.7623244,
-                longitude: 106.7056788,
-            }
+            this.props.navigation.getParam("coordinate")
         ],
         isUserCoordinateReady: false,       // kiểm tra xem đã get được local address chưa
         isMapViewReady: false,
@@ -106,12 +100,7 @@ export default class ItemDetail extends Component {
                                 provider={PROVIDER_GOOGLE}
                                 onPress={this.onPress}
                                 onLongPress={this.onLongPress}
-                                region={{
-                                    latitude: initialRegion.latitude,
-                                    longitude: initialRegion.longitude,
-                                    latitudeDelta: LATITUDE_DELTA,
-                                    longitudeDelta: LONGITUDE_DELTA,
-                                }}
+                                region={initialRegion}
                             >
                                 <Polyline
                                     coordinates={directionPoints}

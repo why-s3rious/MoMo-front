@@ -5,18 +5,19 @@ import { FontAwesome, MaterialCommunityIcons, AntDesign } from '@expo/vector-ico
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const ASPECT_RATIO = (screenWidth * 0.48) / (screenHeight * 0.48);
-const LATITUDE_DELTA = 0.0992;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+const LATITUDE_DELTA = 0.04;
+const LONGITUDE_DELTA = 0.02;
 export default class ItemDetail extends Component {
     state = {
-        storeCoordinate: {              // địa chỉ cửa hàng (sẽ get param)
-            latitude: 10.7623244,
-            longitude: 106.7056788,
+        data: this.props.navigation.getParam('data'),
+        coordinate: {
+            latitude: this.props.navigation.getParam('data').lat,
+            longitude: this.props.navigation.getParam('data').long,
         },
     }
 
-    onPressDirection = data => {
-        this.props.navigation.navigate("ItemAddress", { data: data });
+    onPressDirection = (data, coordinate) => {
+        this.props.navigation.navigate("ItemAddress", { data: data, coordinate: coordinate });
     }
     onPressContact = data => {
         alert("Gọi điện thoại cho: " + data.name);
@@ -32,8 +33,7 @@ export default class ItemDetail extends Component {
     render() {
 
         const { navigation } = this.props;
-        const { storeCoordinate } = this.state;
-        const data = navigation.getParam('data');
+        const { data, coordinate } = this.state;
         return (
             <View style={styles.container}>
                 <View style={styles.Header}>
@@ -90,20 +90,20 @@ export default class ItemDetail extends Component {
                         <View style={styles.infoCol2}>
                             <View style={styles.itemMap}>
                                 {
-                                    storeCoordinate != null ?
+                                    data != null ?
                                         <MapView style={styles.MapViewContent}
                                             provider={PROVIDER_GOOGLE}
                                             onPress={this.onPress}
                                             onLongPress={this.onLongPress}
                                             region={{
-                                                latitude: storeCoordinate.latitude,
-                                                longitude: storeCoordinate.longitude,
+                                                latitude: data.lat,
+                                                longitude: data.long,
                                                 latitudeDelta: LATITUDE_DELTA,
                                                 longitudeDelta: LONGITUDE_DELTA,
                                             }}
                                         >
                                             <Marker
-                                                coordinate={storeCoordinate}
+                                                coordinate={coordinate}
                                                 title={data.address}
                                                 description={data.name}
                                             >
@@ -118,7 +118,7 @@ export default class ItemDetail extends Component {
                         </View>
                     </View>
                     <View style={styles.buttonGroup}>
-                        <TouchableOpacity onPress={() => this.onPressDirection(data)} style={styles.buttonDirection}>
+                        <TouchableOpacity onPress={() => this.onPressDirection(data, coordinate)} style={styles.buttonDirection}>
                             <Text style={{ fontSize: 17, color: 'white' }}>Chỉ đường</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => this.onPressContact(data)} style={styles.buttonContact}>

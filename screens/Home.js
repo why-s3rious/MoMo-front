@@ -5,40 +5,6 @@ import * as Permissions from 'expo-permissions';
 import CategoryButton from '../components/CategoryButton';
 import { screenWidth, screenHeight } from '../costants/DeviceSize';
 
-const datafake = [
-  {
-    "id": 1,
-    "name": "Mass Merchant"
-  },
-  {
-    "id": 2,
-    "name": "Coffee Chains and Milk Tea"
-  },
-  {
-    "id": 3,
-    "name": "CVS"
-  },
-  {
-    "id": 4,
-    "name": "Restaurant"
-  },
-  {
-    "id": 5,
-    "name": "Fast Food"
-  },
-  {
-    "id": 6,
-    "name": "Supermarket"
-  },
-  {
-    "id": 7,
-    "name": "Shopping"
-  },
-  {
-    "id": 8,
-    "name": "Mass Ecom"
-  }
-]
 export default class Home extends Component {
   state = {
     Data: [],
@@ -115,24 +81,16 @@ export default class Home extends Component {
                 Data.map(item => {
                   return (
                     <CategoryButton
-                      onPress={() => this.onPressCategoryButton(item)}
+                      onPress={this.onPressCategoryButton}
                       Data={item}
                       key={item.id} />
                   )
                 })
                 :
-                datafake.map(item => {
-                  return (
-                    <CategoryButton
-                      onPress={() => this.onPressCategoryButton(item)}
-                      Data={item}
-                      key={item.id} />
-                  )
-                })
-              // <View>
-              //   <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold', flex: 1 }}>Server lỗi hoặc quá tải</Text>
-              //   <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold', flex: 1 }}>Vui lòng thử lại sau</Text>
-              // </View>
+                <View>
+                  <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold', flex: 1 }}>Server lỗi hoặc quá tải</Text>
+                  <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold', flex: 1 }}>Vui lòng thử lại sau</Text>
+                </View>
             }
           </ScrollView>
         </View>
@@ -172,6 +130,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   TextDanhMuc: {
+    fontFamily: 'Roboto',
     marginLeft: screenWidth * 0.1,
     fontSize: 20,
     fontWeight: '400',

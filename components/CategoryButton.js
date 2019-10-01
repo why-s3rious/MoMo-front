@@ -3,38 +3,41 @@ import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react
 import { screenWidth, screenHeight } from '../costants/DeviceSize';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const imgs = [
+const HardList = [
     {
         "id": 1,
-        "image": require('../assets/mass-merchant.jpg')
-    },
-    {
-        "id": 2,
-        "image": require('../assets/coffee-dessert.png')
-    },
-    {
-        "id": 3,
-        "image": require('../assets/shopping.jpg')
-    },
-    {
-        "id": 4,
+        "name": 'Dịch vụ F&B',
         "image": require('../assets/restaurant.jpeg')
     },
     {
-        "id": 5,
+        "id": 2,
+        "name": 'Ăn uống',
         "image": require('../assets/fast-food.jpg')
     },
     {
+        "id": 3,
+        "name": 'Cửa hàng tiện lợi',
+        "image": require('../assets/cvs.jpeg')
+    },
+    {
+        "id": 4,
+        "name": 'Coffe/Dessert',
+        "image": require('../assets/coffee-dessert.png')
+    },
+    {
+        "id": 5,
+        "name": 'Khác',
+        "image": require('../assets/mass-merchant.jpg')
+    },
+    {
         "id": 6,
+        "name": 'Siêu thị',
         "image": require('../assets/Super-market.jpg')
     },
     {
         "id": 7,
+        "name": 'Mua sắm',
         "image": require('../assets/shopping.jpg')
-    },
-    {
-        "id": 8,
-        "image": require('../assets/coffee-dessert.png')
     }
 ];
 class CategoryButton extends Component {
@@ -45,10 +48,10 @@ class CategoryButton extends Component {
             onPress
         } = this.props;
         return (
-            imgs.map(item => {
+            HardList.map(item => {
                 if (Data.id == item.id) {
                     return (
-                        < TouchableOpacity key={Data.id} onPress={onPress}
+                        < TouchableOpacity key={Data.id} onPress={() => onPress(item)}
                             style={styles.CategoryButton}
                         >
                             <ImageBackground
@@ -61,7 +64,7 @@ class CategoryButton extends Component {
                                     end={{ x: 1, y: 0 }}
                                     colors={['rgba(21, 23, 23, 0.7)', 'rgba(255, 255, 255, 0.4)']}
                                     style={styles.linearGradient}>
-                                    <Text style={{ fontSize: 20, color: 'white', fontWeight: "700" }}> {Data.name} </Text>
+                                    <Text style={{ fontSize: 20, color: 'white', fontWeight: "700" }}> {item.name} </Text>
                                 </LinearGradient>
                             </ImageBackground>
                         </TouchableOpacity >

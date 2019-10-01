@@ -15,25 +15,20 @@ export default class MainHome extends Component {
       pageNum: 1,
       whatScreen: "match",
       isNewUser: this.props.infoUser.is_new,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
+      isFocusSearch: false,  // xét search input text focus, true/false gọi css khác nhau
     };
-    // this.didFocusSubscription = props.navigation.addListener(
-    //   'willFocus',
-    //   payload => {
-    //     this.setState({
-    //       List: this.props.categoryListItem.stores,
-    //     })
-    //   }
-    // );
+    this.didFocusSubscription = props.navigation.addListener(
+      'willFocus',
+      payload => {
+        this.setState({
+          List: this.props.categoryListItem.stores,
+        })
+      }
+    );
   }
   // call api
   async componentWillMount() {
-    // this.callApiGetListItem("match", this.state.pageNum);
-    const { List } = this.state;
-    await this.props.onGetCategoryListItem(this.props.navigation.getParam('data').id);
-    this.setState({
-      isLoading: false,
-      List: List.concat(this.props.categoryListItem)
-    })
+    this.callApiGetListItem("match", this.state.pageNum);
   }
 
   callApiGetListItem = async (whatScreen, page) => {
@@ -91,20 +86,19 @@ export default class MainHome extends Component {
         onPress={this.onPressItemRecommend}
         key={item.id}
         itemData={item}
-        categoryID={this.props.navigation.getParam('data').id}
       />
     );
   }
   getMore = () => {
-    // this.setState({
-    //   isReachedFooter: true,
-    // })
-    // const { whatScreen, pageNum } = this.state;
-    // page = pageNum + 1;
-    // this.callApiGetListItem(whatScreen, page);
-    // this.setState({
-    //   pageNum: page
-    // })
+    this.setState({
+      isReachedFooter: true,
+    })
+    const { whatScreen, pageNum } = this.state;
+    page = pageNum + 1;
+    this.callApiGetListItem(whatScreen, page);
+    this.setState({
+      pageNum: page
+    })
   }
   renderFooter = () => {
     return <ActivityIndicator size="large" color='black' animating={true} />
@@ -113,7 +107,11 @@ export default class MainHome extends Component {
     const { navigation } = this.props;
     navigation.navigate('ItemDetail', { data: item });
   }
-
+  onFocusSearch = () => {
+    this.setState({
+      isFocusSearch: true,
+    })
+  }
   onEndEditingSearch = async () => { // Xử lí tìm kiếm
     const { whatScreen } = this.state;
     await this.setState({
@@ -121,7 +119,8 @@ export default class MainHome extends Component {
     })
     this.callApiGetListItem(whatScreen, 1);
     this.setState({
-      textSearch: ''
+      textSearch: '',
+      isFocusSearch: false
     })
   }
   onPressItemAuto = (item) => {
@@ -140,17 +139,20 @@ export default class MainHome extends Component {
       isNewUser,
       List,
       textSearch,
+      isFocusSearch
     } = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
           <SearchBox
             text={textSearch}
-            // list={this.props.categoryListItem.stores}
-            list={this.props.categoryListItem}
+            list={List}
             onChangeText={(text) => this.setState({ textSearch: text })}
             onPressItemAuto={this.onPressItemAuto}
             onEndEditingSearch={() => this.onEndEditingSearch(textSearch)}
+            onFocusSearch={this.onFocusSearch}
+            isFocusSearch={isFocusSearch}
+            onclearTextOnFocus={this.onclearTextOnFocus}
           />
           <View style={{}}>
             <TouchableOpacity style={styles.buttonLoc} onPress={this.navigateModal}>
@@ -161,7 +163,7 @@ export default class MainHome extends Component {
         <View style={styles.Content}>
           {
             !isNewUser ? // nếu là user mới (true) => 2 nút, User cũ (false) => 2 nút
-              //user mới dung de may cai nay` =]]]]]]
+              //user mới
               <View style={styles.TabButton}>
                 <TouchableOpacity
                   style={whatScreen == "match" ? styles.ChoseButtonNew : styles.unChoseButtonNew}
@@ -226,15 +228,6 @@ export default class MainHome extends Component {
                       ListFooterComponent={this.renderFooter()}
                     />
                     :
-                    // <FlatList style={styles.Flatlist}
-                    //   ref={(ref) => { this.flatListRef = ref; }}
-                    //   data={datafake}
-                    //   renderItem={this.renderItem}
-                    //   keyExtractor={(item, index) => index.toString()}
-                    //   onEndReached={this.getMore}
-                    //   onEndReachedThreshold={0.1}
-                    //   ListFooterComponent={this.renderFooter()}
-                    // />
                     <View>
                       <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold', flex: 1 }}>Server lỗi hoặc quá tải</Text>
                       <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold', flex: 1 }}>Vui lòng thử lại sau</Text>
@@ -340,7 +333,7 @@ const styles = StyleSheet.create({
     color: 'gray'
   },
   ListDanhMuc: {
-    flex: 0.9,
+    flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
   }

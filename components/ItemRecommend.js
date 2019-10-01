@@ -84,7 +84,7 @@ class ItemRecommend extends Component {
 const styles = StyleSheet.create({
   Swipeout: {
     width: screenWidth,
-    height: screenHeight * 0.36,
+    height: screenHeight * 0.41,
     backgroundColor: 'white',
     marginTop: 30,
   },
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: 'white',
     width: screenWidth * 0.9,
-    height: screenHeight * 0.35,
+    height: screenHeight * 0.4,
     borderRadius: 8,
     //shadow
     shadowColor: "#000",
@@ -115,21 +115,21 @@ const styles = StyleSheet.create({
   },
   NameText: {
     fontFamily: 'Roboto',
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '700',
     marginHorizontal: screenWidth * 0.01,
-    marginVertical: 2,
+    marginVertical: 3,
   },
   AddressText: {
     fontFamily: 'Roboto',
     marginHorizontal: screenWidth * 0.01,
-    marginTop: 2,
-    fontSize: 15,
+    marginTop: 3,
+    fontSize: 13,
   },
   ItemImage: {
     marginBottom: 8,
     alignSelf: 'center',
-    height: screenHeight * 0.24,
+    height: screenHeight * 0.28,
     width: screenWidth * 0.88,
     borderRadius: 8
   }
