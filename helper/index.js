@@ -54,6 +54,6 @@ export const requestAccountApi = async (headers, endpoint, method, data) => {
         headers: headers,
         data: data
     })
-        .then(response => { console.log(response.data); return response.data })
+        .then(response => { console.log("data tra ve: ", response.data); return response.data })
         .catch(er => { console.log("error: ", er.response.status); return er.response.status });
 }

@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, AsyncStorage } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+
 export default class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
             inputTextUser: '',
             inputTextPass: '',
+            text: "Dùng số điện thoại đã đăng kí \n    để đăng nhập vào O.K.E"
             // account: [],
         };
         this.didFocusSubscription = props.navigation.addListener(
@@ -63,7 +65,8 @@ export default class Login extends Component {
             "password": inputTextPass
         }
         await this.props.onLogin(data); // cai OnLogin phai tra ve cai gi do. vay ne giờ gán nó do 1 cái biến result xem nó tra ve gì rồi if
-        const islogin = this.props.successLogin // chay sau cai await tren. gio tuy vao m return true false hay return token ma lam tiep
+        const islogin = this.props.successLogin
+        console.log("islogin",islogin) // chay sau cai await tren. gio tuy vao m return true false hay return token ma lam tiep
         if (islogin === 404) {
             alert("Sai tài khoản hoặc mật khẩu");
             return false;
@@ -96,14 +99,18 @@ export default class Login extends Component {
     onPressSignUp = () => {
         this.props.navigation.navigate("Register");
     }
+    
     render() {
-        const { inputTextPass, inputTextUser } = this.state;
+        
+        const { inputTextPass, inputTextUser, text } = this.state;
         // console.log("user", inputTextUser)
         // console.log("pass", inputTextPass)
         return (
             <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-120" style={styles.container}>
                 <View style={styles.title}>
-                    <Text style={styles.txtTitle}>Welcome to OKE</Text>
+                    <Text style={styles.txtTitle1}>Đăng Nhập O.K.E</Text>
+                    <Text style={styles.txtTitle2}>Nhập số điện thoại</Text>
+                    <Text style={styles.txtTitle3}>{text}</Text>
                 </View>
                 <View style={styles.inputGroup}>
                     <View style={styles.input}>
@@ -150,14 +157,26 @@ const styles = StyleSheet.create({
     title: {
         flex: 0.3,
         justifyContent: 'center',
-        alignItems: "center"
+        alignItems: "center",
+        paddingHorizontal: 50,
+        marginTop: 130
     },
-    txtTitle: {
-        fontSize: 35,
+    txtTitle1: {
+        fontSize: 30,
         fontWeight: 'bold'
     },
+    txtTitle2: {
+        fontSize: 25,
+        fontWeight: '300',
+        marginTop: 50,
+        marginBottom: 15,
+    },
+    txtTitle3: {
+        fontSize: 16,
+        paddingHorizontal: 23
+    },
     inputGroup: {
-        flex: 0.4,
+        flex: 0.3,
         flexDirection: 'column',
         justifyContent: 'flex-end',
         alignItems: 'center',

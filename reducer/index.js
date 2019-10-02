@@ -3,11 +3,11 @@ import category from './categoryReducer';
 import location from './locationReducer'
 import loginReducer from './loginReducer';
 import infoReducer from './infoReducer';
-
-
+import registerReducer from './registerReducer'
+import logoReducer from './logoReducer'
 
 const reducer = combineReducers({
-    category, loginReducer, infoReducer, location
+    category, loginReducer, infoReducer, location, registerReducer, logoReducer
     // visibilityFilter,
 })
 

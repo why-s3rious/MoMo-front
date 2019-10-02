@@ -42,18 +42,33 @@ export const onLogin = (token) => {
         token: token
     }
 }
+export const onLoginFb = (token) => {
+    return {
+        type: "LOGIN_FB",
+        token: token
+    }
+}
+export const onConnectFb = (message) => {
+    return {
+        type: "CONNECT_FB",
+        message: message
+    }
+}
 export const onGetInfo = (info) => {
     return {
         type: 'GET_INFO',
         info: info
     }
 }
-export const onRegister = (account) => {
+export const onGetInfoFb = (userInfo) => {
+    return{
+        type: 'GET_INFO_FB',
+        userInfo: userInfo
+    }
+}
+export const onRegister = (message) => {
     return {
         type: "REGISTER",
-        id: account.id,
-        username: account.username,
-        password: account.password,
-        jwt: account.jwt
+        message: message
     }
 }

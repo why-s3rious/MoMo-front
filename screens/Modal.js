@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native';
 import RadioForm from 'react-native-simple-radio-button';
+import { AntDesign } from '@expo/vector-icons';
+
+
 const typesMoney = [
-    { label: '10.000 - 200.000', value: 0 },
-    { label: '200.000 - 1.000.000', value: 1 },
-    { label: 'Trên 1.000.000', value: 2 },
-    { label: 'Cụ thể', value: 3 }
+    { label: 'Hãy làm tôi ngạc nhiên', value: 0 },
+    { label: 'Tùy chọn', value: 1 },
 ]
 
 const typesDistance = [
-    { label: 'Mặc định (dưới 5km)', value: 0 },
-    { label: 'Cụ thể', value: 1 }
+    { label: 'Hãy làm tôi ngạc nhiên', value: 0 },
+    { label: 'Tùy chọn', value: 1 }
 ]
 
 export default class Modal extends Component {
@@ -21,8 +22,12 @@ export default class Modal extends Component {
             valueDistance: 0,
             isDiffrentDistance: false,
             isDiffrentMoney: false,
-            inputTextTo: 0,
-            inputTextFrom: 0,
+            inputTextDistanceTo: 0,
+            inputTextDistanceFrom: 0,
+            inputTextMoneyTo: 0,
+            inputTextMoneyFrom: 0,
+            showDistance: false,
+            showMoney: false
         };
     }
     onPressRadioMoney = value => {
@@ -30,7 +35,7 @@ export default class Modal extends Component {
             valueMoney: value,
             isDiffrentMoney: false,
         })
-        if (value === 3) {
+        if (value === 1) {
             this.setState({
                 isDiffrentMoney: true
             })
@@ -47,20 +52,41 @@ export default class Modal extends Component {
             })
         }
     }
-    onchangeTo = textTo => {
+    onchangeDistanceTo = textTo => {
         this.setState({
-            inputTextTo: textTo
+            inputTextDistanceTo: textTo
         })
-        console.log(this.state.inputTextTo)
     }
-    onchangeFrom = textFrom => {
+    onchangeDistanceFrom = textFrom => {
         this.setState({
-            inputTextFrom: textFrom
+            inputTextDistanceFrom: textFrom
         })
-        console.log(this.state.inputTextFrom)
+    }
+    onchangeMoneyTo = textTo => {
+        this.setState({
+            inputTextMoneyTo: textTo
+        })
+    }
+    onchangeMoneyFrom = textFrom => {
+        this.setState({
+            inputTextMoneyFrom: textFrom
+        })
+    }
+    onPressShowDistance = () => {
+        const { showDistance } = this.state;
+        this.setState({
+            showDistance: !showDistance
+        })
+    }
+    onPressShowMoney = () => {
+        const { showMoney } = this.state;
+        this.setState({
+            showMoney: !showMoney
+        })
     }
     render() {
-        const { isDiffrentMoney, isDiffrentDistance } = this.state;
+        const { isDiffrentMoney, isDiffrentDistance, showDistance, showMoney, inputTextDistanceFrom, inputTextDistanceTo, inputTextMoneyFrom, inputTextMoneyTo } = this.state;
+        console.log(inputTextDistanceFrom,inputTextDistanceTo)
         return (
             <KeyboardAvoidingView enabled behavior='height' style={styles.container}>
                 <View style={styles.goBack}>
@@ -69,81 +95,105 @@ export default class Modal extends Component {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.title}>
-                    <Text style={styles.txtTitle}>Cái này là Modal</Text>
+                    <Text style={styles.txtTitle}>Bộ lọc</Text>
                 </View>
                 <View style={styles.content}>
                     <ScrollView>
-                        <View style={styles.contentMoney}>
-                            <Text style={styles.txtContent}>Mức tiền có thể chi trả được</Text>
-                            <View style={styles.radioFrom}>
-                                <RadioForm
-                                    radio_props={typesMoney}
-                                    initial={0}
-                                    formHorizontal={false}
-                                    labelHorizontal={true}
-                                    buttonColor={'#2196f3'}
-                                    animation={true}
-                                    onPress={(value) => this.onPressRadioMoney(value)}
-                                />
-                                {isDiffrentMoney && (
-                                    <View style={styles.isDiffrent}>
-                                        <TextInput
-                                            style={styles.textInput}
-                                            autoFocus
-                                            keyboardType='number-pad'
-                                            onChangeText={this.onChangeTo}
-                                            onSubmitEditing={() => this.inputfromref.focus()}
-                                            blurOnSubmit={false}
-                                        />
-                                        <View style={styles.text}>
-                                            <Text>Đến</Text>
-                                        </View>
-                                        <TextInput
-                                            style={styles.textInput}
-                                            keyboardType='number-pad'
-                                            onChangeText={this.onchangeFrom}
-                                            ref={ref => this.inputfromref = ref}
-                                            onSubmitEditing={Keyboard.dismiss}
-                                        />
-                                    </View>
-                                )}
-                            </View>
-                        </View>
                         <View style={styles.contentDistance}>
-                            <Text style={styles.txtContent}>Khoảng cách</Text>
-                            <View style={styles.radioFrom}>
-                                <RadioForm
-                                    radio_props={typesDistance}
-                                    initial={0}
-                                    formHorizontal={false}
-                                    labelHorizontal={true}
-                                    buttonColor={'#2196f3'}
-                                    animation={true}
-                                    onPress={(value) => this.onPressRadioDistance(value)}
-                                />
-                                {isDiffrentDistance && (
-                                    <View style={styles.isDiffrent}>
-                                        <TextInput
-                                            style={styles.textInput}
-                                            autoFocus
-                                            keyboardType='number-pad'
-                                            onChangeText={this.onChangeTo}
-                                            onSubmitEditing={() => this.inputfromref.focus()}
-                                            blurOnSubmit={false}
-                                        />
-                                        <View style={styles.text}>
-                                            <Text>Đến</Text>
-                                        </View>
-                                        <TextInput
-                                            style={styles.textInput}
-                                            keyboardType='number-pad'
-                                            onChangeText={this.onchangeFrom}
-                                            ref={ref => this.inputfromref = ref}
-                                            onSubmitEditing={Keyboard.dismiss}
-                                        />
-                                    </View>
-                                )}
+                            <View style={styles.titleContent}>
+                                <Image source={require('../assets/iconmap.png')} style={{ width: 30, height: 30 }} />
+                                <Text style={styles.txtContent}>Vị trí</Text>
+                                <AntDesign name={!showDistance ? "right" : "down"} size={27} color="black" onPress={this.onPressShowDistance} />
                             </View>
+                            {showDistance && (
+                                <View style={styles.radioFrom}>
+                                    <RadioForm
+                                        radio_props={typesDistance}
+                                        initial={0}
+                                        formHorizontal={false}
+                                        labelHorizontal={true}
+                                        buttonColor={'#2196f3'}
+                                        animation={true}
+                                        onPress={(value) => this.onPressRadioDistance(value)}
+                                    />
+                                    {isDiffrentDistance && (
+                                        <View style={styles.isDiffrent}>
+                                            <View style={styles.text}>
+                                                <Text>Từ</Text>
+                                            </View>
+                                            <TextInput
+                                                style={styles.textInput}
+                                                autoFocus
+                                                keyboardType='number-pad'
+                                                onChangeText={this.onchangeDistanceFrom}
+                                                onSubmitEditing={() => this.inputfromref.focus()}
+                                                blurOnSubmit={false}
+                                            />
+                                            <View style={styles.text}>
+                                                <Text>đến</Text>
+                                            </View>
+                                            <TextInput
+                                                style={styles.textInput}
+                                                keyboardType='number-pad'
+                                                onChangeText={this.onchangeDistanceTo}
+                                                ref={ref => this.inputfromref = ref}
+                                                onSubmitEditing={Keyboard.dismiss}
+                                            />
+                                            <View style={styles.text}>
+                                                <Text>kilomet</Text>
+                                            </View>
+                                        </View>
+                                    )}
+                                </View>
+                            )}
+                        </View>
+                        <View style={styles.contentMoney}>
+                            <View style={styles.titleContent}>
+                                <Image source={require('../assets/iconmoney.png')} style={{ width: 30, height: 30 }} />
+                                <Text style={styles.txtContent}>Mức tiêu dùng</Text>
+                                <AntDesign name={!showMoney ? "right" : "down"} size={27} color="black" onPress={this.onPressShowMoney} />
+                            </View>
+                            {showMoney && (
+                                <View style={styles.radioFrom}>
+                                    <RadioForm
+                                        radio_props={typesMoney}
+                                        initial={0}
+                                        formHorizontal={false}
+                                        labelHorizontal={true}
+                                        buttonColor={'#2196f3'}
+                                        animation={true}
+                                        onPress={(value) => this.onPressRadioMoney(value)}
+                                    />
+                                    {isDiffrentMoney && (
+                                        <View style={styles.isDiffrent}>
+                                            <View style={styles.text}>
+                                                <Text>Từ</Text>
+                                            </View>
+                                            <TextInput
+                                                style={styles.textInput}
+                                                autoFocus
+                                                keyboardType='number-pad'
+                                                onChangeText={this.onchangeMoneyFrom}
+                                                onSubmitEditing={() => this.inputfromref.focus()}
+                                                blurOnSubmit={false}
+                                            />
+                                            <View style={styles.text}>
+                                                <Text>đến</Text>
+                                            </View>
+                                            <TextInput
+                                                style={styles.textInput}
+                                                keyboardType='number-pad'
+                                                onChangeText={this.onchangeMoneyTo}
+                                                ref={ref => this.inputfromref = ref}
+                                                onSubmitEditing={Keyboard.dismiss}
+                                            />
+                                            <View style={styles.text}>
+                                                <Text>VND</Text>
+                                            </View>
+                                        </View>
+                                    )}
+                                </View>
+                            )}
                         </View>
                     </ScrollView>
                 </View>
@@ -158,13 +208,13 @@ const styles = StyleSheet.create({
     },
     goBack: {
         flex: 0.1,
-        marginVertical: 30,
+        marginTop: 30,
         marginHorizontal: 15,
         justifyContent: 'flex-start'
     },
     title: {
         flex: 0.1,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: "center",
         marginVertical: 5,
     },
@@ -172,17 +222,18 @@ const styles = StyleSheet.create({
         flex: 0.8,
         marginVertical: 5,
     },
-    contentMoney: {
-        marginVertical: 5,
-        justifyContent: 'flex-start',
+    titleContent: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        flexDirection: 'column',
+        borderWidth: 1,
+        paddingHorizontal: 10
+    },
+    contentMoney: {
+        marginBottom: 5,
     },
     contentDistance: {
         marginVertical: 5,
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        flexDirection: 'column',
     },
     txtContent: {
         fontSize: 25,
@@ -193,9 +244,10 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
     },
     radioFrom: {
-        marginVertical: 5,
+        marginVertical: 10,
         width: '90%',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        paddingHorizontal: 10
     },
     isDiffrent: {
         flexDirection: 'row',
@@ -222,5 +274,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 15,
         paddingHorizontal: 10,
+        textAlign: 'center'
     },
 })

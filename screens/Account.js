@@ -1,123 +1,155 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage, ImageBackground } from 'react-native';
 
 export default class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      info: {}
-    };
-  }
-  async getInfo() {
-      const token = await AsyncStorage.getItem("@Token");
-      await this.props.onGetInfo(token);
-      this.setState({
-          info: this.props.info,
-      })
-  }
-  componentDidMount = () => {
-      this.getInfo();
-  }
-  async resetKey() {
-    try {
-      await AsyncStorage.removeItem('@Token');
-      console.log("Token remove")
-    } catch (error) {
-      console.log("Error resetting data" + error);
+    constructor(props) {
+        super(props);
+        this.state = {
+            userInfo: {}
+        };
+        // this.didFocusSubscription = props.navigation.addListener(
+        //     'willFocus',
+        //     payload => {
+        //         this.setState({
+        //             userInfo: this.props.userInfo
+        //         })
+        //     }
+        // );
     }
-  }
-  async getKey() {
-    try {
-      const value = await AsyncStorage.getItem('@Token');
-      console.log("Token: " + value)
-    } catch (error) {
-      console.log("Error getting Token" + error);
+    getInfoFB = async () => {
+        const token = await AsyncStorage.getItem("@Token");
+        let result = await this.props.onGetInfoFb(token);
+        if(result !== undefined){
+            this.setState({
+                userInfo: this.props.userInfo,
+            })
+        }
+        else   
+            console.log("Login with Username/Password")
     }
-  }
-  onPressLogoutButton = () => {
-    this.resetKey();
-    this.props.navigation.navigate("Login");
-  }
-  onPressDoneButton = () => {
-    this.props.navigation.navigate("Home");
-  }
+    async getInfo() {
+        const token = await AsyncStorage.getItem("@Token");
+        let result = await this.props.onGetInfo(token);
+        if(result !== undefined){
+            this.setState({
+                userInfo: this.props.info,
+            })
+        }
+        else   
+            console.log("Login with Facebook")
+    }
+    componentDidMount = () => {
+        this.getInfo();
+        this.getInfoFB();
+    }
+    async resetKey() {
+        try {
+            await AsyncStorage.removeItem('@Token');
+            console.log("Token remove")
+        } catch (error) {
+            console.log("Error resetting data" + error);
+        }
+    }
+    async getKey() {
+        try {
+            const value = await AsyncStorage.getItem('@Token');
+            console.log("Token: " + value)
+        } catch (error) {
+            console.log("Error getting Token" + error);
+        }
+    }
+    onPressLogoutButton = () => {
+        this.getKey();
+        this.resetKey();
+        this.getKey();
+        this.props.navigation.navigate("Login");
+    }
+    onPressDoneButton = () => {
+        this.props.navigation.navigate("Home");
+    }
 
-  render() {
-    const {info}=this.state
-    return (
-      <View style={styles.container}>
-        <View style={styles.Header}>
-          <TouchableOpacity style={{ width: 200, height: 200, borderRadius: 100 }}
-            onPress={() => {
-              this.props.navigation.navigate("UploadPicture");
-            }}
-          >
-            <Image
-              style={{ width: 200, height: 200, borderRadius: 100 }}
-              source={require('../assets/coffee-dessert.png')}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.Content}>
-          <Text style={styles.InfoText}>Số điện thoại: {info.phone} </Text>
-          <Text style={styles.InfoText}>Tên tài khoản: {info.name}</Text>
-          <Text style={styles.InfoText}>Thông tin cơ bản: Đẹp trai khoai to 15cm 30 phút</Text>
-          <View style={styles.buttonGroup}>
-            <TouchableOpacity onPress={this.onPressLogoutButton} style={styles.logoutButton}>
-              <Text style={{ fontSize: 15, fontWeight: '400', color: 'white' }}>Đăng xuất</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.onPressDoneButton} style={styles.doneButton}>
-              <Text style={{ fontSize: 15, fontWeight: '400', color: 'red' }}>Xong</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    );
-  }
+    render() {
+        const { userInfo } = this.state;
+        console.log(userInfo)
+        return (
+            <ImageBackground source={require('../assets/Onboarding.png')} style={{ width: "100%", height: "100%" }}>
+                <View style={styles.container}>
+                    <View style={styles.Header}>
+                        <TouchableOpacity style={{ width: 200, height: 200, borderRadius: 100 }}
+                            onPress={() => {
+                                this.props.navigation.navigate("UploadPicture");
+                            }}
+                        >
+                            <Image
+                                source={require('../assets/accountavt.png')}
+                                style={{ width: 200, height: 200, borderRadius: 100, borderWidth: 0.5, borderColor: 'gray' }}
+                            />
+                        </TouchableOpacity>
+                        <Text style={styles.InfoText}>{userInfo.name}</Text>
+                        <Text style={styles.InfoText}>Số điện thoại: </Text>
+                    </View>
+                    <View style={styles.Content}>
+                        <View style={styles.buttonGroup}>
+                            <TouchableOpacity onPress={this.onPressDoneButton} style={styles.doneButton}>
+                                <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'black' }}>Xong</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={this.onPressLogoutButton} style={styles.logoutButton}>
+                                <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>Đăng xuất</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </ImageBackground>
+        );
+    }
 }
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-  Header: {
-    flex: 0.5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  Content: {
-    flex: 0.5,
-    justifyContent: 'space-around',
-  },
-  InfoText: {
-    marginVertical: 10,
-  },
-  buttonGroup: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  logoutButton: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 40,
-    width: 100,
-    borderRadius: 10,
-    backgroundColor: "#3578E5",
-  },
-  doneButton: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 40,
-    width: 100,
-    borderRadius: 10,
-    backgroundColor: "white",
-  },
+    container: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+    },
+    Header: {
+        flex: 0.6,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    Content: {
+        flex: 0.4,
+        justifyContent: 'space-around',
+    },
+    InfoText: {
+        marginTop: 20,
+        fontSize: 17,
+        fontWeight: '400'
+    },
+    buttonGroup: {
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        marginVertical: 50,
+    },
+    logoutButton: {
+        borderWidth: 1,
+        borderColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 50,
+        width: 300,
+        borderRadius: 50,
+        backgroundColor: "#FF5126",
+        marginVertical: 10,
+    },
+    doneButton: {
+        borderWidth: 1,
+        borderColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 50,
+        width: 300,
+        borderRadius: 50,
+        backgroundColor: "#8AFBC5",
+    },
 });

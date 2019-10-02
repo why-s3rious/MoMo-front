@@ -1,88 +1,142 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { CheckBox } from 'react-native-elements';
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
-
-let randomJwt = (Math.random().toString(36).substring(2, 16) + Math.random().toString(36).substring(2, 16));
 export default class Term extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            check: false,
-            showAlert: false
+            showAlert: false,
+            phone: '',
+            password: '',
+            confirm: '',
+            isWrongPass: false,
+            isWrongPhone: false,
         };
     }
-    onPressDone = async (username, password) => {
-        const { check } = this.state;
-        if (!check) {
-            alert("Cần đồng ý điều khoản để tiếp tục")
-            return false
+    onPressDone = async (username) => {
+        const { phone, password } = this.state
+        const accountInfo = {
+            "phone": phone,
+            "password": password,
+            "name": username,
         }
+        await this.props.onRegister(accountInfo);
+        let result = this.props.account;
+        console.log("result: ", result)
         this.props.navigation.navigate("Login")
     }
     onPressCancel = () => {
-        // Alert.alert(
-        //     'Cancel Sign Up',
-        //     'Are you sure you want to cancel?'
-        //     [
-        //     {
-        //         text: 'Cancel',
-        //         onPress: () => console.log('Cancel Pressed'),
-        //         style: 'cancel'
-        //     },
-        //     { text: 'OK', onPress: () => this.props.navigation.navigate("Login") }
-        //     ],
-        //     { cancelable: true }
-        // );
         this.setState({
             showAlert: true
         })
     }
+    checkPass = () => {
+        const { password } = this.state
+        if (password.length < 6) {
+            this.setState({
+                isWrongPass: true
+            })
+        }
+        else {
+            this.setState({
+                isWrongPass: false
+            })
+        }
+    }
+    checkPhone = () => {
+        const { phone } = this.state
+        if (phone.length < 10 || phone.length > 11) {
+            this.setState({
+                isWrongPhone: true
+            })
+        }
+        else {
+            this.setState({
+                isWrongPhone: false
+            })
+        }
+    }
+    onchangePhone = textPhone => {
+        this.setState({
+            phone: textPhone
+        })
+    }
+    onchangePass = textPass => {
+        this.setState({
+            password: textPass
+        })
+    }
+    onchangeConfirm = textConfirm => {
+        this.setState({
+            confirm: textConfirm
+        })
+    }
     render() {
-        const { check, showAlert } = this.state;
+        const { showAlert, isWrongPass, isWrongPhone, confirm, password } = this.state;
         const { navigation } = this.props;
         const username = navigation.getParam("username");
-        const password = navigation.getParam("password");
+        console.log("user: ", username)
         return (
-            <View enabled behavior="padding" keyboardVerticalOffset="-100" style={styles.container}>
+            <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-150" style={styles.container}>
                 <View style={styles.title}>
-                    <Text style={styles.txtTitle}>Term</Text>
+                    <Image source={require('../assets/iconregister2.png')} style={{ width: 95, height: 25 }} />
+                    <Text style={styles.txtTitle}>Đăng Kí</Text>
+                    <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <Image source={require('../assets/iconsmile.png')} style={{ width: 47, height: 42 }} />
+                        <Text style={styles.txtTitle1}>Điền nốt thông tin !!!</Text>
+                    </View>
                 </View>
-                <View style={styles.termGroup}>
-                    <Text termText>Điều 1: </Text>
-                    <Text termText>Điều 2: </Text>
-                    <Text termText>Điều 3: </Text>
-                    <Text termText>Điều 4: </Text>
-                    <Text termText>Điều 5: </Text>
-                </View>
-                <View style={styles.checkBoxWrap}>
-                    <CheckBox
-                        containerStyle={styles.checkBox}
-                        title="I accept all term of OKE"
-                        checked={check}
-                        onPress={() => this.setState({ check: !this.state.check })}
+                <View style={styles.inputGroup}>
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Nhập số điện thoại"
+                        onChangeText={this.onchangePhone}
+                        onSubmitEditing={() => this.passwordRef.focus()}
+                        blurOnSubmit={false}
+                        onEndEditing={this.checkPhone}
+                        keyboardType={"number-pad"}
                     />
+                    {isWrongPhone && <Text style={{ color: "red" }}>* Số điện thoại không đúng</Text>}
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Nhập mật khẩu"
+                        onChangeText={this.onchangePass}
+                        ref={ref => this.passwordRef = ref}
+                        onSubmitEditing={() => this.confirmpasswordRef.focus()}
+                        blurOnSubmit={false}
+                        onEndEditing={this.checkPass}
+                        secureTextEntry={true}
+                    />
+                    {isWrongPass && <Text style={{ color: "red" }}>* Mật khẩu phải nhiều hơn 6 kí tự</Text>}
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Nhập lại mật khẩu"
+                        onChangeText={this.onchangeConfirm}
+                        ref={ref => this.confirmpasswordRef = ref}
+                        secureTextEntry={true}
+                    />
+                    {confirm != '' && ((confirm === password && confirm != '' && password != '') ? <Text style={{ color: 'green' }}>Mật khẩu trùng khớp</Text> : <Text style={{ color: "red" }}>* Nhập lại mật khẩu chưa trùng khớp</Text>)}
                 </View>
                 <View style={styles.buttonGroup}>
-                    <TouchableOpacity style={styles.btnDone} onPress={() => this.onPressDone(username, password)}>
-                        <Text style={styles.txtDone}>Done</Text>
+                    <TouchableOpacity style={styles.btnDone} onPress={() => this.onPressDone(username)}>
+                        <Text style={styles.txtDone}>HOÀN TẤT</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.btnCancel} onPress={this.onPressCancel}>
-                        <Text style={styles.txtCancel}>Cancel</Text>
+                        <Text style={styles.txtCancel}>HỦY</Text>
                     </TouchableOpacity>
                 </View>
                 <AwesomeAlert
                     show={showAlert}
                     showProgress={false}
-                    title="Cancel Sign up"
-                    message="Are you sure you want to cancel?"
+                    title="Hủy Đăng Kí"
+                    message="Bạn có chắc chắn muốn hủy?"
                     closeOnTouchOutside={true}
                     closeOnHardwareBackPress={false}
                     showCancelButton={true}
                     showConfirmButton={true}
-                    confirmText="Yes, cancel it"
-                    cancelText="No, thanks"
+                    confirmText="Có, hủy nó"
+                    cancelText="Không, cảm ơn"
                     confirmButtonColor="#DD6B55"
                     onCancelPressed={() => {
                         this.setState({ showAlert: false })
@@ -91,80 +145,83 @@ export default class Term extends Component {
                         this.props.navigation.navigate("Login");
                     }}
                 />
-            </View>
+            </KeyboardAvoidingView>
         );
     }
 }
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#B48DFA',
+        backgroundColor: '#FFF',
     },
     title: {
-        flex: 0.2,
+        flex: 0.3,
         justifyContent: 'center',
-        alignItems: "center"
+        alignItems: "center",
+        marginTop: 30,
     },
     txtTitle: {
         fontSize: 35,
-        fontWeight: 'bold'
+        fontWeight: '600',
+        marginVertical: 20,
     },
-    termGroup: {
+    txtTitle1: {
+        fontSize: 18,
+        fontWeight: '200',
+        marginLeft: 5,
+    },
+    inputGroup: {
         flex: 0.4,
         flexDirection: 'column',
-        justifyContent: 'flex-start',
+        justifyContent: 'flex-end',
         alignItems: 'center',
-        marginVertical: 5,
-        backgroundColor: 'white',
-        marginHorizontal: 15,
-        borderWidth: 1,
-        borderRadius: 20
     },
-    termText: {
+    textInput: {
         width: 300,
         height: 50,
+        textAlign: 'center',
         borderRadius: 50,
-        marginVertical: 10,
-        paddingHorizontal: 15,
-        backgroundColor: "#F6F8FA"
+        marginVertical: 5,
+        paddingHorizontal: 20,
+        backgroundColor: "#F6F8FA",
+        borderWidth: 1,
     },
     checkBoxWrap: {
         flex: 0.1,
         marginHorizontal: 5,
     },
-    checkBox: {
-
-    },
     buttonGroup: {
-        flex: 0.3,
+        flex: 0.2,
         alignItems: 'center',
         flexDirection: 'column',
+        marginTop: 5,
     },
     btnDone: {
-        backgroundColor: 'pink',
+        backgroundColor: '#46EAD2',
         borderRadius: 50,
         height: 50,
         width: 300,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 15,
+        marginBottom: 10,
     },
     txtDone: {
-        color: 'black',
-        fontSize: 25,
+        color: 'white',
+        fontSize: 20,
         fontWeight: '400'
     },
     btnCancel: {
         borderWidth: 1,
         borderRadius: 50,
+        borderColor: "red",
         height: 50,
         width: 300,
         alignItems: 'center',
         justifyContent: 'center'
     },
     txtCancel: {
-        color: 'black',
-        fontSize: 25,
+        color: 'red',
+        fontSize: 20,
         fontWeight: '400'
     },
 })
