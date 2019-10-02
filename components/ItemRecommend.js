@@ -10,6 +10,7 @@ class ItemRecommend extends Component {
     const {
       itemData,
       onPress,
+      onDeleteItem
     } = this.props;
     const swipeSettings = {
       autocClose: true,
@@ -35,7 +36,7 @@ class ItemRecommend extends Component {
               "Are you sure you want to dislike :( ? ",
               [
                 { text: 'No', onPress: () => console.log('Cancel Dislike!'), style: 'cancel' },
-                { text: 'Yes', onPress: () => console.log('Accept Dislike!'), style: 'cancel' }
+                { text: 'Yes', onPress: () => onDeleteItem(itemData.id) }
               ]
             );
           },
@@ -46,24 +47,7 @@ class ItemRecommend extends Component {
       rowId: this.props.itemData.id,
       sectionId: 1,
     };
-    // let icon = '';
-    // switch (screen) {
-    //   case 'distance':
-    //     {
-    //       icon = require('../assets/directions_run_24px.png');
-    //       break;
-    //     }
-    //   case 'time':
-    //     {
-    //       icon = require('../assets/book_24px.png');
-    //       break;
-    //     }
-    //   default:
-    //     {
-    //       icon = require('../assets/whatshot_24px.png');
-    //       break;
-    //     }
-    // }
+
     return (
       <Swipeout {...swipeSettings} >
         <View style={styles.RecommendItem}>
@@ -95,7 +79,7 @@ const styles = StyleSheet.create({
     height: screenHeight * 0.4,
     borderRadius: 8,
     //shadow
-    shadowColor: "#000",
+    shadowColor: "#00CFB5",
     shadowOffset: {
       width: 0,
       height: 1,
@@ -136,3 +120,21 @@ const styles = StyleSheet.create({
 });
 
 export default ItemRecommend;
+    // let icon = '';
+    // switch (screen) {
+    //   case 'distance':
+    //     {
+    //       icon = require('../assets/directions_run_24px.png');
+    //       break;
+    //     }
+    //   case 'time':
+    //     {
+    //       icon = require('../assets/book_24px.png');
+    //       break;
+    //     }
+    //   default:
+    //     {
+    //       icon = require('../assets/whatshot_24px.png');
+    //       break;
+    //     }
+    // }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
 
-import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import { getRegionForCoordinates } from '../costants/CaculateRegion';
@@ -16,16 +16,17 @@ export default class ItemDetail extends Component {
         storeCoordinate: this.props.navigation.getParam("coordinate"),
         errorMessage: '',
         isDirectionRequest: false,
-        directionPoints: [              // fake direction api, sẽ sửa sau
-            this.props.navigation.getParam("coordinate")
-        ],
+        directionPoints: this.props.navigation.getParam("directionPoints"),
         isUserCoordinateReady: false,       // kiểm tra xem đã get được local address chưa
         isMapViewReady: false,
         initialRegion: null,
+        distance: this.props.navigation.getParam("distance"),
+        time: this.props.navigation.getParam("time"),
     }
     componentWillMount = async () => {
-        const { storeCoordinate } = this.state;
-        await this._getLocationAsync();         // get local address
+        const { storeCoordinate, directionPoints } = this.state;
+        await this._getLocationAsync();
+        // get local address
         this.setState({
             isUserCoordinateReady: true,
             isMapViewReady: true,
@@ -37,12 +38,9 @@ export default class ItemDetail extends Component {
                 longitudeDelta: LONGITUDE_DELTA,
             }
         })
-        const { userCoordinate, directionPoints } = this.state;
-        let newArrayOfCoordinate = [...directionPoints, { latitude: userCoordinate.latitude, longitude: userCoordinate.longitude }];
         this.setState({
             isDirectionRequest: true,
-            directionPoints: newArrayOfCoordinate,
-            initialRegion: getRegionForCoordinates(newArrayOfCoordinate)
+            initialRegion: getRegionForCoordinates(directionPoints),
         });
     }
 
@@ -50,7 +48,7 @@ export default class ItemDetail extends Component {
         let { status } = await Permissions.askAsync(Permissions.LOCATION);
         if (status !== 'granted') {
             this.setState({
-                errorMessage: 'Permission to access location was denied',
+                errorMessage: 'Không có quyền truy cập vào vị trí của bạn :(',
             });
         }
         let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
@@ -72,16 +70,12 @@ export default class ItemDetail extends Component {
     onLongPress = e => {
         console.log(e.nativeEvent);
     }
-
-    onPressDirectButton = async () => {   /// click vào chỉ đường
-
-    }
     render() {
         const { navigation } = this.props;
         const data = navigation.getParam('data');
         const {
             storeCoordinate, errorMessage, userCoordinate, isDirectionRequest,
-            directionPoints, isUserCoordinateReady, initialRegion, isMapViewReady
+            directionPoints, initialRegion, isMapViewReady, distance, time
         } = this.state;
         if (errorMessage != '') {
             <View style={styles.container}>
@@ -91,7 +85,13 @@ export default class ItemDetail extends Component {
         return (
             <View style={styles.container}>
                 <View style={styles.Header}>
-                    <TouchableOpacity onPress={() => { this.props.navigation.goBack() }}><Text>Trở về</Text></TouchableOpacity>
+                    <View style={styles.TitileGroup}>
+                        <TouchableOpacity style={{ height: 20, }}
+                            onPress={() => { this.props.navigation.goBack() }}>
+                            <Text style={{ color: 'rgba(241, 58, 58, 0.78)', fontSize: 17 }}>← Trở về</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.headerTitle}>Đường đến cửa hàng</Text>
+                    </View>
                 </View>
                 <View style={styles.Content}>
                     {
@@ -102,9 +102,9 @@ export default class ItemDetail extends Component {
                                 onLongPress={this.onLongPress}
                                 region={initialRegion}
                             >
-                                <Polyline
+                                <MapView.Polyline
                                     coordinates={directionPoints}
-                                    strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+                                    strokeColor="#00CFB5" // fallback for when `strokeColors` is not supported by the map-provider
                                     strokeColors={[
                                         '#7F0000',
                                         '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
@@ -113,7 +113,7 @@ export default class ItemDetail extends Component {
                                         '#238C23',
                                         '#7F0000'
                                     ]}
-                                    strokeWidth={3}
+                                    strokeWidth={4}
                                 />
                                 {
                                     isDirectionRequest ?
@@ -137,19 +137,12 @@ export default class ItemDetail extends Component {
                             :
                             <Text>Waiting...</Text>
                     }
-                    <Text> Đỉa chỉ: {data.address}</Text>
-                    {
-                        isUserCoordinateReady ?
-                            <TouchableOpacity
-                                style={styles.DirectButton}
-                                onPress={this.onPressDirectButton}
-                            >
-                                <Text>Chỉ đường</Text>
-                            </TouchableOpacity>
-                            :
-                            <ActivityIndicator size='small' color="black" />
-                    }
-
+                    <Text style={styles.addressText}> Địa chỉ: {data.address}</Text>
+                    <Text style={styles.addressText}>
+                        Cách bạn <Text style={{ color: "#30E94E", fontWeight: '300' }}> {distance}</Text>
+                        &ensp;-&ensp;
+                        <Text style={{ color: "rgba(241, 58, 58, 0.78)", fontWeight: '300' }}>{time}</Text> lái xe.
+                    </Text>
                 </View>
             </View>
         );
@@ -165,27 +158,29 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     Header: {
-        flex: 0.2,
-        justifyContent: 'space-around',
+        flex: 0.12,
+    },
+    TitileGroup: {
+        marginHorizontal: width * 0.03,
+        marginTop: height * 0.05,
         flexDirection: 'row',
         alignItems: 'center',
     },
-    Content: {
-        flex: 0.8,
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        alignItems: 'center',
+    headerTitle: {
+        fontSize: 23,
+        fontWeight: '400',
+        marginLeft: width * 0.08
     },
-    DirectButton: {
-        width: 120,
-        height: 30,
-        justifyContent: 'center',
+    Content: {
+        flex: 0.88,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor: 'gray'
     },
     MapViewContent: {
         width: width * 0.95,
-        height: height * 0.4,
+        height: height * 0.6,
+        borderRadius: 20,
     },
     MarkerRadius: {
         width: 30,
@@ -205,4 +200,8 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         backgroundColor: '#007AFF'
     },
+    addressText: {
+        marginTop: 20,
+        width: width * 0.95
+    }
 });

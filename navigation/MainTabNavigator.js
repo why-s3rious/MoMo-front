@@ -55,7 +55,7 @@ const AccountStack = createStackNavigator(
 );
 
 AccountStack.navigationOptions = {
-  tabBarLabel: 'Account',
+  tabBarLabel: 'Tài khoản',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -73,7 +73,12 @@ const tabNavigator = createBottomTabNavigator({
 }, {
   tabBarOptions: {
     activeTintColor: "#00CFB5",
-    inactiveTintColor: "#ddd"
+    inactiveTintColor: "#ddd",
+    style: {
+      shadowOffset: { width: 0, height: 0 },
+      borderTopColor: 'transparent',
+      backgroundColor: '#FFF',
+    },
   }
 }
 );

@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { screenWidth, screenHeight } from '../costants/DeviceSize';
 import { FontAwesome, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import Polyline from '@mapbox/polyline';
+
 
 const ASPECT_RATIO = (screenWidth * 0.48) / (screenHeight * 0.48);
 const LATITUDE_DELTA = 0.04;
@@ -14,10 +16,48 @@ export default class ItemDetail extends Component {
             latitude: this.props.navigation.getParam('data').lat,
             longitude: this.props.navigation.getParam('data').long,
         },
+        directionPoints: [],
+        userLocation: this.props.navigation.getParam("userLocation"),
+        distance: '',
+        time: '',
     }
-
+    async getDirections(startLoc, destinationLoc) {
+        try {
+            let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${startLoc.latitude},${startLoc.longitude}&destination=${destinationLoc.latitude},${destinationLoc.longitude}&key=AIzaSyDqn5t9-pR4mBAgZeutQJS0T8V4bA46h4Q`);
+            let respJson = await resp.json();
+            console.log(`https://maps.googleapis.com/maps/api/directions/json?origin=${startLoc.latitude},${startLoc.longitude}&destination=${destinationLoc.latitude},${destinationLoc.longitude}&key=AIzaSyDqn5t9-pR4mBAgZeutQJS0T8V4bA46h4Q`)
+            let points = Polyline.decode(respJson.routes[0].overview_polyline.points);
+            let coords = points.map((point, index) => {
+                return {
+                    latitude: point[0],
+                    longitude: point[1]
+                }
+            })
+            this.setState({
+                directionPoints: coords,
+                distance: respJson.routes[0].legs[0].distance.text,
+                time: `${Math.floor(respJson.routes[0].legs[0].duration.value / 60)} phút`,
+            })
+            return coords
+        } catch (error) {
+            console.log("error", error)
+            return error
+        }
+    }
+    componentWillMount = async () => {
+        const {
+            userLocation, coordinate
+        } = this.state
+        await this.getDirections(userLocation, coordinate)
+    }
     onPressDirection = (data, coordinate) => {
-        this.props.navigation.navigate("ItemAddress", { data: data, coordinate: coordinate });
+        const { directionPoints, distance, time } = this.state
+        this.props.navigation.navigate("ItemAddress", {
+            data: data, coordinate: coordinate,
+            directionPoints: directionPoints,
+            distance: distance,
+            time: time,
+        });
     }
     onPressContact = data => {
         alert("Gọi điện thoại cho: " + data.name);
@@ -33,14 +73,14 @@ export default class ItemDetail extends Component {
     render() {
 
         const { navigation } = this.props;
-        const { data, coordinate } = this.state;
+        const { data, coordinate, distance } = this.state;
         return (
             <View style={styles.container}>
                 <View style={styles.Header}>
                     <View style={styles.TitileGroup}>
                         <TouchableOpacity style={{ height: 20, }}
                             onPress={() => { this.props.navigation.goBack() }}>
-                            <Text style={{ color: '#ED3E7A', fontSize: 17 }}>← Trở về</Text>
+                            <Text style={{ color: 'rgba(241, 58, 58, 0.78)', fontSize: 17 }}>← Trở về</Text>
                         </TouchableOpacity>
                         <Text style={styles.headerTitle}>Chi tiết cửa hàng</Text>
                     </View>
@@ -60,7 +100,7 @@ export default class ItemDetail extends Component {
                                     size={15}
                                     style={styles.iconInfo}
                                 />
-                                &ensp; {data.address}
+                                &ensp;{data.address}
                             </Text>
                             <Text style={styles.infoText}>
                                 <AntDesign
@@ -68,7 +108,7 @@ export default class ItemDetail extends Component {
                                     size={15}
                                     style={styles.iconInfo}
                                 />
-                                &ensp; <Text style={{ color: "#30E94E", fontWeight: '300' }}> xxx km </Text>(từ vị trí hiện tại)
+                                &ensp;<Text style={{ color: "#30E94E", fontWeight: '300' }}> {distance} </Text>(từ vị trí hiện tại)
                             </Text>
                             <Text style={styles.infoText}>
                                 <AntDesign
@@ -76,7 +116,7 @@ export default class ItemDetail extends Component {
                                     size={15}
                                     style={styles.iconInfo}
                                 />
-                                &ensp; 12h-23h
+                                &ensp;12h-23h
                             </Text>
                             <Text style={styles.infoText}>
                                 <FontAwesome
@@ -84,7 +124,7 @@ export default class ItemDetail extends Component {
                                     size={15}
                                     style={styles.iconInfo}
                                 />
-                                &ensp; 180.000 - 200.000 VNĐ
+                                &ensp;180.000 - 200.000 VNĐ
                             </Text>
                         </View>
                         <View style={styles.infoCol2}>
@@ -149,8 +189,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     headerTitle: {
-        fontSize: 25,
-        fontWeight: 'bold',
+        fontSize: 23,
+        fontWeight: '400',
         marginLeft: screenWidth * 0.08
     },
     Content: {
@@ -170,12 +210,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     NameItemText: {
-        fontSize: 20,
-        fontWeight: '400',
+        fontSize: 17,
+        fontWeight: '300',
         marginHorizontal: screenWidth * 0.03,
     },
     infoGroup: {
-        height: screenHeight * 0.28,
+        height: screenHeight * 0.3,
         width: screenWidth,
         flexDirection: 'row'
     },
@@ -199,8 +239,8 @@ const styles = StyleSheet.create({
     },
     itemMap: {
         width: screenWidth * 0.48,
-        height: screenHeight * 0.2,
-        marginBottom: screenHeight * 0.03,
+        height: screenHeight * 0.28,
+
         borderRadius: 8,
         backgroundColor: "#999898",
         justifyContent: 'center',

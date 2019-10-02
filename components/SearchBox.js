@@ -5,23 +5,6 @@ import { screenWidth, screenHeight } from '../costants/DeviceSize';
 
 
 class SearchBox extends Component {
-
-  findStore(query) {
-    if (query === '') {
-      return [];
-    }
-    if (this.props.list != null) {
-      const newData = this.props.list.filter(function (item) {
-        //applying filter for the inserted text in search bar
-        const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
-        const textData = query.toUpperCase();
-        return itemData.indexOf(textData) > -1;
-      });
-      return newData;
-    }
-    return [];
-  }
-
   render() {
     const {
       text,
@@ -29,9 +12,9 @@ class SearchBox extends Component {
       onPressItemAuto,
       onEndEditingSearch,
       onFocusSearch,
-      isFocusSearch
+      isFocusSearch,
+      list
     } = this.props;
-    const list = this.findStore(text);
     return (
       <View style={styles.searchGroup}>
         <Autocomplete

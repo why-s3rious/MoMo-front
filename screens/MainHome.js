@@ -8,10 +8,16 @@ import { screenWidth, screenHeight } from '../costants/DeviceSize';
 export default class MainHome extends Component {
   constructor(props) {
     super(props);
+    let cateData = this.props.navigation.getParam("data");
     this.state = {
       isLoading: true, // đợi call api 
       textSearch: '',
       List: [],
+      suggestList: [],
+      cate: {
+        id: cateData.id,
+        name: cateData.name
+      },
       pageNum: 1,
       whatScreen: "match",
       isNewUser: this.props.infoUser.is_new,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
@@ -37,14 +43,14 @@ export default class MainHome extends Component {
         isLoading: true,
       })
     }
-    let data = this.props.navigation.getParam('data');
+    const { cate } = this.state;
     let location = this.props.location;
     let locationUser = null;
     if (location != null) {
       locationUser = `${location.latitude},${location.longitude}`
     }
     const { textSearch, List } = this.state;
-    await this.props.onGetCategoryListItem(textSearch, whatScreen, page, data.id, locationUser);
+    await this.props.onGetCategoryListItem(textSearch, whatScreen, page, cate.id, locationUser);
     this.setState({
       isLoading: false,
       List: List.concat(this.props.categoryListItem.stores)
@@ -86,6 +92,7 @@ export default class MainHome extends Component {
         onPress={this.onPressItemRecommend}
         key={item.id}
         itemData={item}
+        onDeleteItem={this.onDeleteItem}
       />
     );
   }
@@ -105,11 +112,15 @@ export default class MainHome extends Component {
   }
   onPressItemRecommend = (item) => {
     const { navigation } = this.props;
-    navigation.navigate('ItemDetail', { data: item });
+    navigation.navigate('ItemDetail', { data: item, userLocation: this.props.location });
   }
-  onFocusSearch = () => {
+  onFocusSearch = async () => {
     this.setState({
       isFocusSearch: true,
+    })
+    await this.props.onGetSuggest(this.state.textSearch);
+    this.setState({
+      suggestList: this.props.suggestList
     })
   }
   onEndEditingSearch = async () => { // Xử lí tìm kiếm
@@ -120,34 +131,56 @@ export default class MainHome extends Component {
     this.callApiGetListItem(whatScreen, 1);
     this.setState({
       textSearch: '',
+      suggestList: [],
       isFocusSearch: false
     })
   }
+  onChangeText = async (text) => {
+    this.setState({
+      textSearch: text
+    });
+    await this.props.onGetSuggest(text);
+    this.setState({
+      suggestList: this.props.suggestList
+    });
+  }
   onPressItemAuto = (item) => {
     Keyboard.dismiss();
+    const { cate } = this.state;
     this.setState({
-      textSearch: item.name
+      cate: { ...cate, id: item.category_id, name: item.name },
+      textSearch: item.name,
     })
-    // this.onEndEditingSearch(item.name);
   }
+  onDeleteItem = (id) => {
+    const { List } = this.state;
+    const foundIndex = List.findIndex(item => item.id === id);
+    List.splice(foundIndex, 1);
+    this.setState({
+      List: List
+    })
+  }
+
+
   render() {
-    const { navigation } = this.props;
-    const Category = navigation.getParam('data');
     const {
       isLoading,
       whatScreen,
       isNewUser,
       List,
       textSearch,
-      isFocusSearch
+      isFocusSearch,
+      suggestList,
+      cate
     } = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
           <SearchBox
             text={textSearch}
-            list={List}
-            onChangeText={(text) => this.setState({ textSearch: text })}
+            list={suggestList}
+            // onChangeText={(text) => this.setState({ textSearch: text })}
+            onChangeText={(text) => this.onChangeText(text)}
             onPressItemAuto={this.onPressItemAuto}
             onEndEditingSearch={() => this.onEndEditingSearch(textSearch)}
             onFocusSearch={this.onFocusSearch}
@@ -202,9 +235,9 @@ export default class MainHome extends Component {
               </View>
           }
           <View style={styles.contentHeader}>
-            <TouchableOpacity style={{ height: 20, }} onPress={() => { this.props.navigation.goBack() }}><Text style={{ color: '#ED3E7A', fontSize: 17 }}>← Trở về</Text></TouchableOpacity>
+            <TouchableOpacity style={{ height: 20, }} onPress={() => { this.props.navigation.goBack() }}><Text style={{ color: 'rgba(241, 58, 58, 0.78)', fontSize: 17 }}>← Trở về</Text></TouchableOpacity>
             <View style={styles.viewTextDanhMuc}>
-              <Text style={styles.TextDanhMuc}>{Category.name}</Text>
+              <Text style={styles.TextDanhMuc}>{cate.name}</Text>
             </View>
           </View>
           {
@@ -292,7 +325,7 @@ const styles = StyleSheet.create({
   },
   //button for new user
   ChoseButtonNew: {
-    height: 40,
+    height: 55,
     width: screenWidth * 0.5,
     borderBottomColor: '#00CFB5',
     borderBottomWidth: 2,
@@ -300,7 +333,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   unChoseButtonNew: {
-    height: 40,
+    height: 55,
     width: screenWidth * 0.5,
     borderBottomColor: 'rgba(51, 51, 51, 0.4)',
     borderBottomWidth: 2,
@@ -309,7 +342,7 @@ const styles = StyleSheet.create({
   },
   //button for old user
   ChoseButton: {
-    height: 40,
+    height: 55,
     width: screenWidth * 0.333333,
     borderBottomColor: '#00CFB5',
     borderBottomWidth: 2,
@@ -317,7 +350,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   unChoseButton: {
-    height: 40,
+    height: 55,
     width: screenWidth * 0.33333333,
     borderBottomColor: 'rgba(51, 51, 51, 0.4)',
     borderBottomWidth: 2,
@@ -325,7 +358,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   ChoseTabButtonText: {
-    fontWeight: 'bold',
+    fontWeight: '600',
     fontSize: 20,
   },
   UnChoseTabButtonText: {

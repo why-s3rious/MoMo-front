@@ -69,7 +69,7 @@ export default class Home extends Component {
       <View style={styles.container}>
         <View style={styles.Header}>
           <Image
-            style={{ width: 50, height: 50, marginLeft: screenWidth * 0.1 }}
+            style={{ width: 50, height: 50, marginLeft: screenWidth * 0.05, marginBottom:5, }}
             source={require('../assets/momo-mini-logo.png')}
           />
         </View>
@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
   Header: {
     flex: 0.12,
     flexDirection: 'row',
+    justifyContent: 'flex-start',
     alignItems: 'flex-end',
     borderBottomWidth: 1,
     borderColor: "rgba(51, 51, 51, 0.1)",

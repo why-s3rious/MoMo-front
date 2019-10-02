@@ -9,7 +9,8 @@ const mapStateToProps = function (state) {
     return {
         categoryListItem: state.category,
         location: state.location,
-        infoUser: state.infoReducer
+        infoUser: state.infoReducer,
+        suggestList: state.suggestList
     }
 }
 
@@ -29,6 +30,10 @@ const mapDispatchToProps = function (dispatch) {
             categoryListItem.stores = newData;
             dispatch(action.onGetCategoryListItem(categoryListItem));
         },
+        onGetSuggest: async (searchText) => {
+            const data = await apiStore.getSuggestListApi(searchText);
+            dispatch(action.onGetSuggest(data))
+        }
     }
 }
 
