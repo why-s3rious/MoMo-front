@@ -9,19 +9,17 @@ export default class Home extends Component {
     state = {
         Data: [],
         isLoading: true,
-        userInfo: this.props.userInfo
     }
     componentWillMount = async () => {
         //ask for list category
         await this.props.onGetListCategory();
-        // if (this.props.listCategory === 401) {
-        //     alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
-        //     await AsyncStorage.removeItem('@Token');
-        //     this.props.navigation.navigate("Login");
-        //     return;
-        // }
+        if (this.props.listCategory === 401) {
+            alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
+            await AsyncStorage.removeItem('@Token');
+            this.props.navigation.navigate("Login");
+            return;
+        }
         const token = await AsyncStorage.getItem('@Token');
-        await this.props.onGetInfo(token);
 
         this.setState({
             Data: this.props.listCategory,
@@ -52,7 +50,6 @@ export default class Home extends Component {
         this.props.navigation.navigate("MainHome", { data: item });
     };
     render() {
-        console.log(this.state.userInfo)
         const {
             Data,
             isLoading

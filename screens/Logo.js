@@ -6,7 +6,6 @@ export default class Logo extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            load: false,
         };
     }
     onPressSignIn = () => {
@@ -46,20 +45,18 @@ export default class Logo extends Component {
                 const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
                 const userInfo = await response.json();
                 const fb_id = { "fb_id": userInfo.id };
-                console.log("fb_id: ", fb_id);
                 await this.props.onLoginFb(fb_id);
-                const islogin = this.props.successLogin
-                console.log("islogin",islogin)
-                // console.log("islogin", islogin)
-                // if (islogin !== 200) {
-                //     alert("Đăng nhập Facebook không thành công");
-                //     return false;
-                // }
-                // else {
-                //     this.saveKey(islogin.token);
-                //     this.getKey();
-                //     this.props.navigation.navigate("Main");
-                // }
+                const getToken = this.props.successLogin;
+                if (getToken.hasOwnProperty('token')) {
+                    this.saveKey(getToken.token);
+                    this.getKey();
+                    this.props.navigation.navigate("Main");
+                }
+                else {
+                    alert("Nhập thông tin còn lại để hoàn thành tài khoản");
+                    this.props.navigation.navigate("Term", { username: userInfo.name, fb_id: userInfo.id });
+                    return false;
+                }
             } else {
                 alert("Đăng nhập với Facebook không thành công");
                 return false;
@@ -69,32 +66,26 @@ export default class Logo extends Component {
         }
     }
     render() {
-        if (this.state.load) {
-            <View>
-                <ActivityIndicator size="large" />
-            </View>
-        }
-        else
-            return (
-                <ImageBackground source={require('../assets/backgroundlogo.png')} style={{ width: "100%", height: "100%" }}>
-                    <View style={styles.container}>
-                        <View style={styles.logo}>
-                            <Image source={require('../assets/okescreenlogo.png')} style={{ width: 244, height: 244, borderRadius: 244 }} />
-                        </View>
-                        <View style={styles.buttonGroup}>
-                            <TouchableOpacity style={styles.buttonSignIn} onPress={this.onPressSignIn}>
-                                <Text style={styles.textSignIn}>Đăng nhập</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.buttonSignInFb} onPress={this.onPressSignInFb}>
-                                <Text style={styles.textSignIn}>Đăng nhập bằng Facebook</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.buttonSignUp} onPress={this.onPressSignUp}>
-                                <Text style={styles.textSignUp}>Tạo tài khoản O.K.E</Text>
-                            </TouchableOpacity>
-                        </View>
+        return (
+            <ImageBackground source={require('../assets/backgroundlogo.png')} style={{ width: "100%", height: "100%" }}>
+                <View style={styles.container}>
+                    <View style={styles.logo}>
+                        <Image source={require('../assets/okescreenlogo.png')} style={{ width: 244, height: 244, borderRadius: 244 }} />
                     </View>
-                </ImageBackground>
-            );
+                    <View style={styles.buttonGroup}>
+                        <TouchableOpacity style={styles.buttonSignIn} onPress={this.onPressSignIn}>
+                            <Text style={styles.textSignIn}>Đăng nhập</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonSignInFb} onPress={this.onPressSignInFb}>
+                            <Text style={styles.textSignIn}>Đăng nhập bằng Facebook</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonSignUp} onPress={this.onPressSignUp}>
+                            <Text style={styles.textSignUp}>Tạo tài khoản O.K.E</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </ImageBackground>
+        );
     }
 }
 const styles = StyleSheet.create({

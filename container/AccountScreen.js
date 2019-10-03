@@ -4,7 +4,7 @@ import * as action from '../action/index';
 import { accountStore } from '../apis/index';
 
 const mapStateToProps = state => {
-    return { userInfo: state.infoReducer, info: state.infoReducer }
+    return { userInfo: state.infoReducer }
 }
 
 const mapDispatchToProps = dispatch => {

@@ -14,17 +14,32 @@ export default class Term extends Component {
             isWrongPhone: false,
         };
     }
-    onPressDone = async (username) => {
-        const { phone, password } = this.state
-        const accountInfo = {
-            "phone": phone,
-            "password": password,
-            "name": username,
+    onPressDone = async (username, fb_id) => {
+        try {
+            const { phone, password } = this.state
+            const accountInfo = {
+                "phone": phone,
+                "password": password,
+                "name": username,
+                "fb_id": fb_id
+            }
+            await this.props.onRegister(accountInfo);
+            let result = this.props.account;
+            console.log("result: ", result)
+            if (result.message === "success") {
+                alert("Đăng kí thành công hãy đăng nhập để tiếp tục")
+                this.props.navigation.navigate("Login")
+            }
+            else {
+                if (result === 400) {
+                    alert("Số điện thoại này đã được đăng kí")
+                    return false
+                }
+            }
+
+        } catch (error) {
+            alert(`Register error: ${error}`);
         }
-        await this.props.onRegister(accountInfo);
-        let result = this.props.account;
-        console.log("result: ", result)
-        this.props.navigation.navigate("Login")
     }
     onPressCancel = () => {
         this.setState({
@@ -76,7 +91,8 @@ export default class Term extends Component {
         const { showAlert, isWrongPass, isWrongPhone, confirm, password } = this.state;
         const { navigation } = this.props;
         const username = navigation.getParam("username");
-        console.log("user: ", username)
+        const fb_id = navigation.getParam("fb_id");
+        console.log(fb_id)
         return (
             <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-150" style={styles.container}>
                 <View style={styles.title}>
@@ -119,7 +135,7 @@ export default class Term extends Component {
                     {confirm != '' && ((confirm === password && confirm != '' && password != '') ? <Text style={{ color: 'green' }}>Mật khẩu trùng khớp</Text> : <Text style={{ color: "red" }}>* Nhập lại mật khẩu chưa trùng khớp</Text>)}
                 </View>
                 <View style={styles.buttonGroup}>
-                    <TouchableOpacity style={styles.btnDone} onPress={() => this.onPressDone(username)}>
+                    <TouchableOpacity style={styles.btnDone} onPress={() => this.onPressDone(username, fb_id)}>
                         <Text style={styles.txtDone}>HOÀN TẤT</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.btnCancel} onPress={this.onPressCancel}>

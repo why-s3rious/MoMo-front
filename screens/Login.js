@@ -11,27 +11,22 @@ export default class Login extends Component {
             text: "Dùng số điện thoại đã đăng kí \n    để đăng nhập vào O.K.E"
             // account: [],
         };
-        this.didFocusSubscription = props.navigation.addListener(
-            'willFocus',
-            payload => {
-                this.setState({
-                    inputTextPass: '',
-                    inputTextUser: ''
-                })
-            }
-        );
+        // this.didFocusSubscription = props.navigation.addListener(
+        //     'willFocus',
+        //     payload => {
+        //         this.setState({
+        //             inputTextPass: '',
+        //             inputTextUser: ''
+        //         })
+        //     }
+        // );
     }
-    // async getAllAccount() {
-    //     await this.props.onGetAllAccount();
-    //     this.setState({
-    //         account: this.props.account,
-    //     })
-    //     console.log("load login", this.state.account)
-    // }
-    // componentDidMount = () => {
-
-    // }
-
+    componentDidMount = () => {
+        this.setState ({
+            inputTextUser: '',
+            inputTextPass: ''
+        })
+    }
     onchangeUser = textUser => {
         this.setState({
             inputTextUser: textUser
@@ -59,49 +54,35 @@ export default class Login extends Component {
         }
     }
     onPressLogin = async () => {
-        const { inputTextUser, inputTextPass } = this.state;
-        let data = {
-            "phone": inputTextUser,
-            "password": inputTextPass
-        }
-        await this.props.onLogin(data); // cai OnLogin phai tra ve cai gi do. vay ne giờ gán nó do 1 cái biến result xem nó tra ve gì rồi if
-        const islogin = this.props.successLogin
-        console.log("islogin",islogin) // chay sau cai await tren. gio tuy vao m return true false hay return token ma lam tiep
-        if (islogin === 404) {
+        try {
+            const { inputTextUser, inputTextPass } = this.state;
+            let data = {
+                "phone": inputTextUser,
+                "password": inputTextPass
+            }
+            await this.props.onLogin(data);
+            const getToken = this.props.successLogin
+            if ('token' in getToken) {
+                this.saveKey(getToken.token);
+                this.getKey();
+                this.props.navigation.navigate("Main");
+            }
+            else {
+                alert("Sai tài khoản hoặc mật khẩu");
+                return false;
+            }
+        } catch (error) {
             alert("Sai tài khoản hoặc mật khẩu");
+            console.log(`Login error: ${error}`);
             return false;
         }
-        else {
-            this.saveKey(islogin.token);
-            this.getKey();
-            this.props.navigation.navigate("Main");
-        }
-        // return token di
-        //if(islogin){ luu token asyncsto, chuyen qua trang sau.} else {báo sai tai khoan hoac mat khau. cho lam lai}
-
-        // const resultLogin = account.find(({ username }) => username === inputTextUser);
-        // if (resultLogin === undefined) {
-        //     alert("Số điện thoại này chưa đăng kí");
-        //     return false
-        // }
-        // else {
-        //     if (resultLogin.password === inputTextPass) {
-        //         this.saveKey(resultLogin.jwt);
-        //         this.getKey();
-        //         this.props.navigation.navigate("Main")
-        //     }
-        //     else {
-        //         alert("Mật khẩu không chính xác, vui lòng kiểm tra lại")
-        //         return false;
-        //     }
-        // }
     }
     onPressSignUp = () => {
         this.props.navigation.navigate("Register");
     }
-    
+
     render() {
-        
+
         const { inputTextPass, inputTextUser, text } = this.state;
         // console.log("user", inputTextUser)
         // console.log("pass", inputTextPass)

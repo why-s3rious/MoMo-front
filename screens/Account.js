@@ -7,38 +7,50 @@ export default class Home extends Component {
         this.state = {
             userInfo: {}
         };
-        // this.didFocusSubscription = props.navigation.addListener(
-        //     'willFocus',
-        //     payload => {
-        //         this.setState({
-        //             userInfo: this.props.userInfo
-        //         })
-        //     }
-        // );
+        this.didFocusSubscription = props.navigation.addListener(
+            'willFocus',
+            payload => {
+                this.setState({
+                    userInfo: this.props.userInfo
+                })
+            }
+        );
     }
     getInfoFB = async () => {
-        const token = await AsyncStorage.getItem("@Token");
-        let result = await this.props.onGetInfoFb(token);
-        if(result !== undefined){
-            this.setState({
-                userInfo: this.props.userInfo,
-            })
+        try {
+            const token = await AsyncStorage.getItem("@Token");
+            await this.props.onGetInfoFb(token);
+            const result = this.props.userInfo
+            console.log("1",result)
+            if (result.error.code !== 190) {
+                this.setState({
+                    userInfo: this.props.userInfo,
+                })
+            }
+            else
+                console.log("Login with Username/Password")
+        } catch (error) {
+            alert(`Error Info: ${error}`);
         }
-        else   
-            console.log("Login with Username/Password")
     }
     async getInfo() {
-        const token = await AsyncStorage.getItem("@Token");
-        let result = await this.props.onGetInfo(token);
-        if(result !== undefined){
-            this.setState({
-                userInfo: this.props.info,
-            })
+        try {
+            const token = await AsyncStorage.getItem("@Token");
+            await this.props.onGetInfo(token);
+            const result = this.props.userInfo
+            console.log("1",result)
+            if (result !== 401) {
+                this.setState({
+                    userInfo: this.props.userInfo,
+                })
+            }
+            else
+                console.log("Login with Facebook")
+        } catch (error) {
+            alert(`Error Info: ${error}`);
         }
-        else   
-            console.log("Login with Facebook")
     }
-    componentDidMount = () => {
+    componentWillMount = () => {
         this.getInfo();
         this.getInfoFB();
     }
@@ -70,7 +82,7 @@ export default class Home extends Component {
 
     render() {
         const { userInfo } = this.state;
-        console.log(userInfo)
+        console.log("hello", userInfo, userInfo.name)
         return (
             <ImageBackground source={require('../assets/Onboarding.png')} style={{ width: "100%", height: "100%" }}>
                 <View style={styles.container}>
@@ -86,7 +98,7 @@ export default class Home extends Component {
                             />
                         </TouchableOpacity>
                         <Text style={styles.InfoText}>{userInfo.name}</Text>
-                        <Text style={styles.InfoText}>Số điện thoại: </Text>
+                        <Text style={styles.InfoText}>Số điện thoại: {userInfo.phone}</Text>
                     </View>
                     <View style={styles.Content}>
                         <View style={styles.buttonGroup}>
