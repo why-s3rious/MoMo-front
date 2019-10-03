@@ -9,8 +9,7 @@ import logoReducer from './logoReducer'
 
 
 const reducer = combineReducers({
-    category, loginReducer, infoReducer, location, suggestList
-    category, loginReducer, infoReducer, location, registerReducer, logoReducer
+    category, loginReducer, infoReducer, location, registerReducer, logoReducer,suggestList
     // visibilityFilter,
 })
 
