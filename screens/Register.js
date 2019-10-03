@@ -72,13 +72,13 @@ export default class Register extends Component {
                     {isWrongName && <Text style={{ color: 'red' }}>* Chưa nhập họ tên</Text>}
                 </View>
                 <View style={styles.buttonGroup}>
-                    <TouchableOpacity style={styles.btnNext} onPress={this.onPressNext}>
-                        <Image source={require('../assets/like.png')} style={{width: 35, height: 30, marginRight: 5,}} />
-                        <Text style={styles.txtNext}>TIẾP TỤC</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity style={styles.btnCancel} onPress={this.onPressCancel}>
-                        <Image source={require('../assets/sad.png')} style={{width: 35, height: 30, marginRight: 10,}} />
+                        <Image source={require('../assets/sad.png')} style={{ width: 35, height: 30, marginRight: 10, }} />
                         <Text style={styles.txtCancel}>HỦY</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.btnNext} onPress={this.onPressNext}>
+                        <Image source={require('../assets/like.png')} style={{ width: 35, height: 30, marginRight: 5, }} />
+                        <Text style={styles.txtNext}>TIẾP TỤC</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
         width: 130,
         alignItems: 'center',
         justifyContent: 'center',
-        flexDirection: 'row', 
+        flexDirection: 'row',
     },
     txtNext: {
         color: 'white',
