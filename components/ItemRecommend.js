@@ -33,7 +33,7 @@ class ItemRecommend extends Component {
           onPress: () => {
             Alert.alert(
               'Hey honey..',
-              "Are you sure you want to dislike :( ? ",
+              "Are you sure you want to do that :( ? ",
               [
                 { text: 'No', onPress: () => console.log('Cancel Dislike!'), style: 'cancel' },
                 { text: 'Yes', onPress: () => onDeleteItem(itemData.id) }
@@ -41,7 +41,7 @@ class ItemRecommend extends Component {
             );
           },
           backgroundColor: 'rgba(241, 58, 58, 0.78)',
-          text: "Dislike!", type: 'delete'
+          text: "Not interested", type: 'delete'
         }
       ],
       rowId: this.props.itemData.id,

@@ -30,12 +30,12 @@ export const requestListCategoryApi = async (endpoint, method) => {
             return er.response.status;
         });
 }
-export const requestStoreApi = async (endpoint, method, searchText, sort, page, categoryId, location) => {
+export const requestStoreApi = async (endpoint, method, searchText, sort, page, categoryId, location, zone = '', area = '') => {
     const token = await getTokenFromAsyncStorage();
-    console.log(`${hostAPI}/${localHost}/${endpoint}?q=${searchText}&sort=+-${sort}&p=${page}&category=${categoryId}&location=${location}`)
+    console.log(`${hostAPI}/${localHost}/${endpoint}?q=${searchText}&sort=${sort}&p=${page}&category=${categoryId}&location=${location}&zone=${zone}&area=${area}`)
     return axios({
         method: method,
-        url: `${hostAPI}/${localHost}/${endpoint}?q=${searchText}&sort=+-${sort}&p=${page}&category=${categoryId}&location=${location}`,
+        url: `${hostAPI}/${localHost}/${endpoint}?q=${searchText}&sort=${sort}&p=${page}&category=${categoryId}&location=${location}&zone=${zone}&area=${area}`,
         headers: { 'Authorization': `bearer ${token}` }
     })
         .then(response => {
@@ -73,4 +73,21 @@ export const requestAccountApi = async (headers, endpoint, method, data) => {
     })
         .then(response => { console.log("data tra ve: ", response.data); return response.data })
         .catch(er => { console.log("error: ", er.response.status); return er.response.status });
+}
+
+export const requestNotInterested = async (endpoint, method, id) => {
+    const token = await getTokenFromAsyncStorage();
+    console.log(token, method, id);
+    return axios({
+        method: method,
+        url: `${hostAPI}/${localHost}/${endpoint}/${id}`,
+        headers: { 'Authorization': `bearer ${token}` }
+    })
+        .then(response => {
+            return response.data;
+        })
+        .catch(er => {
+            console.log(er.response.status)
+            return er.response.status;
+        });
 }

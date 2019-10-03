@@ -7,6 +7,14 @@ export const onGetSuggest = (suggestList) => {
     }
 }
 
+export const onPostNotInterested = (status) => {
+    console.log("post not interested status:", status)
+    return {
+        type: "POST_NOT_INTERESTED",
+        status: status
+    }
+}
+
 export const onGetCategoryListItem = (categoryListItem) => {
     return {
         type: "GET_CATEGORY_LIST_ITEM",

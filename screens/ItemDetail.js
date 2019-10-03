@@ -6,6 +6,8 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Polyline from '@mapbox/polyline';
 
 
+
+
 const ASPECT_RATIO = (screenWidth * 0.48) / (screenHeight * 0.48);
 const LATITUDE_DELTA = 0.04;
 const LONGITUDE_DELTA = 0.02;
@@ -71,7 +73,7 @@ export default class ItemDetail extends Component {
     }
 
     render() {
-
+        
         const { navigation } = this.props;
         const { data, coordinate, distance } = this.state;
         return (
@@ -116,7 +118,7 @@ export default class ItemDetail extends Component {
                                     size={15}
                                     style={styles.iconInfo}
                                 />
-                                &ensp;12h-23h
+                                &ensp;{data.time}
                             </Text>
                             <Text style={styles.infoText}>
                                 <FontAwesome
@@ -124,7 +126,7 @@ export default class ItemDetail extends Component {
                                     size={15}
                                     style={styles.iconInfo}
                                 />
-                                &ensp;180.000 - 200.000 VNĐ
+                                &ensp;{data.price} VNĐ
                             </Text>
                         </View>
                         <View style={styles.infoCol2}>
