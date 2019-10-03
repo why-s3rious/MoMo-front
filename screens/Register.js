@@ -37,7 +37,7 @@ export default class Register extends Component {
     }
     checkName = () => {
         const { username } = this.state
-        if ( username == "") {
+        if (username == "") {
             this.setState({
                 isWrongName: true
             })
@@ -53,10 +53,12 @@ export default class Register extends Component {
         return (
             <KeyboardAvoidingView enabled behavior="height" keyboardVerticalOffset="-300" style={styles.container}>
                 <View style={styles.title}>
-                    <Image source={require('../assets/iconregister1.png')} style={{width: 95, height: 25}} />
+                    <View style={{ paddingVertical: 5, width: "100%", alignItems: 'center' }}>
+                        <Image source={require('../assets/iconregister1.png')} resizeMode="contain" />
+                    </View>
                     <Text style={styles.txtTitle}>Đăng Kí</Text>
-                    <View style={{marginTop: 10, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
-                        <Image source={require('../assets/iconsmile.png')} style={{width: 47, height: 42,}} />
+                    <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <Image source={require('../assets/iconsmile.png')} style={{ width: 47, height: 42, }} />
                         <Text style={styles.txtTitle1}>Nhập tên đi nè !!!</Text>
                     </View>
                 </View>
@@ -67,14 +69,16 @@ export default class Register extends Component {
                         onChangeText={this.onChangeText}
                         onEndEditing={this.checkName}
                     />
-                    {isWrongName && <Text style={{color: 'red'}}>* Chưa nhập họ tên</Text>}
+                    {isWrongName && <Text style={{ color: 'red' }}>* Chưa nhập họ tên</Text>}
                 </View>
                 <View style={styles.buttonGroup}>
-                    <TouchableOpacity style={styles.btnNext} onPress={this.onPressNext}>
-                        <Text style={styles.txtNext}>TIẾP TỤC</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity style={styles.btnCancel} onPress={this.onPressCancel}>
+                        <Image source={require('../assets/sad.png')} style={{ width: 35, height: 30, marginRight: 10, }} />
                         <Text style={styles.txtCancel}>HỦY</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.btnNext} onPress={this.onPressNext}>
+                        <Image source={require('../assets/like.png')} style={{ width: 35, height: 30, marginRight: 5, }} />
+                        <Text style={styles.txtNext}>TIẾP TỤC</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
@@ -84,18 +88,19 @@ export default class Register extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFF'
+        backgroundColor: '#FFF',
+        marginTop: 30,
     },
     title: {
         flex: 0.3,
         justifyContent: 'center',
         alignItems: "center",
-        marginTop: 30,
+        marginTop: 25,
     },
     txtTitle: {
         fontSize: 35,
         fontWeight: '600',
-        marginVertical: 20,
+        marginVertical: 15,
     },
     txtTitle1: {
         fontSize: 18,
@@ -109,7 +114,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     textInput: {
-        width: 300,
+        width: 310,
         height: 50,
         textAlign: 'center',
         borderRadius: 50,
@@ -120,36 +125,38 @@ const styles = StyleSheet.create({
     },
     buttonGroup: {
         flex: 0.5,
-        alignItems: 'center',
-        flexDirection: 'column',
-        marginTop: 5,
+        flexDirection: 'row',
+        marginTop: 30,
+        justifyContent: 'space-around',
+        paddingHorizontal: 5
     },
     btnNext: {
         backgroundColor: '#46EAD2',
         borderRadius: 50,
         height: 50,
-        width: 300,
+        width: 130,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 15,
+        flexDirection: 'row',
     },
     txtNext: {
         color: 'white',
-        fontSize: 20,
-        fontWeight: '400'
+        fontSize: 17,
+        fontWeight: '500'
     },
     btnCancel: {
-        borderWidth: 1,
+        borderWidth: 2,
         borderRadius: 50,
         borderColor: "red",
         height: 50,
-        width: 300,
+        width: 130,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        flexDirection: 'row'
     },
     txtCancel: {
         color: 'red',
-        fontSize: 20,
-        fontWeight: '400'
+        fontSize: 17,
+        fontWeight: '500'
     },
 })
