@@ -235,7 +235,7 @@ export default class MainHome extends Component {
               </View>
           }
           <View style={styles.contentHeader}>
-            <TouchableOpacity style={{ height: 20, }} onPress={() => { this.props.navigation.goBack() }}><Text style={{ color: 'rgba(241, 58, 58, 0.78)', fontSize: 17 }}>← Trở về</Text></TouchableOpacity>
+            <TouchableOpacity style={{ height: 20, }} onPress={() => { this.props.navigation.goBack() }}><Text style={{ color: 'rgba(241, 58, 58, 0.78)', fontSize: 17, marginLeft: screenWidth * 0.03 }}>← Trở về</Text></TouchableOpacity>
             <View style={styles.viewTextDanhMuc}>
               <Text style={styles.TextDanhMuc}>{cate.name}</Text>
             </View>
@@ -304,7 +304,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   contentHeader: {
-    marginLeft: screenWidth * 0.05,
     marginTop: 10,
     flexDirection: 'column',
   },
