@@ -6,42 +6,31 @@ import CategoryButton from '../components/CategoryButton';
 import { screenWidth, screenHeight } from '../costants/DeviceSize';
 
 export default class Home extends Component {
-    state = {
-        Data: [],
-        isLoading: true,
+  state = {
+    Data: [],
+    isLoading: true,
+  }
+  componentWillMount = async () => {
+    //ask for list category
+    await this.props.onGetListCategory();
+    if (this.props.listCategory === 401) {
+      alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
+      await AsyncStorage.removeItem('@Token');
+      this.props.navigation.navigate("Login");
+      return;
     }
-    componentWillMount = async () => {
-        //ask for list category
-        await this.props.onGetListCategory();
-        if (this.props.listCategory === 401) {
-            alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
-            await AsyncStorage.removeItem('@Token');
-            this.props.navigation.navigate("Login");
-            return;
-        }
-        const token = await AsyncStorage.getItem('@Token');
+    const token = await AsyncStorage.getItem('@Token');
+    await this.props.onGetInfo(token);
 
-        this.setState({
-            Data: this.props.listCategory,
-            isLoading: false,
-        })
-        // ask for location
-        let { status } = await Permissions.askAsync(Permissions.LOCATION);
-        if (status !== 'granted') {
-            this.props.onGetLocation(null);
-            console.log("location permission denine");
-        }
-        else {
-            let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
-            let lat = location.coords.latitude;
-            let long = location.coords.longitude;
-            let coords = {
-                latitude: lat,
-                longitude: long,
-            }
-            this.props.onGetLocation(coords);
-            console.log("get location success");
-        }
+    this.setState({
+      Data: this.props.listCategory,
+      isLoading: false,
+    })
+    // ask for location
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+      this.props.onGetLocation(null);
+      console.log("location permission denine");
     }
     else {
       let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
@@ -80,7 +69,7 @@ export default class Home extends Component {
       <View style={styles.container}>
         <View style={styles.Header}>
           <Image
-            style={{ width: 50, height: 50, marginLeft: screenWidth * 0.05, marginBottom:5, }}
+            style={{ width: 50, height: 50, marginLeft: screenWidth * 0.05, marginBottom: 5, }}
             source={require('../assets/momo-mini-logo.png')}
           />
         </View>
@@ -102,42 +91,12 @@ export default class Home extends Component {
                   <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold', flex: 1 }}>Server lỗi hoặc quá tải</Text>
                   <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold', flex: 1 }}>Vui lòng thử lại sau</Text>
                 </View>
-            )
-        }
-        return (
-            <View style={styles.container}>
-                <View style={styles.Header}>
-                    <Text style={{ fontWeight: '400', fontSize: 30, marginBottom: 10, }}>TRANG CHỦ</Text>
-                    <View>
-                        <TouchableOpacity style={styles.buttonLoc} onPress={this.navigateModal}>
-                            <Text>Lọc</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                <View style={styles.Content}>
-                    <Text style={styles.TextDanhMuc}>DANH MỤC</Text>
-                    <ScrollView contentContainerStyle={styles.ListDanhMuc}>
-                        {
-                            Data.length > 0 ?
-                                Data.map(item => {
-                                    return (
-                                        <CategoryButton
-                                            onPress={() => this.onPressCategoryButton(item)}
-                                            Data={item}
-                                            key={item.id} />
-                                    )
-                                })
-                                :
-                                <View>
-                                    <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold', flex: 1 }}>Server lỗi hoặc quá tải</Text>
-                                    <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold', flex: 1 }}>Vui lòng thử lại sau</Text>
-                                </View>
-                        }
-                    </ScrollView>
-                </View>
-            </View>
-        );
-    }
+            }
+          </ScrollView>
+        </View>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
