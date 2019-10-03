@@ -1,14 +1,7 @@
 const registerReducer = (state = [], action) => {
     switch (action.type) {
         case 'REGISTER': {
-            return [
-                {
-                    id: action.id,
-                    username: action.username,
-                    password: action.password,
-                    jwt: action.jwt
-                }, ...state
-            ]
+            return action.message
         }
         default:
             return state
