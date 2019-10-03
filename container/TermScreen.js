@@ -4,17 +4,13 @@ import * as action from '../action/index';
 import { accountStore } from '../apis/index';
 
 const mapStateToProps = state => {
-    return { account: state.account }   
+    return { account: state.registerReducer }   
 }
 const mapDispatchToProps = dispatch => {
     return {
-        onGetAllAccount: async () => {
-            const account = await accountStore.getAllAccountApi();
-            dispatch(action.onGetAllAccount(account));
-        },
-        onRegister: async account => {
-            accountStore.registerApi(account)
-            dispatch(action.onRegister(account))
+        onRegister: async data => {
+            let message = await accountStore.registerApi(data)
+            dispatch(action.onRegister(message))
         }
     }   
 }

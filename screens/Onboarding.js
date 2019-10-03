@@ -1,25 +1,25 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image, AsyncStorage, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, Image, AsyncStorage, ActivityIndicator, ImageBackground } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 
 const slides = [
     {
         key: 'slide1',
-        title: 'Title 1',
-        image: require('../assets/Momo_1.jpg'),
-        text: 'Description.\nRecommend theo xu hướng',
+        background: require('../assets/Onboarding.png'),
+        image: require('../assets/Onboarding1.png'),
+        text: require('../assets/outstanding.png')
     },
     {
         key: 'slide2',
-        title: 'Title 2',
-        image: require('../assets/Momo_1.jpg'),
-        text: 'Description.\nRecommend theo túi tiền',
+        background: require('../assets/Onboarding.png'),
+        image: require('../assets/Onboarding2.png'),
+        text: require('../assets/knowledgeable.png')
     },
     {
         key: 'slide3',
-        title: 'Title 3',
-        image: require('../assets/Momo_1.jpg'),
-        text: 'Description.\nRecommend theo vị trí',
+        background: require('../assets/Onboarding.png'),
+        image: require('../assets/Onboarding3.png'),
+        text: require('../assets/effortless.png')
     }
 ];
 export default class Onboarding extends React.Component {
@@ -42,20 +42,25 @@ export default class Onboarding extends React.Component {
     }
     renderItem = ({ item }) => {
         return (
-            <View style={styles.mainContent}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Image style={styles.image} source={item.image} />
-                <Text style={styles.text}>{item.text}</Text>
-            </View>
+            <ImageBackground source={item.background} style={{ width: "100%", height: "100%" }}>
+                <View style={styles.mainContent}>
+                    <View style={styles.wrapImg}>
+                        <Image style={styles.image} source={item.image} resizeMode="contain" />
+                    </View>
+                    <View style={styles.wrapTxt}>
+                        <Image style={styles.text} source={item.text} resizeMode="contain" />
+                    </View>
+                </View>
+            </ImageBackground>
         );
     }
     render() {
         const { isLoading } = this.state;
         if (isLoading) {
             return (
-                <View style={styles.mainContent}>
+                <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
                     <ActivityIndicator size="large" color="black" />
-                    <Text style={{color: 'gray', fontSize: 13, marginTop: 5}}>Vui lòng chờ trong giây lát</Text>
+                    <Text style={{ color: 'gray', fontSize: 13, marginTop: 5 }}>Vui lòng chờ trong giây lát</Text>
                 </View>
             )
         }
@@ -70,6 +75,9 @@ export default class Onboarding extends React.Component {
                     onSkip={this.onDone}
                     onDone={this.onDone}
                     backgroundColor='gray'
+                    buttonStyle={styles.buttonStyle}
+                    buttonTextStyle={styles.buttonTextStyle}
+                    activeDotStyle={styles.activeDotStyle}
                 />
             );
         }
@@ -78,23 +86,41 @@ export default class Onboarding extends React.Component {
 const styles = StyleSheet.create({
     mainContent: {
         flex: 1,
-        alignItems: 'center',
+    },
+    wrapImg: {
+        flex: 0.5,
+        width: "100%",
         justifyContent: 'center',
-        marginVertical: 30,
+        alignItems: 'center'
+    },
+    wrapTxt: {
+        flex: 0.5,
+        width: "100%",
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        marginVertical: 10
+    },
+    activeDotStyle: {
+        backgroundColor: 'black'
+    },
+    buttonStyle: {
+        width: 70,
+        height: 40,
+        borderWidth: 1,
+        borderColor: 'black',
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    buttonTextStyle: {
+        color: 'black'
     },
     image: {
-        width: 50,
-        height: 50,
-        marginVertical: 10,
+        width: 200,
+        height: 200,
     },
     text: {
-        color: 'rgba(255, 255, 255, 0.8)',
-        backgroundColor: 'transparent',
-        textAlign: 'center',
-    },
-    title: {
-        fontSize: 22,
-        color: 'black',
-        textAlign: 'center',
+        width: 250,
+        height: 37,
     },
 });

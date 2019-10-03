@@ -1,4 +1,12 @@
 
+export const onGetSuggest = (suggestList) => {
+    console.log("action:", suggestList)
+    return {
+        type: "GET_SUGGEST",
+        suggestList: suggestList
+    }
+}
+
 export const onGetCategoryListItem = (categoryListItem) => {
     return {
         type: "GET_CATEGORY_LIST_ITEM",
@@ -14,7 +22,7 @@ export const onGetLocation = (location) => {
 export const onGetListCategory = (listCategory) => {
     return {
         type: "GET_LIST_CATEGORY",
-        listCategory : listCategory
+        listCategory: listCategory
     }
 }
 
@@ -42,18 +50,39 @@ export const onLogin = (token) => {
         token: token
     }
 }
+export const onLoginFb = (token) => {
+    return {
+        type: "LOGIN_FB",
+        token: token
+    }
+}
+export const onConnectFb = (message) => {
+    return {
+        type: "CONNECT_FB",
+        message: message
+    }
+}
+export const onDisConnectFb = (message) => {
+    return {
+        type: "DISCONNECT_FB",
+        message: message
+    }
+}
 export const onGetInfo = (info) => {
     return {
         type: 'GET_INFO',
         info: info
     }
 }
-export const onRegister = (account) => {
+export const onGetInfoFb = (userInfo) => {
+    return{
+        type: 'GET_INFO_FB',
+        userInfo: userInfo
+    }
+}
+export const onRegister = (message) => {
     return {
         type: "REGISTER",
-        id: account.id,
-        username: account.username,
-        password: account.password,
-        jwt: account.jwt
+        message: message
     }
 }

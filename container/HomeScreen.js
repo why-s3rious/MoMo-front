@@ -7,6 +7,7 @@ import { accountStore } from '../apis/index';
 const mapStateToProps = function (state) {
     return {
         listCategory: state.category,
+        userInfo: state.infoReducer
     }
 }
 
@@ -23,8 +24,14 @@ const mapDispatchToProps = function (dispatch) {
         onGetInfo: async (token) => {
             const info = await accountStore.infoApi(token);
             dispatch(action.onGetInfo(info))
+        },
+        onGetInfoFb: async (token) => {
+            const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,picture.type(large)`);
+            const userInfo = await response.json();
+            console.log("dispatch");
+            console.log(userInfo);
+            dispatch(action.onGetInfoFb(userInfo))
         }
-
     }
 }
 

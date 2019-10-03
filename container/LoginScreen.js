@@ -18,5 +18,5 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-const LoginContainer = connect(mapStateToProps, mapDispatchToProps)(Login) // truyen vao
+const LoginContainer = connect(mapStateToProps, mapDispatchToProps)(Login)
 export default LoginContainer;

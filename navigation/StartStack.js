@@ -5,14 +5,14 @@ import LoginContainer from '../container/LoginScreen';
 import Onboarding from '../screens/Onboarding';
 import RegisterContainer from '../container/RegisterScreen';
 import TermContainer from '../container/TermScreen';
-import Logo from '../screens/Logo';
+import LogoContainer from '../container/LogoScreen';
 
 //home stack
 const StartStack = createStackNavigator(
   {
-    //add login, onboarding, logo, register, term
+    // add login, onboarding, logo, register, term
     Onboarding: Onboarding,
-    Logo: Logo,
+    Logo: LogoContainer,
     Login: LoginContainer,
     Register: RegisterContainer,
     Term: TermContainer
