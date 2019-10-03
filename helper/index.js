@@ -48,11 +48,12 @@ export const requestStoreApi = async (endpoint, method, searchText, sort, page, 
 }
 export const requestSuggestSearchApi = async (endpoint, method, searchText) => {
     const token = await getTokenFromAsyncStorage();
-    console.log(searchText);
+    console.log(token);
+    console.log(`${hostAPI}${localHost}/${endpoint}?q=${searchText}`);
     return axios({
         method: method,
         // url: `${hostAPI}/${localHost}/${endpoint}?q=${searchText}`,
-        url: `http://54a8d74b.ngrok.io:80/${localHost}/${endpoint}?q=${searchText}`,
+        url: `${hostAPI}/${localHost}/${endpoint}?q=${searchText}`,
         headers: { 'Authorization': `bearer ${token}` }
     })
         .then(response => {

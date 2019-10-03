@@ -79,14 +79,15 @@ const styles = StyleSheet.create({
     height: screenHeight * 0.4,
     borderRadius: 8,
     //shadow
-    shadowColor: "#00CFB5",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowColor: "#000",
+shadowOffset: {
+	width: 0,
+	height: 2,
+},
+shadowOpacity: 0.6655,
+shadowRadius: 3.84,
+
+elevation: 5,
 
   },
   content: {

@@ -72,12 +72,12 @@ const tabNavigator = createBottomTabNavigator({
   AccountStack,
 }, {
   tabBarOptions: {
-    activeTintColor: "#00CFB5",
+    activeTintColor: "#000000",
     inactiveTintColor: "#ddd",
     style: {
       shadowOffset: { width: 0, height: 0 },
       borderTopColor: 'transparent',
-      backgroundColor: '#FFF',
+      backgroundColor: '#E5FAF7',
     },
   }
 }

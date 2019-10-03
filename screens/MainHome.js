@@ -195,7 +195,7 @@ export default class MainHome extends Component {
         </View>
         <View style={styles.Content}>
           {
-            !isNewUser ? // nếu là user mới (true) => 2 nút, User cũ (false) => 2 nút
+            isNewUser ? // nếu là user mới (true) => 2 nút, User cũ (false) => 3 nút
               //user mới
               <View style={styles.TabButton}>
                 <TouchableOpacity
@@ -249,6 +249,7 @@ export default class MainHome extends Component {
               </View>
               :
               <View style={styles.ListDanhMuc}>
+              <View style={styles.lineHorizon}></View>
                 {
                   List.length > 0 ?
                     <FlatList style={styles.Flatlist}
@@ -310,13 +311,38 @@ const styles = StyleSheet.create({
   viewTextDanhMuc: {
     alignSelf: 'center',
     borderColor: 'black',
-    borderBottomWidth: 1,
-    width: screenWidth * 0.6,
+    // borderBottomWidth: 1,
+    // width: screenWidth * 0.6,
+
+    //shadow
+    // shadowColor: "#00CFB5",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 1,
+    // },
+    // shadowOpacity: 0.4,
+    // shadowRadius: 10,
+    // elevation: 5,
   },
   TextDanhMuc: {
     fontSize: 25,
     textAlign: 'center',
     fontWeight: '400',
+  },
+  lineHorizon:{
+    height:1,
+    width :screenWidth,
+    borderBottomColor:'rgba(51, 51, 51, 0.4)',
+    borderBottomWidth:1,
+        // shadow
+    shadowColor: "rgba(51, 51, 51, 0.4)",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 5,
   },
   TabButton: {
     flexDirection: 'row',
