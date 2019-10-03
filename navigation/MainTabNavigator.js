@@ -31,11 +31,11 @@ const HomeStack = createStackNavigator(
 );
 
 HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+  tabBarLabel: 'Trang chính',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name='md-information-circle'
+      name='md-home'
     />
   ),
 };
@@ -55,7 +55,7 @@ const AccountStack = createStackNavigator(
 );
 
 AccountStack.navigationOptions = {
-  tabBarLabel: 'Account',
+  tabBarLabel: 'Tài khoản',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -70,6 +70,16 @@ HomeStack.path = '';
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
   AccountStack,
+}, {
+  tabBarOptions: {
+    activeTintColor: "#00CFB5",
+    inactiveTintColor: "#ddd",
+    style: {
+      shadowOffset: { width: 0, height: 0 },
+      borderTopColor: 'transparent',
+      backgroundColor: '#FFF',
+    },
+  }
 }
 );
 

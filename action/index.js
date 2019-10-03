@@ -1,4 +1,12 @@
 
+export const onGetSuggest = (suggestList) => {
+    console.log("action:", suggestList)
+    return {
+        type: "GET_SUGGEST",
+        suggestList: suggestList
+    }
+}
+
 export const onGetCategoryListItem = (categoryListItem) => {
     return {
         type: "GET_CATEGORY_LIST_ITEM",
@@ -14,7 +22,7 @@ export const onGetLocation = (location) => {
 export const onGetListCategory = (listCategory) => {
     return {
         type: "GET_LIST_CATEGORY",
-        listCategory : listCategory
+        listCategory: listCategory
     }
 }
 

@@ -32,10 +32,10 @@ export const requestListCategoryApi = async (endpoint, method) => {
 }
 export const requestStoreApi = async (endpoint, method, searchText, sort, page, categoryId, location) => {
     const token = await getTokenFromAsyncStorage();
-    console.log(`${hostAPI}/${localHost}/${endpoint}?q=${searchText}&sort=${sort}&p=${page}&category=${categoryId}&location=${location}`)
+    console.log(`${hostAPI}/${localHost}/${endpoint}?q=${searchText}&sort=+-${sort}&p=${page}&category=${categoryId}&location=${location}`)
     return axios({
         method: method,
-        url: `${hostAPI}/${localHost}/${endpoint}?q=${searchText}&sort=${sort}&p=${page}&category=${categoryId}&location=${location}`,
+        url: `${hostAPI}/${localHost}/${endpoint}?q=${searchText}&sort=+-${sort}&p=${page}&category=${categoryId}&location=${location}`,
         headers: { 'Authorization': `bearer ${token}` }
     })
         .then(response => {
@@ -46,7 +46,23 @@ export const requestStoreApi = async (endpoint, method, searchText, sort, page, 
             return er.response.status;
         });
 }
-
+export const requestSuggestSearchApi = async (endpoint, method, searchText) => {
+    const token = await getTokenFromAsyncStorage();
+    console.log(searchText);
+    return axios({
+        method: method,
+        // url: `${hostAPI}/${localHost}/${endpoint}?q=${searchText}`,
+        url: `http://54a8d74b.ngrok.io:80/${localHost}/${endpoint}?q=${searchText}`,
+        headers: { 'Authorization': `bearer ${token}` }
+    })
+        .then(response => {
+            return response.data;
+        })
+        .catch(er => {
+            console.log(er.response.status)
+            return null;
+        });
+}
 export const requestAccountApi = async (headers, endpoint, method, data) => {
     return axios({
         method: method,

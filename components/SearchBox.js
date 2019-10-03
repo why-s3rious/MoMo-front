@@ -1,55 +1,36 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Autocomplete from 'react-native-autocomplete-input';
+import { screenWidth, screenHeight } from '../costants/DeviceSize';
 
 
 class SearchBox extends Component {
-
-  findStore(query) {
-    if (query === '') {
-      return [];
-    }
-    if (this.props.list != null) {
-      const newData = this.props.list.filter(function (item) {
-        //applying filter for the inserted text in search bar
-        const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
-        const textData = query.toUpperCase();
-        return itemData.indexOf(textData) > -1;
-      });
-      return newData;
-    }
-    return [];
-  }
-
   render() {
     const {
       text,
       onChangeText,
       onPressItemAuto,
       onEndEditingSearch,
+      onFocusSearch,
+      isFocusSearch,
+      list
     } = this.props;
-    const list = this.findStore(text);
     return (
-      // <View>
-      //   {/* <TextInput style={styles.textBox}
-      //     value={text}
-      //     onChangeText={onChangeText}
-      //     placeholder='Tìm kiếm'
-      //     onEndEditing={onEndEditing}
-      //   /> */}
-
-      // </View>
-      <View style={styles.searchBar}>
+      <View style={styles.searchGroup}>
         <Autocomplete
+          onFocus={onFocusSearch}
           onEndEditing={onEndEditingSearch}
+          onChangeText={onChangeText}
+          style={styles.inputText}
+          clearButtonMode="always"
           autoCapitalize="none"
           autoCorrect={false}
-          containerStyle={styles.autoContainerStyle}
-          listContainerStyle={styles.listContainerStyle}
+          inputContainerStyle={styles.searchBar}  // css xung quanh cai input Text
+          listContainerStyle={isFocusSearch ? styles.listContainerStyleFocus : styles.listContainerStyle} // xung quanh cai list result
+          listStyle={styles.listStyle} // cái list result
           data={list}
           defaultValue={text}
-          onChangeText={onChangeText}
-          placeholder='Tìm kiếm'
+          placeholder='Nhập từ khóa tìm kiếm'
           renderItem={
             ({ item }) =>
               <TouchableOpacity onPress={() => onPressItemAuto(item)}>
@@ -64,17 +45,41 @@ class SearchBox extends Component {
 }
 
 const styles = StyleSheet.create({
-  searchBar: {
-    width: 200,
-    height: 40,
-    flexDirection: 'column',
+  searchGroup: {
+    width: screenWidth * 0.7,
+    height: 45,
   },
-  autoContainerStyle: {
+  searchBar: {
+    height: '100%',
+    backgroundColor: "#FBFBFB",
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#BDBDBD',
+    borderRadius: 20,
+  },
+  inputText: {
+    fontSize: 18,
+    height: 28,
+    width: screenWidth * 0.65
+  },
+  listContainerStyleFocus: {
+    borderColor: 'white',
+    borderRadius: 5,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height: 80,
+    zIndex: 1,
   },
   listContainerStyle: {
-    backgroundColor: 'rgba(255,255,255,1.0)',
-    height: 60,
-  }
+    borderColor: 'white',
+    borderRadius: 5,
+    justifyContent: 'center',
+    height: 80,
+  },
+  listStyle: {
+
+  },
 });
 
 
