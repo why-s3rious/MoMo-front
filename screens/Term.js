@@ -9,7 +9,6 @@ export default class Term extends Component {
             showAlert: false,
             phone: '',
             password: '',
-            confirm: '',
             isWrongPass: false,
             isWrongPhone: false,
         };
@@ -82,21 +81,19 @@ export default class Term extends Component {
             password: textPass
         })
     }
-    onchangeConfirm = textConfirm => {
-        this.setState({
-            confirm: textConfirm
-        })
-    }
     render() {
-        const { showAlert, isWrongPass, isWrongPhone, confirm, password } = this.state;
+        const { showAlert, isWrongPass, isWrongPhone } = this.state;
         const { navigation } = this.props;
         const username = navigation.getParam("username");
         const fb_id = navigation.getParam("fb_id");
         console.log(fb_id)
         return (
-            <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-150" style={styles.container}>
+            <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-300" style={styles.container}>
+
                 <View style={styles.title}>
-                    <Image source={require('../assets/iconregister2.png')} style={{ width: 95, height: 25 }} />
+                    <View style={{ paddingVertical: 5, width: "100%", alignItems: 'center' }}>
+                        <Image source={require('../assets/iconregister2.png')} resizeMode="contain" />
+                    </View>
                     <Text style={styles.txtTitle}>Đăng Kí</Text>
                     <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
                         <Image source={require('../assets/iconsmile.png')} style={{ width: 47, height: 42 }} />
@@ -119,27 +116,17 @@ export default class Term extends Component {
                         placeholder="Nhập mật khẩu"
                         onChangeText={this.onchangePass}
                         ref={ref => this.passwordRef = ref}
-                        onSubmitEditing={() => this.confirmpasswordRef.focus()}
-                        blurOnSubmit={false}
                         onEndEditing={this.checkPass}
                         secureTextEntry={true}
                     />
                     {isWrongPass && <Text style={{ color: "red" }}>* Mật khẩu phải nhiều hơn 6 kí tự</Text>}
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder="Nhập lại mật khẩu"
-                        onChangeText={this.onchangeConfirm}
-                        ref={ref => this.confirmpasswordRef = ref}
-                        secureTextEntry={true}
-                    />
-                    {confirm != '' && ((confirm === password && confirm != '' && password != '') ? <Text style={{ color: 'green' }}>Mật khẩu trùng khớp</Text> : <Text style={{ color: "red" }}>* Nhập lại mật khẩu chưa trùng khớp</Text>)}
                 </View>
                 <View style={styles.buttonGroup}>
-                    <TouchableOpacity style={styles.btnDone} onPress={() => this.onPressDone(username, fb_id)}>
-                        <Text style={styles.txtDone}>HOÀN TẤT</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity style={styles.btnCancel} onPress={this.onPressCancel}>
                         <Text style={styles.txtCancel}>HỦY</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.btnDone} onPress={() => this.onPressDone(username, fb_id)}>
+                        <Text style={styles.txtDone}>HOÀN TẤT</Text>
                     </TouchableOpacity>
                 </View>
                 <AwesomeAlert
@@ -169,17 +156,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFF',
+        marginTop: 50,
     },
     title: {
         flex: 0.3,
         justifyContent: 'center',
         alignItems: "center",
-        marginTop: 30,
+        marginTop: 25,
     },
     txtTitle: {
         fontSize: 35,
         fontWeight: '600',
-        marginVertical: 20,
+        marginVertical: 15,
     },
     txtTitle1: {
         fontSize: 18,
@@ -187,13 +175,14 @@ const styles = StyleSheet.create({
         marginLeft: 5,
     },
     inputGroup: {
-        flex: 0.4,
+        flex: 0.3,
         flexDirection: 'column',
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         alignItems: 'center',
+        marginVertical: 30,
     },
     textInput: {
-        width: 300,
+        width: 310,
         height: 50,
         textAlign: 'center',
         borderRadius: 50,
@@ -207,37 +196,38 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
     },
     buttonGroup: {
-        flex: 0.2,
-        alignItems: 'center',
-        flexDirection: 'column',
-        marginTop: 5,
+        flex: 0.6,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        paddingHorizontal: 5,
     },
     btnDone: {
         backgroundColor: '#46EAD2',
         borderRadius: 50,
         height: 50,
-        width: 300,
+        width: 130,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 10,
+        flexDirection: 'row',
     },
     txtDone: {
         color: 'white',
-        fontSize: 20,
-        fontWeight: '400'
+        fontSize: 17,
+        fontWeight: '500'
     },
     btnCancel: {
-        borderWidth: 1,
+        borderWidth: 2,
         borderRadius: 50,
         borderColor: "red",
         height: 50,
-        width: 300,
+        width: 130,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        flexDirection: 'row'
     },
     txtCancel: {
         color: 'red',
-        fontSize: 20,
-        fontWeight: '400'
+        fontSize: 17,
+        fontWeight: '500'
     },
 })

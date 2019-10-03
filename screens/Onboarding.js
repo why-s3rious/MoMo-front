@@ -101,19 +101,21 @@ const styles = StyleSheet.create({
         marginVertical: 10
     },
     activeDotStyle: {
-        backgroundColor: 'black'
+        backgroundColor: '#00CFB5'
     },
     buttonStyle: {
-        width: 70,
+        width: 80,
         height: 40,
-        borderWidth: 1,
-        borderColor: 'black',
+        borderWidth: 2,
+        borderColor: '#00CFB5',
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center'
     },
     buttonTextStyle: {
-        color: 'black'
+        color: '#00CFB5',
+        textAlign: 'center',
+        fontWeight: '300'
     },
     image: {
         width: 200,
