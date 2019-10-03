@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage, ImageBackground } from 'react-native';
+import * as Facebook from 'expo-facebook';
 
 export default class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userInfo: {}
+            userInfo: {},
         };
         this.didFocusSubscription = props.navigation.addListener(
             'willFocus',
             payload => {
                 this.setState({
-                    userInfo: this.props.userInfo
+                    userInfo: this.props.userInfo,
                 })
             }
         );
@@ -21,7 +22,7 @@ export default class Home extends Component {
             const token = await AsyncStorage.getItem("@Token");
             await this.props.onGetInfoFb(token);
             const result = this.props.userInfo
-            console.log("1",result)
+            console.log("1", result)
             if (result.error.code !== 190) {
                 this.setState({
                     userInfo: this.props.userInfo,
@@ -38,7 +39,7 @@ export default class Home extends Component {
             const token = await AsyncStorage.getItem("@Token");
             await this.props.onGetInfo(token);
             const result = this.props.userInfo
-            console.log("1",result)
+            console.log("1", result)
             if (result !== 401) {
                 this.setState({
                     userInfo: this.props.userInfo,
@@ -53,6 +54,18 @@ export default class Home extends Component {
     componentWillMount = () => {
         this.getInfo();
         this.getInfoFB();
+        const { userInfo } = this.state;
+        console.log("component", this.state.isConnect)
+        if (userInfo.fb_id === null) {
+            this.setState({
+                isConnect: false
+            })
+        }
+        else {
+            this.setState({
+                isConnect: true
+            })
+        }
     }
     async resetKey() {
         try {
@@ -76,13 +89,67 @@ export default class Home extends Component {
         this.getKey();
         this.props.navigation.navigate("Login");
     }
-    onPressDoneButton = () => {
-        this.props.navigation.navigate("Home");
+    onPressSignInFb = async () => {
+        const { userInfo, isConnect } = this.state;
+        try {
+            if (isConnect === false) {
+                const {
+                    type,
+                    token,
+                    expires,
+                    permissions,
+                    declinedPermissions,
+                } = await Facebook.logInWithReadPermissionsAsync('1439156022898541', {
+                    permissions: ['public_profile', 'email'],
+                });
+                if (type === 'success') {
+                    const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
+                    const userInfoFB = await response.json();
+                    console.log("user_info", userInfoFB);
+                    const fb_id = { "fb_id": userInfoFB.id };
+                    console.log("fb_id nè", fb_id)
+                    const tokenlocal = await AsyncStorage.getItem('@Token');
+                    await this.props.onConnectFb(fb_id, tokenlocal);
+                    const result = this.props.userInfo;
+                    if (result.hasOwnProperty('message')) {
+                        alert("Kết nối với Facebook thành công");
+                        this.setState({
+                            isConnect: true
+                        })
+                    }
+                    else {
+                        alert("Kết nối với Facebook thất bại");
+                        return false;
+                    }
+                } else {
+                    alert("Kết nối với Facebook không thành công");
+                    return false;
+                }
+            }
+            else {
+                console.log("Ngắt kết nối");
+                const tokenlocal = await AsyncStorage.getItem('@Token');
+                await this.props.onDisConnectFb(tokenlocal);
+                const result = this.props.userInfo;
+                if (result.hasOwnProperty('message')) {
+                    alert("Ngắt kết nối với Facebook thành công");
+                    this.setState({
+                        isConnect: false
+                    })
+                }
+                else {
+                    alert("Ngắt kết nối với Facebook thất bại");
+                    return false;
+                }
+            }
+        } catch ({ message }) {
+            alert(`Facebook Login Error: ${message}`);
+        }
     }
 
     render() {
-        const { userInfo } = this.state;
-        console.log("hello", userInfo, userInfo.name)
+        const { userInfo, isConnect } = this.state;
+        console.log("connect", isConnect)
         return (
             <ImageBackground source={require('../assets/Onboarding.png')} style={{ width: "100%", height: "100%" }}>
                 <View style={styles.container}>
@@ -102,8 +169,8 @@ export default class Home extends Component {
                     </View>
                     <View style={styles.Content}>
                         <View style={styles.buttonGroup}>
-                            <TouchableOpacity onPress={this.onPressDoneButton} style={styles.doneButton}>
-                                <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'black' }}>Xong</Text>
+                            <TouchableOpacity onPress={this.onPressSignInFb} style={isConnect ? styles.disConnect : styles.connect}>
+                                <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>{isConnect ? "Ngắt kết nối Facebook" : "Kết nối với Facebook"}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={this.onPressLogoutButton} style={styles.logoutButton}>
                                 <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>Đăng xuất</Text>
@@ -154,7 +221,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#FF5126",
         marginVertical: 10,
     },
-    doneButton: {
+    connect: {
         borderWidth: 1,
         borderColor: 'white',
         justifyContent: 'center',
@@ -162,6 +229,16 @@ const styles = StyleSheet.create({
         height: 50,
         width: 300,
         borderRadius: 50,
-        backgroundColor: "#8AFBC5",
+        backgroundColor: "#4267B2",
+    },
+    disConnect: {
+        borderWidth: 1,
+        borderColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 50,
+        width: 300,
+        borderRadius: 50,
+        backgroundColor: "#FF5126",
     },
 });

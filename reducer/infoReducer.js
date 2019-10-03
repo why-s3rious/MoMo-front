@@ -4,6 +4,10 @@ const infoReducer = (state = {}, action) => {
             return action.info
         case 'GET_INFO_FB':
             return action.userInfo
+        case 'CONNECT_FB':
+            return action.message
+        case 'DISCONNECT_FB':
+            return action.message
         default:
             return state
     }

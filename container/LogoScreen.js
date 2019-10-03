@@ -11,11 +11,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onConnectFb: async (fb_id) => {
-            let message = await accountStore.connectFbApi(fb_id)
-            console.log("message connect: ",message)
-            dispatch(action.onConnectFb(message));
-        },
         onLoginFb: async (data) => {
             let token = await accountStore.loginFbApi(data)
             console.log("token",token)

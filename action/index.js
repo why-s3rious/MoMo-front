@@ -54,6 +54,12 @@ export const onConnectFb = (message) => {
         message: message
     }
 }
+export const onDisConnectFb = (message) => {
+    return {
+        type: "DISCONNECT_FB",
+        message: message
+    }
+}
 export const onGetInfo = (info) => {
     return {
         type: 'GET_INFO',
