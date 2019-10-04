@@ -87,7 +87,7 @@ export default class Login extends Component {
         // console.log("user", inputTextUser)
         // console.log("pass", inputTextPass)
         return (
-            <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-120" style={styles.container}>
+            <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-180" style={styles.container}>
                 <View style={styles.title}>
                     <Text style={styles.txtTitle1}>Đăng Nhập O.K.E</Text>
                     <Text style={styles.txtTitle2}>Nhập số điện thoại</Text>
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: "center",
         paddingHorizontal: 50,
-        marginTop: 130
+        marginTop: 60
     },
     txtTitle1: {
         fontSize: 30,

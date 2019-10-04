@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage, ImageBackground } from 'react-native';
 import * as Facebook from 'expo-facebook';
+import { AntDesign } from '@expo/vector-icons';
+import { TextInput } from 'react-native-paper';
+import Modal, { ModalContent, ModalTitle, } from 'react-native-modals';
+import { async } from 'q';
 
 export default class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
             userInfo: {},
+            isConnect: null,
+            modalVisible: false,
+            nameChange: ''
         };
         this.didFocusSubscription = props.navigation.addListener(
             'willFocus',
@@ -31,7 +38,7 @@ export default class Home extends Component {
             else
                 console.log("Login with Username/Password")
         } catch (error) {
-            alert(`Error Info: ${error}`);
+            console.log(`Error Info: ${error}`);
         }
     }
     async getInfo() {
@@ -48,14 +55,14 @@ export default class Home extends Component {
             else
                 console.log("Login with Facebook")
         } catch (error) {
-            alert(`Error Info: ${error}`);
+            console.log(`Error Info: ${error}`);
         }
     }
-    componentWillMount = () => {
-        this.getInfo();
-        this.getInfoFB();
+    componentWillMount = async () => {
+        await this.getInfo();
+        await this.getInfoFB();
         const { userInfo } = this.state;
-        console.log("component", this.state.isConnect)
+        console.log("user", userInfo)
         if (userInfo.fb_id === null) {
             this.setState({
                 isConnect: false
@@ -90,7 +97,7 @@ export default class Home extends Component {
         this.props.navigation.navigate("Login");
     }
     onPressSignInFb = async () => {
-        const { userInfo, isConnect } = this.state;
+        const { isConnect } = this.state;
         try {
             if (isConnect === false) {
                 const {
@@ -146,9 +153,15 @@ export default class Home extends Component {
             alert(`Facebook Login Error: ${message}`);
         }
     }
-
+    setModalVisible(visible) {
+        this.setState({ modalVisible: visible });
+    }
+    changeInfo = async () => {
+        alert("Đã lưu");
+        this.setModalVisible(!this.state.modalVisible)
+    }
     render() {
-        const { userInfo, isConnect } = this.state;
+        const { userInfo, isConnect, nameChange } = this.state;
         console.log("connect", isConnect)
         return (
             <ImageBackground source={require('../assets/Onboarding.png')} style={{ width: "100%", height: "100%" }}>
@@ -164,7 +177,38 @@ export default class Home extends Component {
                                 style={{ width: 200, height: 200, borderRadius: 100, borderWidth: 0.5, borderColor: 'gray' }}
                             />
                         </TouchableOpacity>
-                        <Text style={styles.InfoText}>{userInfo.name}</Text>
+                        <View style={{ flexDirection: 'row', justifyContent: "center", alignItems: 'center', marginTop: 20, }}>
+                            <Text style={styles.InfoTextName}>Họ & tên: {nameChange === "" ? userInfo.name : nameChange}</Text>
+                            <AntDesign name={'edit'} size={23} color="black" onPress={() => { this.setModalVisible(true) }} />
+                            <Modal
+                                animationType="slide"
+                                transparent={true}
+                                visible={this.state.modalVisible}
+                                onTouchOutside={() => { this.setModalVisible(!this.state.modalVisible) }}
+                                modalTitle={<ModalTitle title="Thay đổi thông tin" />}
+                            >
+                                <ModalContent>
+                                    <TextInput
+                                        placeholder="Nhập tên của bạn"
+                                        style={{ width: 250, height: 50, borderRadius: 10, marginVertical: 10 }}
+                                        onChangeText={text => this.setState({ nameChange: text })} />
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
+                                        <TouchableOpacity
+                                            style={{ backgroundColor: "#22863A", width: 50, height: 30, borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}
+                                            onPress={this.changeInfo}
+                                        >
+                                            <Text style={{ fontSize: 15, fontWeight: "400", color: 'white' }}>Lưu</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={{ backgroundColor: "#FFF", width: 50, height: 30, borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'red' }}
+                                            onPress={() => { this.setModalVisible(!this.state.modalVisible) ;this.setState({ nameChange: '' }) }}
+                                        >
+                                            <Text style={{ fontSize: 15, fontWeight: "400", color: 'red' }}>Hủy</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </ModalContent>
+                            </Modal>
+                        </View>
                         <Text style={styles.InfoText}>Số điện thoại: {userInfo.phone}</Text>
                     </View>
                     <View style={styles.Content}>
@@ -200,9 +244,14 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     InfoText: {
-        marginTop: 20,
-        fontSize: 17,
+        fontSize: 20,
         fontWeight: '400'
+    },
+    InfoTextName: {
+        fontSize: 20,
+        fontWeight: '400',
+        marginRight: 10,
+        marginBottom: 20
     },
     buttonGroup: {
         flexDirection: 'column',
