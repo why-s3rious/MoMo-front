@@ -4,26 +4,22 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import TabBarIcon from '../components/TabBarIcon';
-import Home from '../screens/Home';
-import Account from '../screens/Account';
-import Modal from '../screens/Modal';
-import MainHome from '../screens/MainHome';
+import HomeContainer from '../container/HomeScreen';
+import AccountContainer from '../container/AccountScreen';
+import ModalContainer from '../container/ModalScreen';
+import MainHomeContainer from '../container/MainHomeScreen';
 import ItemDetail from '../screens/ItemDetail';
 import ItemAddress from '../screens/ItemAddress';
-import Direction from '../screens/Direction';
-import SearchScreen from '../screens/SearchScreen';
 import UploadPicture from '../screens/UploadPicture';
 
 //home stack
 const HomeStack = createStackNavigator(
   {
-    Home: Home,
-    Modal: Modal,
-    MainHome: MainHome,
+    Home: HomeContainer,
+    Modal: ModalContainer,
+    MainHome: MainHomeContainer,
     ItemDetail: ItemDetail,
     ItemAddress: ItemAddress,
-    Direction: Direction,
-    SearchScreen: SearchScreen,
   },
   {
     headerMode: 'none',
@@ -35,11 +31,11 @@ const HomeStack = createStackNavigator(
 );
 
 HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+  tabBarLabel: 'Trang chính',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name='md-information-circle'
+      name='md-home'
     />
   ),
 };
@@ -47,7 +43,7 @@ HomeStack.navigationOptions = {
 // Account Stack
 const AccountStack = createStackNavigator(
   {
-    Account: Account,
+    Account: AccountContainer,
     UploadPicture: UploadPicture,
   },
   {
@@ -59,7 +55,7 @@ const AccountStack = createStackNavigator(
 );
 
 AccountStack.navigationOptions = {
-  tabBarLabel: 'Account',
+  tabBarLabel: 'Tài khoản',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -74,6 +70,16 @@ HomeStack.path = '';
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
   AccountStack,
+}, {
+  tabBarOptions: {
+    activeTintColor: "#000000",
+    inactiveTintColor: "#ddd",
+    style: {
+      shadowOffset: { width: 0, height: 0 },
+      borderTopColor: 'transparent',
+      backgroundColor: '#E5FAF7',
+    },
+  }
 }
 );
 

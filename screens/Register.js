@@ -1,56 +1,84 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { red } from 'ansi-colors';
 export default class Register extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
-        };
+            username: "",
+            isWrongName: false,
+        }
+    }
+    onChangeText = text => {
+        this.setState({
+            username: text
+        })
     }
     onPressNext = () => {
-        this.props.navigation.navigate("Term")
+        const { username } = this.state;
+        if (username == "") {
+            alert("Không được để trống")
+            return false
+        }
+        // if (password.length < 6) {
+        //     alert("Mật khẩu cần nhiều hơn 6 kí tự")
+        //     return false;
+        // }
+        // if (password != confirm) {
+        //     alert("Nhập lại mật khẩu chưa trùng khớp")
+        //     return false
+        // }
+        else {
+            this.props.navigation.navigate("Term", { username: username })
+        }
     }
     onPressCancel = () => {
         this.props.navigation.goBack();
     }
+    checkName = () => {
+        const { username } = this.state
+        if (username == "") {
+            this.setState({
+                isWrongName: true
+            })
+        }
+        else {
+            this.setState({
+                isWrongName: false
+            })
+        }
+    }
     render() {
+        const { isWrongName } = this.state;
         return (
-            <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-100" style={styles.container}>
+            <KeyboardAvoidingView enabled behavior="height" keyboardVerticalOffset="-300" style={styles.container}>
                 <View style={styles.title}>
-                    <Text style={styles.txtTitle}>Sign Up</Text>
+                    <View style={{ paddingVertical: 5, width: "100%", alignItems: 'center' }}>
+                        <Image source={require('../assets/iconregister1.png')} resizeMode="contain" />
+                    </View>
+                    <Text style={styles.txtTitle}>Đăng Kí</Text>
+                    <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <Image source={require('../assets/iconsmile.png')} style={{ width: 47, height: 42, }} />
+                        <Text style={styles.txtTitle1}>Nhập tên đi nè !!!</Text>
+                    </View>
                 </View>
                 <View style={styles.inputGroup}>
                     <TextInput
                         style={styles.textInput}
-                        placeholder="Email"
-                        onChangeText={this.onchangeEmail}
-                        onSubmitEditing={() => this.passwordRef.focus()}
-                        blurOnSubmit={false}
-                        keyboardType={'email-address'}
+                        placeholder="Nhập họ và tên"
+                        onChangeText={this.onChangeText}
+                        onEndEditing={this.checkName}
                     />
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder="Password"
-                        onChangeText={this.onchangePass}
-                        ref={ref => this.passwordRef = ref}
-                        onSubmitEditing={() => this.confirmpasswordRef.focus()}
-                        blurOnSubmit={false}
-                        secureTextEntry={true}
-                    />
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder="Confirm Password"
-                        onChangeText={this.onchangeConfirm}
-                        ref={ref => this.confirmpasswordRef = ref}
-                        secureTextEntry={true}
-                    />
+                    {isWrongName && <Text style={{ color: 'red' }}>* Chưa nhập họ tên</Text>}
                 </View>
                 <View style={styles.buttonGroup}>
-                    <TouchableOpacity style={styles.btnNext} onPress={this.onPressNext}>
-                        <Text style={styles.txtNext}>Next</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity style={styles.btnCancel} onPress={this.onPressCancel}>
-                        <Text style={styles.txtCancel}>Cancel</Text>
+                        <Image source={require('../assets/sad.png')} style={{ width: 35, height: 30, marginRight: 10, }} />
+                        <Text style={styles.txtCancel}>HỦY</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.btnNext} onPress={this.onPressNext}>
+                        <Image source={require('../assets/like.png')} style={{ width: 35, height: 30, marginRight: 5, }} />
+                        <Text style={styles.txtNext}>TIẾP TỤC</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
@@ -60,62 +88,75 @@ export default class Register extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#B48DFA'
+        backgroundColor: '#FFF',
+        marginTop: 30,
     },
     title: {
         flex: 0.3,
         justifyContent: 'center',
-        alignItems: "center"
+        alignItems: "center",
+        marginTop: 25,
     },
     txtTitle: {
         fontSize: 35,
-        fontWeight: 'bold'
+        fontWeight: '600',
+        marginVertical: 15,
+    },
+    txtTitle1: {
+        fontSize: 18,
+        fontWeight: '200',
+        marginLeft: 5,
     },
     inputGroup: {
-        flex: 0.4,
+        flex: 0.2,
         flexDirection: 'column',
         justifyContent: 'flex-end',
         alignItems: 'center',
-        marginVertical: 5,
     },
     textInput: {
-        width: 300,
+        width: 310,
         height: 50,
+        textAlign: 'center',
         borderRadius: 50,
         marginVertical: 10,
-        paddingHorizontal: 15,
-        backgroundColor: "#F6F8FA"
+        paddingHorizontal: 20,
+        backgroundColor: "#F6F8FA",
+        borderWidth: 1,
     },
     buttonGroup: {
-        flex: 0.3,
-        alignItems: 'center',
-        flexDirection: 'column',
+        flex: 0.5,
+        flexDirection: 'row',
+        marginTop: 30,
+        justifyContent: 'space-around',
+        paddingHorizontal: 5
     },
     btnNext: {
-        backgroundColor: 'pink',
+        backgroundColor: '#46EAD2',
         borderRadius: 50,
         height: 50,
-        width: 300,
+        width: 130,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 15,
+        flexDirection: 'row',
     },
     txtNext: {
-        color: 'black',
-        fontSize: 25,
-        fontWeight: '400'
+        color: 'white',
+        fontSize: 17,
+        fontWeight: '500'
     },
     btnCancel: {
-        borderWidth: 1,
+        borderWidth: 2,
         borderRadius: 50,
+        borderColor: "red",
         height: 50,
-        width: 300,
+        width: 130,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        flexDirection: 'row'
     },
     txtCancel: {
-        color: 'black',
-        fontSize: 25,
-        fontWeight: '400'
+        color: 'red',
+        fontSize: 17,
+        fontWeight: '500'
     },
 })

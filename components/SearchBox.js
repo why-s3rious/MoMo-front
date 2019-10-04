@@ -1,65 +1,36 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Autocomplete from 'react-native-autocomplete-input';
+import { screenWidth, screenHeight } from '../costants/DeviceSize';
 
-const Data = [
-  { id: 1, name: 'Phúc Long', image: require('../assets/Momo_1.jpg'), address: 'quận 1', longdis: '7km', price: '100.000 - 200.000' },
-  { id: 2, name: 'The Coffee House', image: require('../assets/Momo_2.jpg'), address: 'quận 2', longdis: '6km', price: '150.000 - 200.000' },
-  { id: 3, name: 'Hoàng Yến Buffet', image: require('../assets/Momo_3.jpg'), address: 'quận 3', longdis: '5km', price: '300.000 - 400.000' },
-  { id: 4, name: 'Phúc Long', image: require('../assets/Momo_1.jpg'), address: 'quận 4', longdis: '4km', price: '250.000 - 300.000' },
-  { id: 5, name: 'The Coffee House', image: require('../assets/Momo_2.jpg'), address: 'quận 5', longdis: '3km', price: '50.000- 100.000' },
-  { id: 6, name: 'Hoàng Yến Buffet', image: require('../assets/Momo_3.jpg'), address: 'quận 6', longdis: '2km', price: '500.000 - 1.000.000' },
-];
 
 class SearchBox extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      list: Data,
-    };
-  }
-
-  findFilm(query) {
-    if (query === '') {
-      return [];
-    }
-    const { list } = this.state;
-    const newData = list.filter(function (item) {
-      //applying filter for the inserted text in search bar
-      const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
-      const textData = query.toUpperCase();
-      return itemData.indexOf(textData) > -1;
-    });
-    return newData;
-  }
-
   render() {
     const {
       text,
       onChangeText,
       onPressItemAuto,
+      onEndEditingSearch,
+      onFocusSearch,
+      isFocusSearch,
+      list
     } = this.props;
-    const list = this.findFilm(text);
     return (
-      // <View>
-      //   {/* <TextInput style={styles.textBox}
-      //     value={text}
-      //     onChangeText={onChangeText}
-      //     placeholder='Tìm kiếm'
-      //     onEndEditing={onEndEditing}
-      //   /> */}
-
-      // </View>
-      <View style={styles.searchBar}>
+      <View style={styles.searchGroup}>
         <Autocomplete
+          onFocus={onFocusSearch}
+          onEndEditing={onEndEditingSearch}
+          onChangeText={onChangeText}
+          style={styles.inputText}
+          clearButtonMode="always"
           autoCapitalize="none"
           autoCorrect={false}
-          containerStyle={styles.autoContainerStyle}
-          listContainerStyle ={styles.listContainerStyle}
+          inputContainerStyle={styles.searchBar}  // css xung quanh cai input Text
+          listContainerStyle={isFocusSearch ? styles.listContainerStyleFocus : styles.listContainerStyle} // xung quanh cai list result
+          listStyle={styles.listStyle} // cái list result
           data={list}
           defaultValue={text}
-          onChangeText={onChangeText}
-          placeholder='Tìm kiếm'
+          placeholder='Nhập từ khóa tìm kiếm'
           renderItem={
             ({ item }) =>
               <TouchableOpacity onPress={() => onPressItemAuto(item)}>
@@ -74,17 +45,41 @@ class SearchBox extends Component {
 }
 
 const styles = StyleSheet.create({
+  searchGroup: {
+    width: screenWidth * 0.7,
+    height: 45,
+  },
   searchBar: {
-    width: 200,
-    height: 40,
+    height: '100%',
+    backgroundColor: "#FBFBFB",
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#BDBDBD',
+    borderRadius: 20,
+  },
+  inputText: {
+    fontSize: 18,
+    height: 28,
+    width: screenWidth * 0.65
+  },
+  listContainerStyleFocus: {
+    borderColor: 'white',
+    borderRadius: 5,
     flexDirection: 'column',
+    justifyContent: 'center',
+    height: 80,
+    zIndex: 1,
   },
-  autoContainerStyle: {
+  listContainerStyle: {
+    borderColor: 'white',
+    borderRadius: 5,
+    justifyContent: 'center',
+    height: 80,
   },
-  listContainerStyle:{
-    backgroundColor: 'rgba(255,255,255,1.0)',
-    height:60,
-  }
+  listStyle: {
+
+  },
 });
 
 

@@ -1,22 +1,23 @@
-import React from 'react';
-
+import { AsyncStorage } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 
-import Login from '../screens/Login';
+import LoginContainer from '../container/LoginScreen';
 import Onboarding from '../screens/Onboarding';
-import Register from '../screens/Register';
-import Term from '../screens/Term';
-import Logo from '../screens/Logo';
+import RegisterContainer from '../container/RegisterScreen';
+import TermContainer from '../container/TermScreen';
+import LogoContainer from '../container/LogoScreen';
+import AuthScreen from './AuthScreen';
 
 //home stack
 const StartStack = createStackNavigator(
   {
-    //add login, onboarding, logo, register, term
+    // add login, onboarding, logo, register, term
+    Auth: AuthScreen,
     Onboarding: Onboarding,
-    Logo: Logo,
-    Login: Login,
-    Register: Register,
-    Term: Term
+    Logo: LogoContainer,
+    Login: LoginContainer,
+    Register: RegisterContainer,
+    Term: TermContainer
   },
   {
     headerMode: 'none',

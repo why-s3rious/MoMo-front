@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ImageBackground, AsyncStorage, ActivityIndicator } from 'react-native';
+import * as Facebook from 'expo-facebook';
 
 export default class Logo extends Component {
     constructor(props) {
@@ -13,72 +14,128 @@ export default class Logo extends Component {
     onPressSignUp = () => {
         this.props.navigation.navigate("Register");
     }
+    async saveKey(value) {
+        try {
+            await AsyncStorage.setItem('@Token', value);
+            console.log("Lưu token thành công")
+        } catch (error) {
+            console.log("Error saving Token" + error);
+        }
+    }
+    async getKey() {
+        try {
+            const value = await AsyncStorage.getItem('@Token');
+            console.log("Token: " + value)
+        } catch (error) {
+            console.log("Error getting Token" + error);
+        }
+    }
+    onPressSignInFb = async () => {
+        try {
+            const {
+                type,
+                token,
+                expires,
+                permissions,
+                declinedPermissions,
+            } = await Facebook.logInWithReadPermissionsAsync('1439156022898541', {
+                permissions: ['public_profile', 'email'],
+            });
+            if (type === 'success') {
+                const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
+                const userInfo = await response.json();
+                const fb_id = { "fb_id": userInfo.id };
+                await this.props.onLoginFb(fb_id);
+                const getToken = this.props.successLogin;
+                if (getToken.hasOwnProperty('token')) {
+                    this.saveKey(getToken.token);
+                    this.getKey();
+                    this.props.navigation.navigate("Main");
+                }
+                else {
+                    alert("Nhập thông tin còn lại để hoàn thành tài khoản");
+                    this.props.navigation.navigate("Term", { username: userInfo.name, fb_id: userInfo.id });
+                    return false;
+                }
+            } else {
+                alert("Đăng nhập với Facebook không thành công");
+                return false;
+            }
+        } catch ({ message }) {
+            alert(`Facebook Login Error: ${message}`);
+        }
+    }
     render() {
         return (
-            <View style={styles.container}>
-                <View style={styles.image}>
-                    <Image
-                        source={require('../assets/logoOKE.png')}
-                        style={{ width: 200, height: 300 }}
-                    />
+            <ImageBackground source={require('../assets/backgroundlogo.png')} style={{ width: "100%", height: "100%" }}>
+                <View style={styles.container}>
+                    <View style={styles.logo}>
+                        <Image source={require('../assets/okescreenlogo.png')} style={{ width: 244, height: 244, borderRadius: 244 }} />
+                    </View>
+                    <View style={styles.buttonGroup}>
+                        <TouchableOpacity style={styles.buttonSignIn} onPress={this.onPressSignIn}>
+                            <Text style={styles.textSignIn}>Đăng nhập</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonSignInFb} onPress={this.onPressSignInFb}>
+                            <Text style={styles.textSignIn}>Đăng nhập bằng Facebook</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonSignUp} onPress={this.onPressSignUp}>
+                            <Text style={styles.textSignUp}>Tạo tài khoản O.K.E</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <View style={styles.buttonGroup}>
-                    <TouchableOpacity style={styles.buttonSignIn} onPress={this.onPressSignIn}>
-                        <Text style={styles.textSignIn}>Sign In</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity  style={styles.buttonSignUp} onPress={this.onPressSignUp}>
-                        <Text style={styles.textSignUp}>Sign Up</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            </ImageBackground>
         );
     }
 }
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white'
-    },
-    image: {
-        flex: 0.5,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        marginVertical: 10,
+        marginTop: 50
     },
     buttonGroup: {
-        flex: 0.5,
-        flexDirection: 'row',
+        flex: 1,
+        flexDirection: 'column',
         alignItems: 'center',
-        marginVertical: 5,
-        justifyContent: 'space-around',
-        paddingHorizontal: 30
+        justifyContent: 'flex-start',
+        paddingHorizontal: 30,
+        marginTop: 100
     },
     buttonSignIn: {
-        backgroundColor: 'blue',
-        width: 130,
+        backgroundColor: '#00CFB5',
+        width: 300,
         height: 50,
-        borderRadius: 50,
+        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    buttonSignInFb: {
+        backgroundColor: '#4267B2',
+        width: 300,
+        height: 50,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginVertical: 20
     },
     textSignIn: {
         color: 'white',
-        fontSize: 25,
-        fontWeight: '400'
+        fontSize: 20,
     },
     buttonSignUp: {
         backgroundColor: 'white',
-        width: 130,
+        width: 300,
         height: 50,
-        borderRadius: 50,
+        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 2,
-        borderColor: 'blue'
+        borderColor: '#00CFB5'
     },
     textSignUp: {
-        color: 'blue',
-        fontSize: 25,
-        fontWeight: '400'
+        color: '#00CFB5',
+        fontSize: 20,
     },
 })

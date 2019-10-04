@@ -1,123 +1,241 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { CheckBox } from 'react-native-elements';
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
+import AwesomeAlert from 'react-native-awesome-alerts';
+
 export default class Term extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            check: false
+            showAlert: false,
+            phone: '',
+            password: '',
+            isWrongPass: false,
+            isWrongPhone: false,
         };
     }
-    onPressDone = () => {
-        this.props.navigation.navigate("Login")
+    onPressDone = async (username, fb_id) => {
+        try {
+            const { phone, password } = this.state
+            const accountInfo = {
+                "phone": phone,
+                "password": password,
+                "name": username,
+                "fb_id": fb_id
+            }
+            if (phone.length < 10 || phone.length > 11) {
+                alert("Số điện thoại chưa chính xác");
+                return false;
+            }
+            if (password < 6) {
+                alert("Mật khẩu phải nhiều hơn 6 kí tự");
+                return false;
+            }
+            await this.props.onRegister(accountInfo);
+            let result = this.props.account;
+            console.log("result: ", result)
+            if (result.message === "success") {
+                alert("Đăng kí thành công hãy đăng nhập để tiếp tục")
+                this.props.navigation.navigate("Login")
+            }
+            else {
+                if (result === 400) {
+                    alert("Số điện thoại này đã được đăng kí")
+                    return false
+                }
+            }
+
+        } catch (error) {
+            alert(`Register error: ${error}`);
+        }
     }
     onPressCancel = () => {
-        this.props.navigation.navigate("Login");
+        this.setState({
+            showAlert: true
+        })
+    }
+    checkPass = () => {
+        const { password } = this.state
+        if (password.length < 6) {
+            this.setState({
+                isWrongPass: true
+            })
+        }
+        else {
+            this.setState({
+                isWrongPass: false
+            })
+        }
+    }
+    checkPhone = () => {
+        const { phone } = this.state
+        if (phone.length < 10 || phone.length > 11) {
+            this.setState({
+                isWrongPhone: true
+            })
+        }
+        else {
+            this.setState({
+                isWrongPhone: false
+            })
+        }
+    }
+    onchangePhone = textPhone => {
+        this.setState({
+            phone: textPhone
+        })
+    }
+    onchangePass = textPass => {
+        this.setState({
+            password: textPass
+        })
     }
     render() {
-        const { check } = this.state;
+        const { showAlert, isWrongPass, isWrongPhone } = this.state;
+        const { navigation } = this.props;
+        const username = navigation.getParam("username");
+        const fb_id = navigation.getParam("fb_id");
+        console.log(fb_id)
         return (
-            <View enabled behavior="padding" keyboardVerticalOffset="-100" style={styles.container}>
+            <KeyboardAvoidingView enabled behavior="padding" keyboardVerticalOffset="-300" style={styles.container}>
+
                 <View style={styles.title}>
-                    <Text style={styles.txtTitle}>Term</Text>
+                    <View style={{ paddingVertical: 5, width: "100%", alignItems: 'center' }}>
+                        <Image source={require('../assets/iconregister2.png')} resizeMode="contain" />
+                    </View>
+                    <Text style={styles.txtTitle}>Đăng Kí</Text>
+                    <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <Image source={require('../assets/iconsmile.png')} style={{ width: 47, height: 42 }} />
+                        <Text style={styles.txtTitle1}>Điền nốt thông tin !!!</Text>
+                    </View>
                 </View>
-                <View style={styles.termGroup}>
-                    <Text termText>Điều 1: </Text>
-                    <Text termText>Điều 2: </Text>
-                    <Text termText>Điều 3: </Text>
-                    <Text termText>Điều 4: </Text>
-                    <Text termText>Điều 5: </Text>
-                </View>
-                <View style={styles.checkBoxWrap}>
-                    <CheckBox 
-                        containerStyle={styles.checkBox}
-                        title="I accept all term of OKE"
-                        checked={check}
-                        onPress={() => this.setState({ check: !this.state.check })}
+                <View style={styles.inputGroup}>
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Nhập số điện thoại"
+                        onChangeText={this.onchangePhone}
+                        onSubmitEditing={() => this.passwordRef.focus()}
+                        blurOnSubmit={false}
+                        onEndEditing={this.checkPhone}
+                        keyboardType={"number-pad"}
                     />
+                    {isWrongPhone && <Text style={{ color: "red" }}>* Số điện thoại không đúng</Text>}
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Nhập mật khẩu"
+                        onChangeText={this.onchangePass}
+                        ref={ref => this.passwordRef = ref}
+                        onEndEditing={this.checkPass}
+                        secureTextEntry={true}
+                    />
+                    {isWrongPass && <Text style={{ color: "red" }}>* Mật khẩu phải nhiều hơn 6 kí tự</Text>}
                 </View>
                 <View style={styles.buttonGroup}>
-                    <TouchableOpacity style={styles.btnDone} onPress={this.onPressDone}>
-                        <Text style={styles.txtDone}>Done</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity style={styles.btnCancel} onPress={this.onPressCancel}>
-                        <Text style={styles.txtCancel}>Cancel</Text>
+                        <Text style={styles.txtCancel}>HỦY</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.btnDone} onPress={() => this.onPressDone(username, fb_id)}>
+                        <Text style={styles.txtDone}>HOÀN TẤT</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+                <AwesomeAlert
+                    show={showAlert}
+                    showProgress={false}
+                    title="Hủy Đăng Kí"
+                    message="Bạn có chắc chắn muốn hủy?"
+                    closeOnTouchOutside={true}
+                    closeOnHardwareBackPress={false}
+                    showCancelButton={true}
+                    showConfirmButton={true}
+                    confirmText="Có, hủy nó"
+                    cancelText="Không, cảm ơn"
+                    confirmButtonColor="#DD6B55"
+                    onCancelPressed={() => {
+                        this.setState({ showAlert: false })
+                    }}
+                    onConfirmPressed={() => {
+                        this.props.navigation.navigate("Login");
+                    }}
+                />
+            </KeyboardAvoidingView>
         );
     }
 }
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#B48DFA'
+        backgroundColor: '#FFF',
+        marginTop: 50,
     },
     title: {
-        flex: 0.2,
+        flex: 0.3,
         justifyContent: 'center',
-        alignItems: "center"
+        alignItems: "center",
+        marginTop: 25,
     },
     txtTitle: {
         fontSize: 35,
-        fontWeight: 'bold'
+        fontWeight: '600',
+        marginVertical: 15,
     },
-    termGroup: {
-        flex: 0.4,
+    txtTitle1: {
+        fontSize: 18,
+        fontWeight: '200',
+        marginLeft: 5,
+    },
+    inputGroup: {
+        flex: 0.3,
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        marginVertical: 5,
-        backgroundColor: 'white',
-        marginHorizontal: 15,
-        borderWidth: 1,
-        borderRadius: 20
+        marginVertical: 30,
     },
-    termText: {
-        width: 300,
+    textInput: {
+        width: 310,
         height: 50,
+        textAlign: 'center',
         borderRadius: 50,
-        marginVertical: 10,
-        paddingHorizontal: 15,
-        backgroundColor: "#F6F8FA"
+        marginVertical: 5,
+        paddingHorizontal: 20,
+        backgroundColor: "#F6F8FA",
+        borderWidth: 1,
     },
     checkBoxWrap: {
         flex: 0.1,
         marginHorizontal: 5,
     },
-    checkBox: {
-        
-    },
     buttonGroup: {
-        flex: 0.3,
-        alignItems: 'center',
-        flexDirection: 'column',
+        flex: 0.6,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        paddingHorizontal: 5,
     },
     btnDone: {
-        backgroundColor: 'pink',
+        backgroundColor: '#46EAD2',
         borderRadius: 50,
         height: 50,
-        width: 300,
+        width: 130,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 15,
+        flexDirection: 'row',
     },
     txtDone: {
-        color: 'black',
-        fontSize: 25,
-        fontWeight: '400'
+        color: 'white',
+        fontSize: 17,
+        fontWeight: '500'
     },
     btnCancel: {
-        borderWidth: 1,
+        borderWidth: 2,
         borderRadius: 50,
+        borderColor: "red",
         height: 50,
-        width: 300,
+        width: 130,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        flexDirection: 'row'
     },
     txtCancel: {
-        color: 'black',
-        fontSize: 25,
-        fontWeight: '400'
+        color: 'red',
+        fontSize: 17,
+        fontWeight: '500'
     },
 })
