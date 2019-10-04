@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native';
 import RadioForm from 'react-native-simple-radio-button';
-import { AntDesign } from '@expo/vector-icons';
-import Picker from 'react-native-picker-select';
-
+import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
+import RNPickerSelect from 'react-native-picker-select';
+import { screenWidth, screenHeigh } from '../costants/DeviceSize';
 
 const typesMoney = [
     { label: 'Hãy làm tôi ngạc nhiên', value: 0 },
@@ -119,13 +119,11 @@ export default class Modal extends Component {
             <KeyboardAvoidingView enabled behavior='height' style={styles.container}>
                 <View style={styles.goBack}>
                     <TouchableOpacity style={styles.btnBack} onPress={() => this.props.navigation.goBack()}>
-                        <Text style={styles.txtBack}> Trở về </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.btnFilter}
-                        onPress={() => this.props.navigation.navigate('MainHome',
-                            { zone: distanceZone, area: distanceArea, disFrom: inputTextDistanceFrom, disTo: inputTextDistanceTo, isFilter: true })
-                        }>
-                        <Text style={styles.txtBack}> Lọc </Text>
+                        <SimpleLineIcons
+                            name='arrow-left'
+                            color='black'
+                            size={40}
+                        />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.title}>
@@ -151,12 +149,12 @@ export default class Modal extends Component {
                                         onPress={(value) => this.onPressRadioDistance(value)}
                                     />
                                     {isDiffrentDistance && (
-                                        <View style={{ flexDirection: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', }}>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <View style={{ flexDirection: 1, flexDirection: 'column', justifyContent: 'center' }}>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
                                                 <View style={styles.PickerSelect}>
-                                                    <Picker style={styles.PickerText}
+                                                    <RNPickerSelect style={{ ...styles.PickerText }}
                                                         placeholder={{
-                                                            label: 'chọn thành phố',
+                                                            label: 'Thành phố',
                                                             value: '0',
                                                         }}
                                                         items={[
@@ -179,12 +177,13 @@ export default class Modal extends Component {
                                                         }}
                                                     />
                                                 </View>
+                                                <View style={styles.text}></View>
                                                 {
                                                     isZoneSelected ?
-                                                        <View style={styles.PickerSelect}>
-                                                            <Picker style={styles.PickerText}
+                                                        <View style={styles.PickerSelectRight}>
+                                                            <RNPickerSelect style={{ ...styles.PickerText }}
                                                                 placeholder={{
-                                                                    label: 'chọn Quận',
+                                                                    label: 'Quận',
                                                                     value: '0',
                                                                 }}
                                                                 items={
@@ -209,15 +208,12 @@ export default class Modal extends Component {
                                                         </View>
                                                         :
                                                         null
-
                                                 }
                                             </View>
+
                                             <View style={styles.isDiffrent}>
-                                                <View style={styles.text}>
-                                                    <Text>Từ</Text>
-                                                </View>
                                                 <TextInput
-                                                    style={styles.textInput}
+                                                    style={styles.PickerSelect}
                                                     autoFocus
                                                     keyboardType='number-pad'
                                                     onChangeText={this.onchangeDistanceFrom}
@@ -229,7 +225,7 @@ export default class Modal extends Component {
                                                     <Text>đến</Text>
                                                 </View>
                                                 <TextInput
-                                                    style={styles.textInput}
+                                                    style={styles.PickerSelect}
                                                     keyboardType='number-pad'
                                                     onChangeText={this.onchangeDistanceTo}
                                                     placeholder="ví dụ: 6"
@@ -237,7 +233,7 @@ export default class Modal extends Component {
                                                     onSubmitEditing={Keyboard.dismiss}
                                                 />
                                                 <View style={styles.text}>
-                                                    <Text>kilomet</Text>
+                                                    <Text>km</Text>
                                                 </View>
                                             </View>
                                         </View>
@@ -249,7 +245,7 @@ export default class Modal extends Component {
                             <TouchableOpacity style={styles.titleContent} onPress={this.onPressShowMoney}>
                                 <Image source={require('../assets/iconmoney.png')} style={{ width: 30, height: 30 }} />
                                 <Text style={styles.txtContent}>Mức tiêu dùng</Text>
-                                <AntDesign name={!showMoney ? "right" : "down"} size={27} color="black"  />
+                                <AntDesign name={!showMoney ? "right" : "down"} size={27} color="black" />
                             </TouchableOpacity>
                             {showMoney && (
                                 <View style={styles.radioFrom}>
@@ -264,23 +260,22 @@ export default class Modal extends Component {
                                     />
                                     {isDiffrentMoney && (
                                         <View style={styles.isDiffrent}>
-                                            <View style={styles.text}>
-                                                <Text>Từ</Text>
-                                            </View>
                                             <TextInput
-                                                style={styles.textInput}
+                                                style={styles.PickerSelect}
                                                 autoFocus
+                                                placeholder='Vd: 20.000'
                                                 keyboardType='number-pad'
                                                 onChangeText={this.onchangeMoneyFrom}
                                                 onSubmitEditing={() => this.inputfromref.focus()}
                                                 blurOnSubmit={false}
                                             />
-                                            <View style={styles.text}>
-                                                <Text>đến</Text>
+                                            <View style={styles.text2}>
+                                                <Text>-</Text>
                                             </View>
                                             <TextInput
-                                                style={styles.textInput}
+                                                style={styles.PickerSelect}
                                                 keyboardType='number-pad'
+                                                placeholder='Vd: 10.0000'
                                                 onChangeText={this.onchangeMoneyTo}
                                                 ref={ref => this.inputfromref = ref}
                                                 onSubmitEditing={Keyboard.dismiss}
@@ -293,6 +288,12 @@ export default class Modal extends Component {
                                 </View>
                             )}
                         </View>
+                        <TouchableOpacity style={styles.btnFilter}
+                            onPress={() => this.props.navigation.navigate('MainHome',
+                                { zone: distanceZone, area: distanceArea, disFrom: inputTextDistanceFrom, disTo: inputTextDistanceTo, isFilter: true })
+                            }>
+                            <Text style={{ fontSize: 20, color: 'white' }}> Lọc </Text>
+                        </TouchableOpacity>
                     </ScrollView>
                 </View>
             </KeyboardAvoidingView>
@@ -307,8 +308,6 @@ const styles = StyleSheet.create({
     goBack: {
         flex: 0.1,
         marginTop: 30,
-        marginHorizontal: 15,
-        justifyContent: 'space-between',
         flexDirection: 'row',
     },
     title: {
@@ -340,7 +339,12 @@ const styles = StyleSheet.create({
         marginVertical: 5,
     },
     text: {
-        marginHorizontal: 5,
+        width: screenWidth * 0.07,
+        marginRight: screenWidth * 0.02
+    },
+    text2: {
+        width: screenWidth * 0.03,
+        marginRight: screenWidth * 0.02
     },
     radioFrom: {
         marginVertical: 10,
@@ -348,22 +352,17 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         paddingHorizontal: 10
     },
-    isDiffrent: {
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
+    isDiffrent: { flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' },
     btnBack: {
-        borderRadius: 10,
-        height: 30,
+        height: 40,
         width: 80,
-        backgroundColor: 'gray',
-        justifyContent: 'center',
-        alignItems: 'center'
+        marginLeft: screenWidth * 0.03
     },
     btnFilter: {
+        alignSelf: 'center',
         borderRadius: 10,
-        height: 30,
-        width: 80,
+        height: 45,
+        width: 120,
         backgroundColor: '#4267B2',
         justifyContent: 'center',
         alignItems: 'center'
@@ -375,24 +374,25 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 35
     },
-    textInput: {
-        width: 100,
-        height: 30,
+    PickerSelect: {
+        width: 160,
+        height: 50,
         borderWidth: 1,
-        borderRadius: 15,
-        paddingHorizontal: 10,
+        borderRadius: 25,
+        marginBottom: 10,
+        marginRight: screenWidth * 0.03,
         textAlign: 'center'
     },
-    PickerSelect: {
-        width: 150,
-        height: 30,
+    PickerSelectRight: {
+        width: 160,
+        height: 50,
         borderWidth: 1,
-        borderRadius: 15,
-        marginHorizontal: 15,
+        borderRadius: 25,
+        marginBottom: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center'
     },
     PickerText: {
-        flex: 1,
-        fontSize: 15,
-        textAlign: 'center'
     }
 })

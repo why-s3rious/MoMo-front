@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Keyboard, ActivityIndicator, FlatList, Alert } from 'react-native';
+import { SimpleLineIcons } from '@expo/vector-icons';
 
 import SearchBox from '../components/SearchBox';
 import ItemRecommend from '../components/ItemRecommend';
@@ -206,10 +207,10 @@ export default class MainHome extends Component {
     this.setState({
       cate: { ...cate, id: item.category_id, name: item.name },
       textSearch: item.name,
-      // zone: '',
-      // area: '',
-      // disFrom: 0,
-      // disTo: 0,
+      zone: '',
+      area: '',
+      disFrom: 0,
+      disTo: 0,
     })
   }
   onDeleteItem = async (id) => {
@@ -240,7 +241,6 @@ export default class MainHome extends Component {
     const {
       isLoading,
       whatScreen,
-      isNewUser,
       List,
       textSearch,
       isFocusSearch,
@@ -249,6 +249,25 @@ export default class MainHome extends Component {
       cate,
       zone, area, disFrom, disTo, saveTextSearch
     } = this.state;
+    let city = '';
+    switch (zone) {
+      case '1': {
+        city = 'Hồ Chí Minh';
+        break;
+      };
+      case '2': {
+        city = 'Hà Nội'
+        break;
+      };
+      case '3': {
+        city = 'Đà Nẵng'
+        break;
+      }
+      default: {
+        city = '';
+      }
+    }
+    console.log("city:", city)
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
@@ -265,7 +284,11 @@ export default class MainHome extends Component {
           />
           <View style={{}}>
             <TouchableOpacity style={styles.buttonLoc} onPress={this.navigateModal}>
-              <Text style={{ fontSize: 18, color: 'white', fontWeight: '100' }}>Lọc</Text>
+              <SimpleLineIcons
+                name='menu'
+                size={25}
+                color='white'
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -322,7 +345,7 @@ export default class MainHome extends Component {
                       < View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <Text style={{ fontSize: 22, color: 'gray', fontWeight: '400' }}>Không tìm thấy cửa hàng phù hợp</Text>
                         <Text style={{ fontSize: 20, color: 'gray', fontWeight: '300' }}>Thông tin lọc:</Text>
-                        <Text style={{ fontSize: 17, color: 'gray', fontWeight: '300' }}>{saveTextSearch} - Hồ Chí mình - {area}</Text>
+                        <Text style={{ fontSize: 17, color: 'gray', fontWeight: '300' }}>{saveTextSearch} - {city} - {area}</Text>
                         <Text style={{ fontSize: 17, color: 'gray', fontWeight: '300' }}>khoảng cách từ {disFrom}-{disTo} km</Text>
                       </View>
                       :
@@ -371,9 +394,9 @@ const styles = StyleSheet.create({
   contentHeader: {
     // marginTop: 10,
     flexDirection: 'column',
-    backgroundColor:'rgba(208, 254, 240, 0.57)',
-    paddingLeft:5,
-    paddingRight:5,
+    backgroundColor: 'rgba(208, 254, 240, 0.57)',
+    paddingLeft: 5,
+    paddingRight: 5,
 
   },
   viewTextDanhMuc: {

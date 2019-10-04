@@ -73,7 +73,7 @@ export default class ItemDetail extends Component {
     }
 
     render() {
-        
+
         const { navigation } = this.props;
         const { data, coordinate, distance } = this.state;
         return (
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     },
     Header: {
         flex: 0.12,
-        backgroundColor:'#BCFFF3',
+        backgroundColor: '#BCFFF3',
     },
     TitileGroup: {
         marginHorizontal: screenWidth * 0.03,
@@ -218,13 +218,13 @@ const styles = StyleSheet.create({
         marginHorizontal: screenWidth * 0.03,
     },
     infoGroup: {
-        height: screenHeight * 0.3,
+        height: screenHeight * 0.31,
         width: screenWidth,
         flexDirection: 'row'
     },
     infoCol1: {
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'space-around',
         flex: 0.5,
     },
     infoCol2: {
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     infoText: {
-        marginBottom: screenHeight * 0.03,
+        // marginTop: screenHeight * 0.02,
         marginLeft: screenWidth * 0.03,
         fontSize: 13,
     },
