@@ -183,6 +183,7 @@ const styles = StyleSheet.create({
     },
     Header: {
         flex: 0.12,
+        backgroundColor:'#BCFFF3',
     },
     TitileGroup: {
         marginHorizontal: screenWidth * 0.03,

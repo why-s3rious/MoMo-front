@@ -134,11 +134,11 @@ export default class Modal extends Component {
                 <View style={styles.content}>
                     <ScrollView>
                         <View style={styles.contentDistance}>
-                            <View style={styles.titleContent}>
+                            <TouchableOpacity style={styles.titleContent} onPress={this.onPressShowDistance}>
                                 <Image source={require('../assets/iconmap.png')} style={{ width: 30, height: 30 }} />
                                 <Text style={styles.txtContent}>Vị trí</Text>
                                 <AntDesign name={!showDistance ? "right" : "down"} size={27} color="black" onPress={this.onPressShowDistance} />
-                            </View>
+                            </TouchableOpacity>
                             {showDistance && (
                                 <View style={styles.radioFrom}>
                                     <RadioForm
@@ -246,11 +246,11 @@ export default class Modal extends Component {
                             )}
                         </View>
                         <View style={styles.contentMoney}>
-                            <View style={styles.titleContent}>
+                            <TouchableOpacity style={styles.titleContent} onPress={this.onPressShowMoney}>
                                 <Image source={require('../assets/iconmoney.png')} style={{ width: 30, height: 30 }} />
                                 <Text style={styles.txtContent}>Mức tiêu dùng</Text>
-                                <AntDesign name={!showMoney ? "right" : "down"} size={27} color="black" onPress={this.onPressShowMoney} />
-                            </View>
+                                <AntDesign name={!showMoney ? "right" : "down"} size={27} color="black"  />
+                            </TouchableOpacity>
                             {showMoney && (
                                 <View style={styles.radioFrom}>
                                     <RadioForm

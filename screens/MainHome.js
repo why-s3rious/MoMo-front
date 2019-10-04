@@ -369,13 +369,16 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   contentHeader: {
-    marginTop: 10,
+    // marginTop: 10,
     flexDirection: 'column',
+    backgroundColor:'rgba(208, 254, 240, 0.57)',
+    paddingLeft:5,
+    paddingRight:5,
+
   },
   viewTextDanhMuc: {
     alignSelf: 'center',
     borderColor: 'black',
-
   },
   TextDanhMuc: {
     fontSize: 25,
@@ -405,7 +408,7 @@ const styles = StyleSheet.create({
   ChoseButton: {
     height: 55,
     width: screenWidth * 0.333333,
-    borderBottomColor: '#00CFB5',
+    borderBottomColor: 'black',
     borderBottomWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
