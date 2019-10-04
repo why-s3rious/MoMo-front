@@ -22,6 +22,14 @@ export default class Term extends Component {
                 "name": username,
                 "fb_id": fb_id
             }
+            if (phone.length < 10 || phone.length > 11) {
+                alert("Số điện thoại chưa chính xác");
+                return false;
+            }
+            if (password < 6) {
+                alert("Mật khẩu phải nhiều hơn 6 kí tự");
+                return false;
+            }
             await this.props.onRegister(accountInfo);
             let result = this.props.account;
             console.log("result: ", result)
