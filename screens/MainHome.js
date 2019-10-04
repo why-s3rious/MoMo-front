@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Keyboard, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Keyboard, ActivityIndicator, FlatList, Alert } from 'react-native';
+import { SimpleLineIcons } from '@expo/vector-icons';
 
 import SearchBox from '../components/SearchBox';
 import ItemRecommend from '../components/ItemRecommend';
@@ -19,22 +20,51 @@ export default class MainHome extends Component {
         name: cateData.name
       },
       pageNum: 1,
-      whatScreen: "match",
+      whatScreen: "",
       isNewUser: this.props.infoUser.is_new,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
       isFocusSearch: false,  // xét search input text focus, true/false gọi css khác nhau
+      zone: '',
+      area: '',
+      disFrom: 0,
+      disTo: 0,
+      isSearch: false,
+      saveTextSearch: '',
     };
     this.didFocusSubscription = props.navigation.addListener(
       'willFocus',
-      payload => {
-        this.setState({
-          List: this.props.categoryListItem.stores,
-        })
+      async payload => {
+        const { navigation } = this.props;
+        const { whatScreen } = this.state;
+        if (navigation.getParam("isFilter") == true) {
+          await this.setState({
+            List: [],
+            cate: cateData,
+            zone: navigation.getParam("zone"),
+            area: navigation.getParam("area"),
+            disFrom: navigation.getParam("disFrom"),
+            disTo: navigation.getParam("disTo"),
+            isSearch: true,
+          })
+          this.callApiGetListItem(whatScreen, 1);
+        }
       }
     );
   }
   // call api
   async componentWillMount() {
-    this.callApiGetListItem("match", this.state.pageNum);
+    const { isNewUser } = this.state;
+    if (isNewUser) {
+      this.setState({
+        whatScreen: "popular"
+      })
+      this.callApiGetListItem("popular", this.state.pageNum);
+    }
+    else {
+      this.setState({
+        whatScreen: "match"
+      })
+      this.callApiGetListItem("match", this.state.pageNum);
+    }
   }
 
   callApiGetListItem = async (whatScreen, page) => {
@@ -43,31 +73,56 @@ export default class MainHome extends Component {
         isLoading: true,
       })
     }
-    const { cate } = this.state;
+    const { cate, textSearch, List, zone, area, disFrom, disTo } = this.state;
     let location = this.props.location;
-    let locationUser = null;
-    if (location != null) {
+    let locationUser = '';
+    if (location != '') {
       locationUser = `${location.latitude},${location.longitude}`
     }
-    const { textSearch, List } = this.state;
-    await this.props.onGetCategoryListItem(textSearch, whatScreen, page, cate.id, locationUser);
-    this.setState({
-      isLoading: false,
-      List: List.concat(this.props.categoryListItem.stores)
-    })
+    let distanceFilter = '';
+    if (disFrom != 0 || disTo != 0) {
+      distanceFilter = `distance,${disFrom},${disTo}`
+    }
+    await this.props.onGetCategoryListItem(textSearch, whatScreen, page, cate.id, locationUser, zone, area, distanceFilter);
+    if (typeof this.props.categoryListItem == 'object') {
+      this.setState({
+        isLoading: false,
+        List: List.concat(this.props.categoryListItem.stores)
+      })
+    }
+    else {
+      this.setState({
+        isLoading: false,
+      })
+    }
+
   }
 
 
   navigateModal = () => {
     this.props.navigation.navigate("Modal");
   }
-  onPressDungNhieu = async () => {
-    await this.setState({
-      List: [],
-      whatScreen: "match",
-      pageNum: 1
-    })
-    this.callApiGetListItem("match", 1);
+  onPressPhuHop = async () => {
+    const { isNewUser } = this.state;
+    if (isNewUser) {
+      Alert.alert(
+        'Bạn là người dùng mới',
+        'không đủ dữ kiện để xử lí - Hãy sử dụng ví MoMo thường xuyên để nhận được gợi ý phù hợp với bạn!',
+        [
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ],
+        { cancelable: false },
+      );
+    }
+    else {
+      await this.setState({
+        List: [],
+        whatScreen: "match",
+        pageNum: 1
+      })
+      this.callApiGetListItem("match", 1);
+    }
+
   }
   onPressGanToi = async () => {
     await this.setState({
@@ -77,13 +132,13 @@ export default class MainHome extends Component {
     })
     this.callApiGetListItem("distance", 1);
   }
-  onPressLishSu = async () => {
+  onPressPhoBien = async () => {
     await this.setState({
       List: [],
-      whatScreen: "time",
+      whatScreen: "popular",
       pageNum: 1
     })
-    this.callApiGetListItem("time", 1);
+    this.callApiGetListItem("popular", 1);
   }
 
   renderItem = ({ item }) => {
@@ -124,15 +179,17 @@ export default class MainHome extends Component {
     })
   }
   onEndEditingSearch = async () => { // Xử lí tìm kiếm
-    const { whatScreen } = this.state;
+    const { whatScreen, textSearch } = this.state;
     await this.setState({
       List: [],
     })
     this.callApiGetListItem(whatScreen, 1);
     this.setState({
+      saveTextSearch: textSearch,
       textSearch: '',
       suggestList: [],
-      isFocusSearch: false
+      isFocusSearch: false,
+      isSearch: true,
     })
   }
   onChangeText = async (text) => {
@@ -150,15 +207,33 @@ export default class MainHome extends Component {
     this.setState({
       cate: { ...cate, id: item.category_id, name: item.name },
       textSearch: item.name,
+      zone: '',
+      area: '',
+      disFrom: 0,
+      disTo: 0,
     })
   }
-  onDeleteItem = (id) => {
-    const { List } = this.state;
-    const foundIndex = List.findIndex(item => item.id === id);
-    List.splice(foundIndex, 1);
+  onDeleteItem = async (id) => {
     this.setState({
-      List: List
+      isLoading: true,
     })
+    await this.props.onPostNotInterested(id);
+    console.log("status post nt:", this.props.statusPostNotInterested);
+    if (this.props.statusPostNotInterested == 'success') {
+      const { List } = this.state;
+      const foundIndex = List.findIndex(item => item.id === id);
+      List.splice(foundIndex, 1);
+      this.setState({
+        isLoading: false,
+        List: List
+      })
+    }
+    else {
+      alert("Server bị lỗi hoặc đang quá tải,vui lòng thử lại sau");
+      this.setState({
+        isLoading: false,
+      })
+    }
   }
 
 
@@ -166,13 +241,33 @@ export default class MainHome extends Component {
     const {
       isLoading,
       whatScreen,
-      isNewUser,
       List,
       textSearch,
       isFocusSearch,
       suggestList,
-      cate
+      isSearch,
+      cate,
+      zone, area, disFrom, disTo, saveTextSearch
     } = this.state;
+    let city = '';
+    switch (zone) {
+      case '1': {
+        city = 'Hồ Chí Minh';
+        break;
+      };
+      case '2': {
+        city = 'Hà Nội'
+        break;
+      };
+      case '3': {
+        city = 'Đà Nẵng'
+        break;
+      }
+      default: {
+        city = '';
+      }
+    }
+    console.log("city:", city)
     return (
       <View style={styles.container}>
         <View style={styles.Header}>
@@ -189,55 +284,40 @@ export default class MainHome extends Component {
           />
           <View style={{}}>
             <TouchableOpacity style={styles.buttonLoc} onPress={this.navigateModal}>
-              <Text style={{ fontSize: 18, color: 'white', fontWeight: '100' }}>Lọc</Text>
+              <SimpleLineIcons
+                name='menu'
+                size={25}
+                color='white'
+              />
             </TouchableOpacity>
           </View>
         </View>
         <View style={styles.Content}>
-          {
-            isNewUser ? // nếu là user mới (true) => 2 nút, User cũ (false) => 3 nút
-              //user mới
-              <View style={styles.TabButton}>
-                <TouchableOpacity
-                  style={whatScreen == "match" ? styles.ChoseButtonNew : styles.unChoseButtonNew}
-                  onPress={this.onPressDungNhieu}
-                >
-                  <Text style={whatScreen == "match" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Nổi bật</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={whatScreen == "distance" ? styles.ChoseButtonNew : styles.unChoseButtonNew}
-                  onPress={this.onPressGanToi}
-                >
-                  <Text style={whatScreen == "distance" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Gần tôi</Text>
-                </TouchableOpacity>
-              </View>
-              :
-              //user cũ
-              <View style={styles.TabButton}>
-                <TouchableOpacity
-                  style={whatScreen == "match" ? styles.ChoseButton : styles.unChoseButton}
-                  onPress={this.onPressDungNhieu}
-                >
-                  <Text style={whatScreen == "match" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Nổi bật</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={whatScreen == "distance" ? styles.ChoseButton : styles.unChoseButton}
-                  onPress={this.onPressGanToi}
-                >
-                  <Text style={whatScreen == "distance" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Gần tôi</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={whatScreen == "time" ? styles.ChoseButton : styles.unChoseButton}
-                  onPress={this.onPressLishSu}
-                >
-                  <Text style={whatScreen == "time" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Lịch sử</Text>
-                </TouchableOpacity>
-              </View>
-          }
+          <View style={styles.TabButton}>
+            <TouchableOpacity
+              style={whatScreen == "match" ? styles.ChoseButton : styles.unChoseButton}
+              onPress={this.onPressPhuHop}
+            >
+              <Text style={whatScreen == "match" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Phù hợp</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={whatScreen == "popular" ? styles.ChoseButton : styles.unChoseButton}
+              onPress={this.onPressPhoBien}
+            >
+              <Text style={whatScreen == "popular" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Phổ biến</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={whatScreen == "distance" ? styles.ChoseButton : styles.unChoseButton}
+              onPress={this.onPressGanToi}
+            >
+              <Text style={whatScreen == "distance" ? styles.ChoseTabButtonText : styles.UnChoseTabButtonText}>Gần bạn</Text>
+            </TouchableOpacity>
+          </View>
           <View style={styles.contentHeader}>
-            <TouchableOpacity style={{ height: 20, }} onPress={() => { this.props.navigation.goBack() }}><Text style={{ color: 'rgba(241, 58, 58, 0.78)', fontSize: 17, marginLeft: screenWidth * 0.03 }}>← Trở về</Text></TouchableOpacity>
+            <TouchableOpacity style={{ height: 20, width: screenWidth * 0.25 }} onPress={() => { this.props.navigation.goBack() }}><Text style={{ color: 'rgba(241, 58, 58, 0.78)', fontSize: 17, marginLeft: screenWidth * 0.03, }}>← Trở về</Text></TouchableOpacity>
             <View style={styles.viewTextDanhMuc}>
               <Text style={styles.TextDanhMuc}>{cate.name}</Text>
+              <View style={styles.lineHorizon}></View>
             </View>
           </View>
           {
@@ -249,7 +329,6 @@ export default class MainHome extends Component {
               </View>
               :
               <View style={styles.ListDanhMuc}>
-              <View style={styles.lineHorizon}></View>
                 {
                   List.length > 0 ?
                     <FlatList style={styles.Flatlist}
@@ -262,15 +341,23 @@ export default class MainHome extends Component {
                       ListFooterComponent={this.renderFooter()}
                     />
                     :
-                    <View>
-                      <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold', flex: 1 }}>Server lỗi hoặc quá tải</Text>
-                      <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold', flex: 1 }}>Vui lòng thử lại sau</Text>
-                    </View>
+                    isSearch ?
+                      < View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, color: 'gray', fontWeight: '400' }}>Không tìm thấy cửa hàng phù hợp</Text>
+                        <Text style={{ fontSize: 20, color: 'gray', fontWeight: '300' }}>Thông tin lọc:</Text>
+                        <Text style={{ fontSize: 17, color: 'gray', fontWeight: '300' }}>{saveTextSearch} - {city} - {area}</Text>
+                        <Text style={{ fontSize: 17, color: 'gray', fontWeight: '300' }}>khoảng cách từ {disFrom}-{disTo} km</Text>
+                      </View>
+                      :
+                      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold' }}>Server lỗi hoặc quá tải</Text>
+                        <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold' }}>Vui lòng thử lại sau</Text>
+                      </View>
                 }
               </View>
           }
         </View>
-      </View>
+      </View >
     );
   }
 }
@@ -305,42 +392,35 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   contentHeader: {
-    marginTop: 10,
+    // marginTop: 10,
     flexDirection: 'column',
+    backgroundColor: 'rgba(208, 254, 240, 0.57)',
+    paddingLeft: 5,
+    paddingRight: 5,
+
   },
   viewTextDanhMuc: {
     alignSelf: 'center',
     borderColor: 'black',
-    // borderBottomWidth: 1,
-    // width: screenWidth * 0.6,
-
-    //shadow
-    // shadowColor: "#00CFB5",
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 1,
-    // },
-    // shadowOpacity: 0.4,
-    // shadowRadius: 10,
-    // elevation: 5,
   },
   TextDanhMuc: {
     fontSize: 25,
     textAlign: 'center',
     fontWeight: '400',
   },
-  lineHorizon:{
-    height:1,
-    width :screenWidth,
-    borderBottomColor:'rgba(51, 51, 51, 0.4)',
-    borderBottomWidth:1,
-        // shadow
+  lineHorizon: {
+    height: 1,
+    width: screenWidth,
+    backgroundColor: 'rgba(51, 51, 51, 0.1)',
+    // borderBottomColor: 'rgba(51, 51, 51, 0.4)',
+    // borderBottomWidth: 1,
+    // shadow
     shadowColor: "rgba(51, 51, 51, 0.4)",
     shadowOffset: {
       width: 0,
       height: 1,
     },
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.6,
     shadowRadius: 10,
     elevation: 5,
   },
@@ -348,28 +428,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  //button for new user
-  ChoseButtonNew: {
-    height: 55,
-    width: screenWidth * 0.5,
-    borderBottomColor: '#00CFB5',
-    borderBottomWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  unChoseButtonNew: {
-    height: 55,
-    width: screenWidth * 0.5,
-    borderBottomColor: 'rgba(51, 51, 51, 0.4)',
-    borderBottomWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  //button for old user
   ChoseButton: {
     height: 55,
     width: screenWidth * 0.333333,
-    borderBottomColor: '#00CFB5',
+    borderBottomColor: 'black',
     borderBottomWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',

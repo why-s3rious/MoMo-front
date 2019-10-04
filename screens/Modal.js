@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native';
 import RadioForm from 'react-native-simple-radio-button';
-import { AntDesign } from '@expo/vector-icons';
-
+import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
+import RNPickerSelect from 'react-native-picker-select';
+import { screenWidth, screenHeigh } from '../costants/DeviceSize';
 
 const typesMoney = [
     { label: 'Hãy làm tôi ngạc nhiên', value: 0 },
@@ -27,7 +28,11 @@ export default class Modal extends Component {
             inputTextMoneyTo: 0,
             inputTextMoneyFrom: 0,
             showDistance: false,
-            showMoney: false
+            showMoney: false,
+            Zones: this.props.Zones,
+            distanceZone: '',
+            distanceArea: '',
+            isZoneSelected: false,
         };
     }
     onPressRadioMoney = value => {
@@ -85,13 +90,40 @@ export default class Modal extends Component {
         })
     }
     render() {
-        const { isDiffrentMoney, isDiffrentDistance, showDistance, showMoney, inputTextDistanceFrom, inputTextDistanceTo, inputTextMoneyFrom, inputTextMoneyTo } = this.state;
-        console.log(inputTextDistanceFrom,inputTextDistanceTo)
+        const {
+            isDiffrentMoney, isDiffrentDistance, showDistance, showMoney, inputTextDistanceFrom,
+            inputTextDistanceTo, inputTextMoneyFrom, inputTextMoneyTo, Zones, distanceZone, distanceArea,
+            isZoneSelected
+        } = this.state;
+        let Areas = [];
+        if (distanceZone != '0') {
+            switch (distanceZone) {
+                case '1':
+                    {
+                        Areas = Zones[1];
+                        break;
+                    };
+                case '2':
+                    {
+                        Areas = Zones[2];
+                        break;
+                    };
+                case '3':
+                    {
+                        Areas = Zones[3];
+                        break;
+                    };
+            }
+        }
         return (
             <KeyboardAvoidingView enabled behavior='height' style={styles.container}>
                 <View style={styles.goBack}>
                     <TouchableOpacity style={styles.btnBack} onPress={() => this.props.navigation.goBack()}>
-                        <Text style={styles.txtBack}> Trở về </Text>
+                        <SimpleLineIcons
+                            name='arrow-left'
+                            color='black'
+                            size={40}
+                        />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.title}>
@@ -100,11 +132,11 @@ export default class Modal extends Component {
                 <View style={styles.content}>
                     <ScrollView>
                         <View style={styles.contentDistance}>
-                            <View style={styles.titleContent}>
+                            <TouchableOpacity style={styles.titleContent} onPress={this.onPressShowDistance}>
                                 <Image source={require('../assets/iconmap.png')} style={{ width: 30, height: 30 }} />
                                 <Text style={styles.txtContent}>Vị trí</Text>
                                 <AntDesign name={!showDistance ? "right" : "down"} size={27} color="black" onPress={this.onPressShowDistance} />
-                            </View>
+                            </TouchableOpacity>
                             {showDistance && (
                                 <View style={styles.radioFrom}>
                                     <RadioForm
@@ -117,30 +149,92 @@ export default class Modal extends Component {
                                         onPress={(value) => this.onPressRadioDistance(value)}
                                     />
                                     {isDiffrentDistance && (
-                                        <View style={styles.isDiffrent}>
-                                            <View style={styles.text}>
-                                                <Text>Từ</Text>
+                                        <View style={{ flexDirection: 1, flexDirection: 'column', justifyContent: 'center' }}>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+                                                <View style={styles.PickerSelect}>
+                                                    <RNPickerSelect style={{ ...styles.PickerText }}
+                                                        placeholder={{
+                                                            label: 'Thành phố',
+                                                            value: '0',
+                                                        }}
+                                                        items={[
+                                                            { label: 'Hồ Chí Minh', value: '1' },
+                                                            { label: 'Hà Nội', value: '2' },
+                                                            { label: 'Đà Nẵng', value: '3' },
+                                                        ]}
+                                                        onValueChange={(value) => {
+                                                            if (value != '0')
+                                                                this.setState({
+                                                                    distanceZone: value,
+                                                                    isZoneSelected: true,
+                                                                });
+                                                            else {
+                                                                this.setState({
+                                                                    distanceZone: '',
+                                                                    isZoneSelected: false,
+                                                                });
+                                                            }
+                                                        }}
+                                                    />
+                                                </View>
+                                                <View style={styles.text}></View>
+                                                {
+                                                    isZoneSelected ?
+                                                        <View style={styles.PickerSelectRight}>
+                                                            <RNPickerSelect style={{ ...styles.PickerText }}
+                                                                placeholder={{
+                                                                    label: 'Quận',
+                                                                    value: '0',
+                                                                }}
+                                                                items={
+                                                                    Areas.map(item => {
+                                                                        return { label: item, value: item }
+                                                                    })
+                                                                }
+                                                                onValueChange={(value) => {
+                                                                    console.log(value)
+                                                                    if (value != '0')
+                                                                        this.setState({
+                                                                            distanceArea: value,
+                                                                        });
+                                                                    else {
+                                                                        this.setState({
+                                                                            distanceArea: '',
+                                                                        });
+                                                                    }
+                                                                }
+                                                                }
+                                                            />
+                                                        </View>
+                                                        :
+                                                        null
+                                                }
                                             </View>
-                                            <TextInput
-                                                style={styles.textInput}
-                                                autoFocus
-                                                keyboardType='number-pad'
-                                                onChangeText={this.onchangeDistanceFrom}
-                                                onSubmitEditing={() => this.inputfromref.focus()}
-                                                blurOnSubmit={false}
-                                            />
-                                            <View style={styles.text}>
-                                                <Text>đến</Text>
-                                            </View>
-                                            <TextInput
-                                                style={styles.textInput}
-                                                keyboardType='number-pad'
-                                                onChangeText={this.onchangeDistanceTo}
-                                                ref={ref => this.inputfromref = ref}
-                                                onSubmitEditing={Keyboard.dismiss}
-                                            />
-                                            <View style={styles.text}>
-                                                <Text>kilomet</Text>
+
+                                            <View style={styles.isDiffrent}>
+                                                <TextInput
+                                                    style={styles.PickerSelect}
+                                                    autoFocus
+                                                    keyboardType='number-pad'
+                                                    onChangeText={this.onchangeDistanceFrom}
+                                                    placeholder="ví dụ: 3"
+                                                    onSubmitEditing={() => this.inputfromref.focus()}
+                                                    blurOnSubmit={false}
+                                                />
+                                                <View style={styles.text}>
+                                                    <Text>đến</Text>
+                                                </View>
+                                                <TextInput
+                                                    style={styles.PickerSelect}
+                                                    keyboardType='number-pad'
+                                                    onChangeText={this.onchangeDistanceTo}
+                                                    placeholder="ví dụ: 6"
+                                                    ref={ref => this.inputfromref = ref}
+                                                    onSubmitEditing={Keyboard.dismiss}
+                                                />
+                                                <View style={styles.text}>
+                                                    <Text>km</Text>
+                                                </View>
                                             </View>
                                         </View>
                                     )}
@@ -148,11 +242,11 @@ export default class Modal extends Component {
                             )}
                         </View>
                         <View style={styles.contentMoney}>
-                            <View style={styles.titleContent}>
+                            <TouchableOpacity style={styles.titleContent} onPress={this.onPressShowMoney}>
                                 <Image source={require('../assets/iconmoney.png')} style={{ width: 30, height: 30 }} />
                                 <Text style={styles.txtContent}>Mức tiêu dùng</Text>
-                                <AntDesign name={!showMoney ? "right" : "down"} size={27} color="black" onPress={this.onPressShowMoney} />
-                            </View>
+                                <AntDesign name={!showMoney ? "right" : "down"} size={27} color="black" />
+                            </TouchableOpacity>
                             {showMoney && (
                                 <View style={styles.radioFrom}>
                                     <RadioForm
@@ -166,23 +260,22 @@ export default class Modal extends Component {
                                     />
                                     {isDiffrentMoney && (
                                         <View style={styles.isDiffrent}>
-                                            <View style={styles.text}>
-                                                <Text>Từ</Text>
-                                            </View>
                                             <TextInput
-                                                style={styles.textInput}
+                                                style={styles.PickerSelect}
                                                 autoFocus
+                                                placeholder='Vd: 20.000'
                                                 keyboardType='number-pad'
                                                 onChangeText={this.onchangeMoneyFrom}
                                                 onSubmitEditing={() => this.inputfromref.focus()}
                                                 blurOnSubmit={false}
                                             />
-                                            <View style={styles.text}>
-                                                <Text>đến</Text>
+                                            <View style={styles.text2}>
+                                                <Text>-</Text>
                                             </View>
                                             <TextInput
-                                                style={styles.textInput}
+                                                style={styles.PickerSelect}
                                                 keyboardType='number-pad'
+                                                placeholder='Vd: 10.0000'
                                                 onChangeText={this.onchangeMoneyTo}
                                                 ref={ref => this.inputfromref = ref}
                                                 onSubmitEditing={Keyboard.dismiss}
@@ -195,6 +288,12 @@ export default class Modal extends Component {
                                 </View>
                             )}
                         </View>
+                        <TouchableOpacity style={styles.btnFilter}
+                            onPress={() => this.props.navigation.navigate('MainHome',
+                                { zone: distanceZone, area: distanceArea, disFrom: inputTextDistanceFrom, disTo: inputTextDistanceTo, isFilter: true })
+                            }>
+                            <Text style={{ fontSize: 20, color: 'white' }}> Lọc </Text>
+                        </TouchableOpacity>
                     </ScrollView>
                 </View>
             </KeyboardAvoidingView>
@@ -209,8 +308,7 @@ const styles = StyleSheet.create({
     goBack: {
         flex: 0.1,
         marginTop: 30,
-        marginHorizontal: 15,
-        justifyContent: 'flex-start'
+        flexDirection: 'row',
     },
     title: {
         flex: 0.1,
@@ -241,7 +339,12 @@ const styles = StyleSheet.create({
         marginVertical: 5,
     },
     text: {
-        marginHorizontal: 5,
+        width: screenWidth * 0.07,
+        marginRight: screenWidth * 0.02
+    },
+    text2: {
+        width: screenWidth * 0.03,
+        marginRight: screenWidth * 0.02
     },
     radioFrom: {
         marginVertical: 10,
@@ -249,15 +352,18 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         paddingHorizontal: 10
     },
-    isDiffrent: {
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
+    isDiffrent: { flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' },
     btnBack: {
-        borderRadius: 10,
-        height: 30,
+        height: 40,
         width: 80,
-        backgroundColor: 'gray',
+        marginLeft: screenWidth * 0.03
+    },
+    btnFilter: {
+        alignSelf: 'center',
+        borderRadius: 10,
+        height: 45,
+        width: 120,
+        backgroundColor: '#4267B2',
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -268,12 +374,25 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 35
     },
-    textInput: {
-        width: 100,
-        height: 30,
+    PickerSelect: {
+        width: 160,
+        height: 50,
         borderWidth: 1,
-        borderRadius: 15,
-        paddingHorizontal: 10,
+        borderRadius: 25,
+        marginBottom: 10,
+        marginRight: screenWidth * 0.03,
         textAlign: 'center'
     },
+    PickerSelectRight: {
+        width: 160,
+        height: 50,
+        borderWidth: 1,
+        borderRadius: 25,
+        marginBottom: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center'
+    },
+    PickerText: {
+    }
 })

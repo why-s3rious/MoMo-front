@@ -32,16 +32,16 @@ class ItemRecommend extends Component {
         {
           onPress: () => {
             Alert.alert(
-              'Hey honey..',
-              "Are you sure you want to dislike :( ? ",
+              'Bạn yêu ơi :(..',
+              'Bạn có chắc là muốn làm vậy hông? ',
               [
-                { text: 'No', onPress: () => console.log('Cancel Dislike!'), style: 'cancel' },
-                { text: 'Yes', onPress: () => onDeleteItem(itemData.id) }
+                { text: 'Hông', onPress: () => console.log('Cancel Dislike!'), style: 'cancel' },
+                { text: 'Dĩ nhiên', onPress: () => onDeleteItem(itemData.id) }
               ]
             );
           },
           backgroundColor: 'rgba(241, 58, 58, 0.78)',
-          text: "Dislike!", type: 'delete'
+          text: "Không thích!", type: 'delete'
         }
       ],
       rowId: this.props.itemData.id,
@@ -99,14 +99,12 @@ elevation: 5,
     flexDirection: 'column',
   },
   NameText: {
-    fontFamily: 'Roboto',
     fontSize: 15,
     fontWeight: '700',
     marginHorizontal: screenWidth * 0.01,
     marginVertical: 3,
   },
   AddressText: {
-    fontFamily: 'Roboto',
     marginHorizontal: screenWidth * 0.01,
     marginTop: 3,
     fontSize: 13,

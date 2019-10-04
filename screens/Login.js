@@ -22,7 +22,7 @@ export default class Login extends Component {
         // );
     }
     componentDidMount = () => {
-        this.setState ({
+        this.setState({
             inputTextUser: '',
             inputTextPass: ''
         })
@@ -97,6 +97,7 @@ export default class Login extends Component {
                     <View style={styles.input}>
                         <Feather name={'phone'} size={27} color="gray" style={styles.icon} />
                         <TextInput
+                            style={styles.inputTextStyle}
                             placeholder="Nhập số điện thoại"
                             onChangeText={this.onchangeUser}
                             value={inputTextUser}
@@ -108,6 +109,7 @@ export default class Login extends Component {
                     <View style={styles.input}>
                         <Feather name={'lock'} size={27} color="gray" style={styles.icon} />
                         <TextInput
+                            style={styles.inputTextStyle}
                             placeholder="Nhập mật khẩu"
                             onChangeText={this.onchangePass}
                             value={inputTextPass}
@@ -206,5 +208,8 @@ const styles = StyleSheet.create({
     text: {
         textDecorationLine: 'underline',
         fontWeight: '400'
+    },
+    inputTextStyle: {
+        flex: 1,
     }
 })

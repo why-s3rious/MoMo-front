@@ -1,4 +1,4 @@
-const location = (state = null, action) => {
+const location = (state = '', action) => {
     switch (action.type) {
         case 'GET_LOCATION': {
             return action.location

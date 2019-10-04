@@ -7,6 +7,14 @@ export const onGetSuggest = (suggestList) => {
     }
 }
 
+export const onPostNotInterested = (status) => {
+    console.log("post not interested status:", status)
+    return {
+        type: "POST_NOT_INTERESTED",
+        status: status
+    }
+}
+
 export const onGetCategoryListItem = (categoryListItem) => {
     return {
         type: "GET_CATEGORY_LIST_ITEM",
@@ -75,7 +83,7 @@ export const onGetInfo = (info) => {
     }
 }
 export const onGetInfoFb = (userInfo) => {
-    return{
+    return {
         type: 'GET_INFO_FB',
         userInfo: userInfo
     }
@@ -84,5 +92,12 @@ export const onRegister = (message) => {
     return {
         type: "REGISTER",
         message: message
+    }
+}
+
+export const onGetZones = (zones) => {
+    return {
+        type: "GET_ZONES",
+        zones: zones
     }
 }

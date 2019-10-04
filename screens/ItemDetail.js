@@ -6,6 +6,8 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Polyline from '@mapbox/polyline';
 
 
+
+
 const ASPECT_RATIO = (screenWidth * 0.48) / (screenHeight * 0.48);
 const LATITUDE_DELTA = 0.04;
 const LONGITUDE_DELTA = 0.02;
@@ -116,7 +118,7 @@ export default class ItemDetail extends Component {
                                     size={15}
                                     style={styles.iconInfo}
                                 />
-                                &ensp;12h-23h
+                                &ensp;{data.time}
                             </Text>
                             <Text style={styles.infoText}>
                                 <FontAwesome
@@ -124,7 +126,7 @@ export default class ItemDetail extends Component {
                                     size={15}
                                     style={styles.iconInfo}
                                 />
-                                &ensp;180.000 - 200.000 VNĐ
+                                &ensp;{data.price} VNĐ
                             </Text>
                         </View>
                         <View style={styles.infoCol2}>
@@ -181,6 +183,7 @@ const styles = StyleSheet.create({
     },
     Header: {
         flex: 0.12,
+        backgroundColor: '#BCFFF3',
     },
     TitileGroup: {
         marginHorizontal: screenWidth * 0.03,
@@ -215,13 +218,13 @@ const styles = StyleSheet.create({
         marginHorizontal: screenWidth * 0.03,
     },
     infoGroup: {
-        height: screenHeight * 0.3,
+        height: screenHeight * 0.31,
         width: screenWidth,
         flexDirection: 'row'
     },
     infoCol1: {
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'space-around',
         flex: 0.5,
     },
     infoCol2: {
@@ -230,7 +233,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     infoText: {
-        marginBottom: screenHeight * 0.03,
+        // marginTop: screenHeight * 0.02,
         marginLeft: screenWidth * 0.03,
         fontSize: 13,
     },
