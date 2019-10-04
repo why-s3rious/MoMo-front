@@ -17,11 +17,11 @@ const mapStateToProps = function (state) {
 
 const mapDispatchToProps = function (dispatch) {
     return {
-        onGetCategoryListItem: async (searchText, sort, page, categoryId, location) => {
+        onGetCategoryListItem: async (searchText, sort, page, categoryId, location, zone, area, filter) => {
             let randImg = "";
             let newData = [];
             const categoryImages = STOREIMAGES.find(cate => cate.id === categoryId);
-            let categoryListItem = await apiStore.getCategoryListItemApi(searchText, sort, page, categoryId, location);
+            let categoryListItem = await apiStore.getCategoryListItemApi(searchText, sort, page, categoryId, location, zone, area, filter);
             if (typeof categoryListItem == 'number') {
                 categoryListItem = [];
             }

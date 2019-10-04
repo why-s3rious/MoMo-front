@@ -12,6 +12,7 @@ export default class Home extends Component {
   }
   componentWillMount = async () => {
     //ask for list category
+    this.props.onGetZones();
     await this.props.onGetListCategory();
     if (this.props.listCategory === 401) {
       alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
@@ -29,11 +30,12 @@ export default class Home extends Component {
     // ask for location
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== 'granted') {
-      this.props.onGetLocation(null);
+      this.props.onGetLocation('');
       console.log("location permission denine");
     }
     else {
       let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+      console.log("get location: ", location)
       let lat = location.coords.latitude;
       let long = location.coords.longitude;
       let coords = {
@@ -41,12 +43,8 @@ export default class Home extends Component {
         longitude: long,
       }
       this.props.onGetLocation(coords);
-      console.log("get location success");
     }
   }
-  navigateModal = () => {
-    this.props.navigation.navigate("Modal");
-  };
   onPressCategoryButton = item => {
     this.props.navigation.navigate("MainHome", { data: item });
   };

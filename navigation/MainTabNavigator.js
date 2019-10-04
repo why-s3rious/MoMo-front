@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import TabBarIcon from '../components/TabBarIcon';
 import HomeContainer from '../container/HomeScreen';
 import AccountContainer from '../container/AccountScreen';
-import Modal from '../screens/Modal';
+import ModalContainer from '../container/ModalScreen';
 import MainHomeContainer from '../container/MainHomeScreen';
 import ItemDetail from '../screens/ItemDetail';
 import ItemAddress from '../screens/ItemAddress';
@@ -16,7 +16,7 @@ import UploadPicture from '../screens/UploadPicture';
 const HomeStack = createStackNavigator(
   {
     Home: HomeContainer,
-    Modal: Modal,
+    Modal: ModalContainer,
     MainHome: MainHomeContainer,
     ItemDetail: ItemDetail,
     ItemAddress: ItemAddress,

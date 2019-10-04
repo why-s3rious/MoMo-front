@@ -1,11 +1,11 @@
-import { requestStoreApi, requestListCategoryApi, requestSuggestSearchApi, requestNotInterested } from '../helper/index';
+import { requestStoreApi, requestListCategoryApi, requestSuggestSearchApi, requestNotInterested, requestZonesApi } from '../helper/index';
 
 // export const getCategoryListItemApi = categoryName => {
 //     return requestStoreApi('store', 'get', null, categoryName);
 // }
 
-export const getCategoryListItemApi = (searchText, sort, page, categoryId, location) => {
-    return requestStoreApi('search', 'get', searchText, sort, page, categoryId, location)
+export const getCategoryListItemApi = (searchText, sort, page, categoryId, location, zone, area, filter) => {
+    return requestStoreApi('search', 'get', searchText, sort, page, categoryId, location, zone, area, filter)
         .then(rs => { return rs })
         .catch(er => { console.log("error: ", er); return [] });
 }
@@ -32,4 +32,9 @@ export const postNotInterestedApi = (id) => {
             }
         })
         .catch(er => { console.log("error: ", er); return 'false' })
+}
+export const getZonesApi = () => {
+    return requestZonesApi('zones', 'get')
+        .then(rs => { return rs })
+        .catch(er => { console.log("zones error: ", er) })
 }

@@ -31,6 +31,13 @@ const mapDispatchToProps = function (dispatch) {
             console.log("dispatch");
             console.log(userInfo);
             dispatch(action.onGetInfoFb(userInfo))
+        },
+        onGetZones: async () => {
+            let zones = await apiStore.getZonesApi();
+            if (typeof zones == "number") {
+                zones = [];
+            }
+            dispatch(action.onGetZones(zones))
         }
     }
 }

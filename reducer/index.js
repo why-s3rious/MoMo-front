@@ -8,9 +8,10 @@ import registerReducer from './registerReducer'
 import logoReducer from './logoReducer'
 import statusPostNotInterested from './notInterestedReducer';
 import listItem from './ListItemReducer';
+import Zones from './zonesReducer';
 
 const reducer = combineReducers({
-    category, loginReducer, infoReducer, location, registerReducer, logoReducer, suggestList, statusPostNotInterested, listItem
+    category, loginReducer, infoReducer, location, registerReducer, logoReducer, suggestList, statusPostNotInterested, listItem, Zones
     // visibilityFilter,
 })
 

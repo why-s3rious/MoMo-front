@@ -22,14 +22,29 @@ export default class MainHome extends Component {
       whatScreen: "",
       isNewUser: this.props.infoUser.is_new,  // đọc trans, nếu có trans thì = true (user cũ), ko có thì = fasle (user mới)
       isFocusSearch: false,  // xét search input text focus, true/false gọi css khác nhau
+      zone: '',
+      area: '',
+      disFrom: 0,
+      disTo: 0,
+      isSearch: false,
+      saveTextSearch: '',
     };
     this.didFocusSubscription = props.navigation.addListener(
       'willFocus',
-      payload => {
-        if (isLoading = false) {
-          this.setState({
-            List: this.props.categoryListItem.stores,
+      async payload => {
+        const { navigation } = this.props;
+        const { whatScreen } = this.state;
+        if (navigation.getParam("isFilter") == true) {
+          await this.setState({
+            List: [],
+            cate: cateData,
+            zone: navigation.getParam("zone"),
+            area: navigation.getParam("area"),
+            disFrom: navigation.getParam("disFrom"),
+            disTo: navigation.getParam("disTo"),
+            isSearch: true,
           })
+          this.callApiGetListItem(whatScreen, 1);
         }
       }
     );
@@ -57,14 +72,17 @@ export default class MainHome extends Component {
         isLoading: true,
       })
     }
-    const { cate } = this.state;
+    const { cate, textSearch, List, zone, area, disFrom, disTo } = this.state;
     let location = this.props.location;
-    let locationUser = null;
-    if (location != null) {
+    let locationUser = '';
+    if (location != '') {
       locationUser = `${location.latitude},${location.longitude}`
     }
-    const { textSearch, List } = this.state;
-    await this.props.onGetCategoryListItem(textSearch, whatScreen, page, cate.id, locationUser);
+    let distanceFilter = '';
+    if (disFrom != 0 || disTo != 0) {
+      distanceFilter = `distance,${disFrom},${disTo}`
+    }
+    await this.props.onGetCategoryListItem(textSearch, whatScreen, page, cate.id, locationUser, zone, area, distanceFilter);
     if (typeof this.props.categoryListItem == 'object') {
       this.setState({
         isLoading: false,
@@ -160,15 +178,17 @@ export default class MainHome extends Component {
     })
   }
   onEndEditingSearch = async () => { // Xử lí tìm kiếm
-    const { whatScreen } = this.state;
+    const { whatScreen, textSearch } = this.state;
     await this.setState({
       List: [],
     })
     this.callApiGetListItem(whatScreen, 1);
     this.setState({
+      saveTextSearch: textSearch,
       textSearch: '',
       suggestList: [],
-      isFocusSearch: false
+      isFocusSearch: false,
+      isSearch: true,
     })
   }
   onChangeText = async (text) => {
@@ -186,6 +206,10 @@ export default class MainHome extends Component {
     this.setState({
       cate: { ...cate, id: item.category_id, name: item.name },
       textSearch: item.name,
+      // zone: '',
+      // area: '',
+      // disFrom: 0,
+      // disTo: 0,
     })
   }
   onDeleteItem = async (id) => {
@@ -221,7 +245,9 @@ export default class MainHome extends Component {
       textSearch,
       isFocusSearch,
       suggestList,
-      cate
+      isSearch,
+      cate,
+      zone, area, disFrom, disTo, saveTextSearch
     } = this.state;
     return (
       <View style={styles.container}>
@@ -292,15 +318,23 @@ export default class MainHome extends Component {
                       ListFooterComponent={this.renderFooter()}
                     />
                     :
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                      <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold' }}>Server lỗi hoặc quá tải</Text>
-                      <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold' }}>Vui lòng thử lại sau</Text>
-                    </View>
+                    isSearch ?
+                      < View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, color: 'gray', fontWeight: '400' }}>Không tìm thấy cửa hàng phù hợp</Text>
+                        <Text style={{ fontSize: 20, color: 'gray', fontWeight: '300' }}>Thông tin lọc:</Text>
+                        <Text style={{ fontSize: 17, color: 'gray', fontWeight: '300' }}>{saveTextSearch} - Hồ Chí mình - {area}</Text>
+                        <Text style={{ fontSize: 17, color: 'gray', fontWeight: '300' }}>khoảng cách từ {disFrom}-{disTo} km</Text>
+                      </View>
+                      :
+                      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 30, color: 'black', fontWeight: 'bold' }}>Server lỗi hoặc quá tải</Text>
+                        <Text style={{ fontSize: 25, color: 'black', fontWeight: 'bold' }}>Vui lòng thử lại sau</Text>
+                      </View>
                 }
               </View>
           }
         </View>
-      </View>
+      </View >
     );
   }
 }
