@@ -10,7 +10,7 @@ export default createAppContainer(
       Main: MainTabNavigator,
     },
     {
-      initialRouteName: 'Start',
+      initialRouteName: 'Main',
     }
   )
 );

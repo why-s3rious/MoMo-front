@@ -11,7 +11,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onGetInfo: async (token) => {
             const info = await accountStore.infoApi(token);
-            dispatch(action.onGetInfo(info))
+            dispatch(action.onGetInfo(info));
         },
         onGetInfoFb: async (token) => {
             const response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=id,name,picture.type(large)`);
