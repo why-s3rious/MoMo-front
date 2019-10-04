@@ -26,12 +26,14 @@ export default class Onboarding extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: false
+            isLoading: false,
         };
     }
     onDone = () => {
         this.setState({ isLoading: true })
         setTimeout(async () => {
+            await AsyncStorage.setItem("@Firstload","User exist");
+            // await AsyncStorage.removeItem("@FirstLoad")
             if (await AsyncStorage.getItem('@Token') !== null) {
                 this.props.navigation.navigate('Main')
             }
