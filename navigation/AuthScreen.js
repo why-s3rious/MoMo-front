@@ -13,17 +13,22 @@ export default class AuthScreen extends Component {
         setTimeout(async () => {
             const firstLoad = await AsyncStorage.getItem("@Firstload");
             console.log("first", firstLoad);
-            if(firstLoad!==null){
-                this.props.navigation.navigate("Logo")
+            if (firstLoad !== null) {
+                if (await AsyncStorage.getItem('@Token') !== null) {
+                    this.props.navigation.navigate('Main')
+                }
+                else {
+                    this.props.navigation.navigate("Logo")
+                }
             }
-            else{
+            else {
                 this.props.navigation.navigate("Onboarding")
             }
-        },500)
+        }, 500)
     }
     render() {
         return (
-            <ImageBackground source={require('../assets/splash.png')} style={{width: "100%", height: "100%"}} />
+            <ImageBackground source={require('../assets/splash.png')} style={{ width: "100%", height: "100%" }} />
         );
     }
 }

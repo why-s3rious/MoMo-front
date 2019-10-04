@@ -270,7 +270,7 @@ export default class Modal extends Component {
                                                 blurOnSubmit={false}
                                             />
                                             <View style={styles.text2}>
-                                                <Text>-</Text>
+                                                <Text>đến</Text>
                                             </View>
                                             <TextInput
                                                 style={styles.PickerSelect}
@@ -280,9 +280,6 @@ export default class Modal extends Component {
                                                 ref={ref => this.inputfromref = ref}
                                                 onSubmitEditing={Keyboard.dismiss}
                                             />
-                                            <View style={styles.text}>
-                                                <Text>VND</Text>
-                                            </View>
                                         </View>
                                     )}
                                 </View>
@@ -343,7 +340,7 @@ const styles = StyleSheet.create({
         marginRight: screenWidth * 0.02
     },
     text2: {
-        width: screenWidth * 0.03,
+        width: screenWidth * 0.07,
         marginRight: screenWidth * 0.02
     },
     radioFrom: {
@@ -375,7 +372,7 @@ const styles = StyleSheet.create({
         fontSize: 35
     },
     PickerSelect: {
-        width: 160,
+        width: 150,
         height: 50,
         borderWidth: 1,
         borderRadius: 25,
@@ -384,7 +381,7 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     PickerSelectRight: {
-        width: 160,
+        width: 150,
         height: 50,
         borderWidth: 1,
         borderRadius: 25,
@@ -394,5 +391,14 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     PickerText: {
+        fontSize: 12,
+        width: 150,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderWidth: 0.5,
+        borderColor: 'purple',
+        borderRadius: 8,
+        color: 'black',
+        paddingRight: 30,
     }
 })
